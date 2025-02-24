@@ -1,93 +1,118 @@
-# umpool_admin
+<p align="center">
+  <a href="https://vuestic.dev" target="_blank">
+    <img alt="Vuestic UI Logo" width="220" src="./.github/assets/vuestic-admin-logo.png">
+  </a>
+</p>
 
+<p align="center">
+  Free and beautiful Admin Template utilizing Vue 3, Vite, Pinia, and Tailwind CSS. Designed for building efficient, responsive, and fast-loading admin interfaces.</br>
+  Developed by  <a href="https://epicmax.co">Epicmax</a>.</br>
+  Based on <a href="https://ui.vuestic.dev">Vuestic UI</a> library.
+</p>
 
+<p align="center">
+  <a href="https://admin-demo.vuestic.dev"> Live Demo </a> |
+  <a href="https://admin.vuestic.dev/"> About Vuestic Admin </a> |
+  <a href="https://ui.vuestic.dev/">Vuestic UI documentation</a>
+</p>
 
-## Getting started
+> Vuestic Admin is built with [Vuestic UI](https://ui.vuestic.dev). See our
+> <a href="https://github.com/epicmaxco/vuestic-ui/issues">issues</a>,
+> <a href="https://ui.vuestic.dev/en/contribution/guide">contributing guide</a> and join discussions on our
+> <a href="https://discord.gg/jTKTjj2weV">Discord server</a> to help us improve Vuestic Admin & Vuestic UI experience.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+<p align="center">
+  <a href="https://admin.vuestic.dev" target="_blank">
+    <img src="./public/vuestic-admin-image.png" align="center" width="888px"/>
+  </a>
+</p>
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+### Quick start
 
-## Add your files
+Use following command to quickly scaffold new [Vuestic Admin](https://admin-demo.vuestic.dev) or empty Vite or Nuxt project with [Vuestic UI](https://ui.vuestic.dev).
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
+```bash
+npm create vuestic@latest
 ```
-cd existing_repo
-git remote add origin http://172.28.56.101/scm/pool/umpool_admin.git
-git branch -M dev
-git push -uf origin dev
-```
 
-## Integrate with your tools
+After [Vuestic Admin](https://admin.vuestic.dev) is installed, run `npm install` to install dependcies, then run `npm run dev` to start local development server.
 
-- [ ] [Set up project integrations](http://172.28.56.101/scm/pool/umpool_admin/-/settings/integrations)
+### Documentation
 
-## Collaborate with your team
+Documentation, guides, examples and tutorials are available on [ui.vuestic.dev](https://ui.vuestic.dev)
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+### Official Discord Server
 
-## Test and Deploy
+Ask questions at the official community [discord server](https://discord.gg/jTKTjj2weV)
 
-Use the built-in continuous integration in GitLab.
+### Features
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+- **Vue 3, Vite, Pinia, and Tailwind CSS -** Fast and efficient development
+- **Dark Theme -** Modern and eye-catching
+- **Global Configuration -** Effortless customization
+- **Accessibility -** Inclusive and user-friendly
+- **i18n Integration -** Easy localization for global reach
+- **Educational Resource -** Ideal for learning and improving skills
+- **Responsive Design -** Adapts seamlessly to all devices
+- **Professional Support -** Reliable help from the experts
+- **Highly Customizable -** Tailor to your project’s style
 
-***
+### Contributing
 
-# Editing this README
+Thanks for all your wonderful PRs, issues and ideas.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+<a href="https://github.com/epicmaxco/vuestic-admin/graphs/contributors">
+<img src="https://opencollective.com/vuestic-admin/contributors.svg?width=890&button=false" />
+</a>
+<br>
 
-## Suggestions for a good README
+You’re always welcome to join: check out
+our <a href="https://ui.vuestic.dev/en/contribution/guide">
+contribution guides</a>
+, [open issues](https://github.com/epicmaxco/vuestic-ui/issues)
+and [Discord server](https://discord.gg/jTKTjj2weV)
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+### Partners & Sponsors ❤️
 
-## Name
-Choose a self-explaining name for your project.
+<img src="./.github/assets/sponsors.png" loading="lazy" alt="Epicmax, vuejobs, ag-grid, flatlogic, browserstack and jetbrains" width="400px">
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Become a partner: [hello@epicmax.co](mailto:hello@epicmax.co)
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### Can I hire you guys?
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+[Epicmax](https://epicmax.co) is committed to Open Source from its beginning. Vuestic Admin was created and backed by Epicmax, and is supported through all the years.
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+With 6+ years of dedicated work on both commercial and open-source projects, and more than 47 clients worldwide across various fields, Epicmax has deep expertise in frontend development, especially in Vue.js. We regularly conduct code audits for our projects and now excited to offer this service not only to our existing clients but to anyone looking to understand the state of their frontend code and ensure it's secure and up-to-date!
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+You can request a consultation or order web development services by Epicmax via this [form](https://epicmax.co/contacts) 😎
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+Say hi: <a href="mailto:hello@epicmax.co">hello@epicmax.co</a>. We will be happy to work with you!
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+[Other work](https://epicmax.co) we’ve done 🤘
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+[Meet the Team](https://ui.vuestic.dev/introduction/team)
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+### Awards
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+<a href="https://flatlogic.com/templates/vuestic-vue-free-admin" target="_blank">
+    <img src="https://i.imgur.com/ZeQPZ3Q.png" align="center" width="150px"/>
+</a>
+<p>
+  By <a href="https://flatlogic.com/templates/vuestic-vue-free-admin" target="_blank">@flatlogic</a> marketplace
+</p>
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+### Premium Support and Consulting
 
-## License
-For open source projects, say how it is licensed.
+Get Premium Support & Consulting services through our official development partner, Epicmax. As the main contributor to Vuestic UI and Vuestic Admin, Epicmax brings a wealth of expertise and experience to help you achieve your project goals efficiently and effectively.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+[Get a quote](https://www.epicmax.co/?ref=vuestic-consulting)
+
+### Follow us
+
+Stay up to date with the latest Vuestic news! Follow us
+on [Twitter](https://twitter.com/vuestic_ui)
+or [Linkedin](https://www.linkedin.com/company/18509340)
+
+### License
+
+[MIT](https://github.com/epicmaxco/vuestic-admin/blob/master/LICENSE) license.
