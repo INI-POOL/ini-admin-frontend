@@ -11,13 +11,13 @@ export default {
     displayName: "navigationRoutes.home",
   },
   routes: [
-    {
-      name: "dashboard",
-      displayName: "menu.dashboard",
-      meta: {
-        icon: "vuestic-iconset-dashboard",
-      },
-    },
+    // {
+    //   name: "dashboard",
+    //   displayName: "menu.dashboard",
+    //   meta: {
+    //     icon: "vuestic-iconset-dashboard",
+    //   },
+    // },
     // {
     //   name: 'users',
     //   displayName: 'menu.users',
@@ -83,25 +83,32 @@ export default {
     //   },
     // },
     {
-      name: "404",
-      displayName: "menu.404",
+      name: "withdraw",
+      displayName: "提现列表",
       meta: {
         icon: "vuestic-iconset-files",
       },
     },
-    {
-      name: "preferences",
-      displayName: "menu.preferences",
-      meta: {
-        icon: "manage_accounts",
-      },
-    },
-    {
-      name: "settings",
-      displayName: "menu.settings",
-      meta: {
-        icon: "settings",
-      },
-    },
+    // {
+    //   name: "404",
+    //   displayName: "menu.404",
+    //   meta: {
+    //     icon: "vuestic-iconset-files",
+    //   },
+    // },
+    // {
+    //   name: "preferences",
+    //   displayName: "menu.preferences",
+    //   meta: {
+    //     icon: "manage_accounts",
+    //   },
+    // },
+    // {
+    //   name: "settings",
+    //   displayName: "menu.settings",
+    //   meta: {
+    //     icon: "settings",
+    //   },
+    // },
   ] as INavigationRoute[],
 };

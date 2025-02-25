@@ -10,7 +10,10 @@
         <VaButton preset="secondary" color="textPrimary">
           <span class="profile-dropdown__anchor min-w-max">
             <slot />
-            <VaAvatar :size="32" color="warning"> 😍 </VaAvatar>
+            <!-- <VaAvatar :size="32" color="warning"> 😍 </VaAvatar> -->
+            <VaAvatar color="warning">
+              U.M
+            </VaAvatar>
           </span>
         </VaButton>
       </template>
@@ -19,12 +22,12 @@
         :style="{ '--hover-color': hoverColor }"
       >
         <VaList v-for="group in options" :key="group.name">
-          <header
+          <!-- <header
             v-if="group.name"
             class="uppercase text-[var(--va-secondary)] opacity-80 font-bold text-xs px-4"
           >
             {{ t(`user.${group.name}`) }}
-          </header>
+          </header> -->
           <VaListItem
             v-for="item in group.list"
             :key="item.name"
@@ -70,48 +73,48 @@ withDefaults(
   }>(),
   {
     options: () => [
-      {
-        name: "account",
-        separator: true,
-        list: [
-          {
-            name: "profile",
-            to: "preferences",
-            icon: "mso-account_circle",
-          },
-          {
-            name: "settings",
-            to: "settings",
-            icon: "mso-settings",
-          },
-          {
-            name: "billing",
-            to: "billing",
-            icon: "mso-receipt_long",
-          },
-          {
-            name: "projects",
-            to: "projects",
-            icon: "mso-favorite",
-          },
-        ],
-      },
-      {
-        name: "explore",
-        separator: true,
-        list: [
-          {
-            name: "faq",
-            to: "faq",
-            icon: "mso-quiz",
-          },
-          {
-            name: "helpAndSupport",
-            href: "https://discord.gg/u7fQdqQt8c",
-            icon: "mso-error",
-          },
-        ],
-      },
+      // {
+      //   name: "account",
+      //   separator: true,
+      //   list: [
+      //     {
+      //       name: "profile",
+      //       to: "preferences",
+      //       icon: "mso-account_circle",
+      //     },
+      //     {
+      //       name: "settings",
+      //       to: "settings",
+      //       icon: "mso-settings",
+      //     },
+      //     {
+      //       name: "billing",
+      //       to: "billing",
+      //       icon: "mso-receipt_long",
+      //     },
+      //     {
+      //       name: "projects",
+      //       to: "projects",
+      //       icon: "mso-favorite",
+      //     },
+      //   ],
+      // },
+      // {
+      //   name: "explore",
+      //   separator: true,
+      //   list: [
+      //     {
+      //       name: "faq",
+      //       to: "faq",
+      //       icon: "mso-quiz",
+      //     },
+      //     {
+      //       name: "helpAndSupport",
+      //       href: "https://discord.gg/u7fQdqQt8c",
+      //       icon: "mso-error",
+      //     },
+      //   ],
+      // },
       {
         name: "",
         separator: false,
