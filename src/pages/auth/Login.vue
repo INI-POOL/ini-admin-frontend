@@ -58,15 +58,16 @@ const formData = reactive({
 });
 
 const submit = () => {
+  // ||  (formData.username === "umpool" &&
+  // formData.password === "gT9@pY6uV*2S")
   if (
-    validate() &&
     formData.username === "admin" &&
-    formData.password === "123456"
+    formData.password === "A3f!7#b2Pz9L"
   ) {
     const token = generateToken();
     setToken(token);
     init({ message: "登陆成功！", color: "success" });
-    push({ name: "dashboard" });
+    push({ name: "withdraw" });
   } else {
     init({ message: "登陆失败！", color: "error" });
   }

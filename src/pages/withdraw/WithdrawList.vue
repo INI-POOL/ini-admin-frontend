@@ -129,13 +129,14 @@ const { init: toast } = useToast();
 
 // 表格列定义
 const columns = [
-  { key: "mobile", title: "手机号" },
-  { key: "amount", title: "提现金额" },
-  { key: "gas_fee", title: "gas费" },
-  { key: "status", title: "提现状态" },
-  { key: "audit_status", title: "审核状态" },
-  { key: "created_time", title: "申请时间" },
-  { key: "action", title: "操作" },
+  { key: "mobile", label: "手机号" },
+  { key: "amount", label: "提现金额" },
+  { key: "gas_fee", label: "gas费" },
+  { key: "currency", label: "币种" },
+  { key: "status", label: "提现状态" },
+  { key: "audit_status", label: "审核状态",sortable: true },
+  { key: "created_time", label: "申请时间",sortable: true },
+  { key: "action", label: "操作" },
 ];
 
 // 查询参数
@@ -322,7 +323,7 @@ onMounted(() => {
 
 <style scoped>
 .withdraw-list {
-  padding: 1rem;
+  /* padding: 1rem; */
 }
 
 .audit-buttons {
@@ -404,6 +405,7 @@ onMounted(() => {
   /* 操作列样式 */
   th:last-child,
   td:last-child {
+    text-align: center;
     position: sticky;
     right: 0;
     background: white;
@@ -412,11 +414,11 @@ onMounted(() => {
     &::after {
       content: "";
       position: absolute;
-      left: -8px;
+      left: -5px;
       top: 0;
       bottom: 0;
-      width: 8px;
-      /* background: linear-gradient(to right, transparent, rgba(0,0,0,0.1)); */
+      width: 5px;
+      background: linear-gradient(to right, transparent, rgba(0,0,0,0.1));
     }
   }
 }
@@ -425,13 +427,16 @@ onMounted(() => {
   display: flex;
   gap: 0.5rem;
   justify-content: center;
-  min-width: 80px; /* 确保按钮有足够空间 */
+  padding-left: 5px;
+  padding-right: 5px;
+  min-width: 40px; /* 确保按钮有足够空间 */
 }
 
 /* 移动端适配 */
 @media screen and (max-width: 768px) {
   :deep(.responsive-table) {
-    margin: 0 -1rem; /* 移除边距 */
+    /*margin: 0 -1rem; *//* 移除边距 */
+    margin: 0;
 
     .va-data-table__table {
       min-width: 600px; /* 调整移动端最小宽度 */

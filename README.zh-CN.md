@@ -12,14 +12,14 @@
 
 <p align="center">
   <a href="https://admin-demo.vuestic.dev"> 在线演示 </a> |
-  <a href="https://admin-landing.vuestic.dev/"> 关于Vuestic Admin </a> |
+  <a href="https://admin-landing.vuestic.dev/"> 关于Umpool Admin </a> |
   <a href="https://ui.vuestic.dev/">Vuestic UI文档</a>
 </p>
 
-> Vuestic Admin是使用[Vuestic UI](https://ui.vuestic.dev)构建的。查看我们的
+> Umpool Admin是使用[Vuestic UI](https://ui.vuestic.dev)构建的。查看我们的
 > <a href="https://github.com/epicmaxco/vuestic-ui/issues">问题</a>，
 > <a href="https://ui.vuestic.dev/en/contribution/guide">贡献指南</a> 并参与我们的
-> <a href="https://discord.gg/jTKTjj2weV">Discord服务器</a>，帮助我们改进Vuestic Admin和Vuestic UI体验。
+> <a href="https://discord.gg/jTKTjj2weV">Discord服务器</a>，帮助我们改进Umpool Admin和Vuestic UI体验。
 
 <p align="center">
   <a href="https://admin.vuestic.dev" target="_blank">
@@ -29,13 +29,13 @@
 
 ### 快速入门
 
-使用以下命令快速搭建新的[Vuestic Admin](admin-demo.vuestic.ui)或使用[Vuestic UI](ui.vuestic.dev)的空白Vite或Nuxt项目。
+使用以下命令快速搭建新的[Umpool Admin](admin-demo.vuestic.ui)或使用[Vuestic UI](ui.vuestic.dev)的空白Vite或Nuxt项目。
 
 ```bash
 npm create vuestic@latest
 ```
 
-安装[Vuestic Admin](admin.vuestic.ui)后，运行 `npm install` 安装依赖，然后运行 `npm run dev` 启动本地开发服务器。
+安装[Umpool Admin](admin.vuestic.ui)后，运行 `npm install` 安装依赖，然后运行 `npm run dev` 启动本地开发服务器。
 
 ### 文档
 
@@ -76,7 +76,7 @@ npm create vuestic@latest
 
 ### 我能雇佣你们吗？
 
-[Epicmax](https://epicmax.co) 从一开始就致力于开源。Vuestic Admin是由Epicmax创建并支持的，经过多年的支持。
+[Epicmax](https://epicmax.co) 从一开始就致力于开源。Umpool Admin是由Epicmax创建并支持的，经过多年的支持。
 
 在前端开发方面，Epicmax在商业和开源项目上已经有超过6年的专业经验，与全球各个领域的47个以上的客户合作。我们定期对我们的项目进行代码审核，现在很高兴不仅向我们现有的客户提供此服务，而且向任何希望了解其前端代码状态并确保其安全和最新的人提供此服务！
 
