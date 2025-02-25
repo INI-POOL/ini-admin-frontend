@@ -1,6 +1,11 @@
 <template>
   <div class="profile-dropdown-wrapper">
-    <VaDropdown v-model="isShown" :offset="[9, 0]" class="profile-dropdown" stick-to-edges>
+    <VaDropdown
+      v-model="isShown"
+      :offset="[9, 0]"
+      class="profile-dropdown"
+      stick-to-edges
+    >
       <template #anchor>
         <VaButton preset="secondary" color="textPrimary">
           <span class="profile-dropdown__anchor min-w-max">
@@ -14,7 +19,10 @@
         :style="{ '--hover-color': hoverColor }"
       >
         <VaList v-for="group in options" :key="group.name">
-          <header v-if="group.name" class="uppercase text-[var(--va-secondary)] opacity-80 font-bold text-xs px-4">
+          <header
+            v-if="group.name"
+            class="uppercase text-[var(--va-secondary)] opacity-80 font-bold text-xs px-4"
+          >
             {{ t(`user.${group.name}`) }}
           </header>
           <VaListItem
@@ -34,96 +42,100 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useColors } from 'vuestic-ui'
+import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useColors } from "vuestic-ui";
 
-const { colors, setHSLAColor } = useColors()
-const hoverColor = computed(() => setHSLAColor(colors.focus, { a: 0.1 }))
+const { colors, setHSLAColor } = useColors();
+const hoverColor = computed(() => setHSLAColor(colors.focus, { a: 0.1 }));
 
-const { t } = useI18n()
+const { t } = useI18n();
 
 type ProfileListItem = {
-  name: string
-  to?: string
-  href?: string
-  icon: string
-}
+  name: string;
+  to?: string;
+  href?: string;
+  icon: string;
+};
 
 type ProfileOptions = {
-  name: string
-  separator: boolean
-  list: ProfileListItem[]
-}
+  name: string;
+  separator: boolean;
+  list: ProfileListItem[];
+};
 
 withDefaults(
   defineProps<{
-    options?: ProfileOptions[]
+    options?: ProfileOptions[];
   }>(),
   {
     options: () => [
       {
-        name: 'account',
+        name: "account",
         separator: true,
         list: [
           {
-            name: 'profile',
-            to: 'preferences',
-            icon: 'mso-account_circle',
+            name: "profile",
+            to: "preferences",
+            icon: "mso-account_circle",
           },
           {
-            name: 'settings',
-            to: 'settings',
-            icon: 'mso-settings',
+            name: "settings",
+            to: "settings",
+            icon: "mso-settings",
           },
           {
-            name: 'billing',
-            to: 'billing',
-            icon: 'mso-receipt_long',
+            name: "billing",
+            to: "billing",
+            icon: "mso-receipt_long",
           },
           {
-            name: 'projects',
-            to: 'projects',
-            icon: 'mso-favorite',
+            name: "projects",
+            to: "projects",
+            icon: "mso-favorite",
           },
         ],
       },
       {
-        name: 'explore',
+        name: "explore",
         separator: true,
         list: [
           {
-            name: 'faq',
-            to: 'faq',
-            icon: 'mso-quiz',
+            name: "faq",
+            to: "faq",
+            icon: "mso-quiz",
           },
           {
-            name: 'helpAndSupport',
-            href: 'https://discord.gg/u7fQdqQt8c',
-            icon: 'mso-error',
+            name: "helpAndSupport",
+            href: "https://discord.gg/u7fQdqQt8c",
+            icon: "mso-error",
           },
         ],
       },
       {
-        name: '',
+        name: "",
         separator: false,
         list: [
           {
-            name: 'logout',
-            to: 'login',
-            icon: 'mso-logout',
+            name: "logout",
+            to: "login",
+            icon: "mso-logout",
           },
         ],
       },
     ],
   },
-)
+);
 
-const isShown = ref(false)
+const isShown = ref(false);
 
 const resolveLinkAttribute = (item: ProfileListItem) => {
-  return item.to ? { to: { name: item.to } } : item.href ? { href: item.href, target: '_blank' } : {}
-}
+  return item.to
+    ? { to: { name: item.to } }
+    : item.href
+      ? { href: item.href, target: "_blank" }
+      : {};
+};
 </script>
 
 <style lang="scss">

@@ -1,8 +1,8 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import PrivateRoute from './components/PrivateRoute'
-import Login from './components/Login'
-import Layout from './components/Layout'
-import Dashboard from './pages/dashboard/Dashboard'
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import PrivateRoute from "./components/PrivateRoute";
+import Login from "./components/Login";
+import Layout from "./components/Layout";
+import Dashboard from "./pages/dashboard/Dashboard";
 
 // ... 其他导入
 
@@ -29,7 +29,7 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;

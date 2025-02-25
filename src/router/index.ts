@@ -1,155 +1,155 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import { isTokenValid } from '../utils/auth'
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import { isTokenValid } from "../utils/auth";
 
-import AuthLayout from '../layouts/AuthLayout.vue'
-import AppLayout from '../layouts/AppLayout.vue'
+import AuthLayout from "../layouts/AuthLayout.vue";
+import AppLayout from "../layouts/AppLayout.vue";
 
-import RouteViewComponent from '../layouts/RouterBypass.vue'
+import RouteViewComponent from "../layouts/RouterBypass.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/:pathMatch(.*)*',
-    redirect: { name: 'dashboard' },
+    path: "/:pathMatch(.*)*",
+    redirect: { name: "dashboard" },
   },
   {
-    name: 'admin',
-    path: '/',
+    name: "admin",
+    path: "/",
     component: AppLayout,
-    redirect: { name: 'dashboard' },
+    redirect: { name: "dashboard" },
     children: [
       {
-        name: 'dashboard',
-        path: 'dashboard',
-        component: () => import('../pages/admin/dashboard/Dashboard.vue'),
+        name: "dashboard",
+        path: "dashboard",
+        component: () => import("../pages/admin/dashboard/Dashboard.vue"),
         meta: { requiresAuth: true },
       },
       {
-        name: 'settings',
-        path: 'settings',
-        component: () => import('../pages/settings/Settings.vue'),
+        name: "settings",
+        path: "settings",
+        component: () => import("../pages/settings/Settings.vue"),
       },
       {
-        name: 'preferences',
-        path: 'preferences',
-        component: () => import('../pages/preferences/Preferences.vue'),
+        name: "preferences",
+        path: "preferences",
+        component: () => import("../pages/preferences/Preferences.vue"),
       },
       {
-        name: 'users',
-        path: 'users',
-        component: () => import('../pages/users/UsersPage.vue'),
+        name: "users",
+        path: "users",
+        component: () => import("../pages/users/UsersPage.vue"),
       },
       {
-        name: 'projects',
-        path: 'projects',
-        component: () => import('../pages/projects/ProjectsPage.vue'),
+        name: "projects",
+        path: "projects",
+        component: () => import("../pages/projects/ProjectsPage.vue"),
       },
       {
-        name: 'payments',
-        path: '/payments',
+        name: "payments",
+        path: "/payments",
         component: RouteViewComponent,
         children: [
           {
-            name: 'payment-methods',
-            path: 'payment-methods',
-            component: () => import('../pages/payments/PaymentsPage.vue'),
+            name: "payment-methods",
+            path: "payment-methods",
+            component: () => import("../pages/payments/PaymentsPage.vue"),
           },
           {
-            name: 'billing',
-            path: 'billing',
-            component: () => import('../pages/billing/BillingPage.vue'),
+            name: "billing",
+            path: "billing",
+            component: () => import("../pages/billing/BillingPage.vue"),
           },
           {
-            name: 'pricing-plans',
-            path: 'pricing-plans',
-            component: () => import('../pages/pricing-plans/PricingPlans.vue'),
+            name: "pricing-plans",
+            path: "pricing-plans",
+            component: () => import("../pages/pricing-plans/PricingPlans.vue"),
           },
         ],
       },
       {
-        name: 'faq',
-        path: '/faq',
-        component: () => import('../pages/faq/FaqPage.vue'),
+        name: "faq",
+        path: "/faq",
+        component: () => import("../pages/faq/FaqPage.vue"),
       },
       {
-        name: 'withdraw',
-        path: 'withdraw',
-        component: () => import('../pages/withdraw/WithdrawList.vue'),
+        name: "withdraw",
+        path: "withdraw",
+        component: () => import("../pages/withdraw/WithdrawList.vue"),
         meta: {
           requiresAuth: true,
-          title: '提现管理',
+          title: "提现管理",
         },
       },
     ],
   },
 
   {
-    path: '/auth',
+    path: "/auth",
     component: AuthLayout,
     children: [
       {
-        name: 'login',
-        path: 'login',
-        component: () => import('../pages/auth/Login.vue'),
+        name: "login",
+        path: "login",
+        component: () => import("../pages/auth/Login.vue"),
         meta: { requiresAuth: false },
       },
       {
-        name: 'signup',
-        path: 'signup',
-        component: () => import('../pages/auth/Signup.vue'),
+        name: "signup",
+        path: "signup",
+        component: () => import("../pages/auth/Signup.vue"),
       },
       {
-        name: 'recover-password',
-        path: 'recover-password',
-        component: () => import('../pages/auth/RecoverPassword.vue'),
+        name: "recover-password",
+        path: "recover-password",
+        component: () => import("../pages/auth/RecoverPassword.vue"),
       },
       {
-        name: 'recover-password-email',
-        path: 'recover-password-email',
-        component: () => import('../pages/auth/CheckTheEmail.vue'),
+        name: "recover-password-email",
+        path: "recover-password-email",
+        component: () => import("../pages/auth/CheckTheEmail.vue"),
       },
       {
-        path: '',
-        redirect: { name: 'login' },
+        path: "",
+        redirect: { name: "login" },
       },
     ],
   },
   {
-    name: '404',
-    path: '/404',
-    component: () => import('../pages/404.vue'),
+    name: "404",
+    path: "/404",
+    component: () => import("../pages/404.vue"),
   },
-]
+];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
-      return savedPosition
+      return savedPosition;
     }
     // For some reason using documentation example doesn't scroll on page navigation.
     if (to.hash) {
-      return { el: to.hash, behavior: 'smooth' }
+      return { el: to.hash, behavior: "smooth" };
     } else {
-      window.scrollTo(0, 0)
+      window.scrollTo(0, 0);
     }
   },
   routes,
-})
+});
 
 // 全局前置守卫
 router.beforeEach((to, from, next) => {
   // 默认需要登录验证
-  const requiresAuth = to.meta.requiresAuth !== false
+  const requiresAuth = to.meta.requiresAuth !== false;
 
   if (requiresAuth && !isTokenValid()) {
     // 如果需要验证且未登录，重定向到登录页
     next({
-      path: '/auth/login',
+      path: "/auth/login",
       query: { redirect: to.fullPath }, // 保存原本要访问的路径
-    })
+    });
   } else {
-    next()
+    next();
   }
-})
+});
 
-export default router
+export default router;

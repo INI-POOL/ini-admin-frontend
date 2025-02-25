@@ -1,21 +1,21 @@
 export interface INavigationRoute {
-  name: string
-  displayName: string
-  meta: { icon: string }
-  children?: INavigationRoute[]
+  name: string;
+  displayName: string;
+  meta: { icon: string };
+  children?: INavigationRoute[];
 }
 
 export default {
   root: {
-    name: '/',
-    displayName: 'navigationRoutes.home',
+    name: "/",
+    displayName: "navigationRoutes.home",
   },
   routes: [
     {
-      name: 'dashboard',
-      displayName: 'menu.dashboard',
+      name: "dashboard",
+      displayName: "menu.dashboard",
       meta: {
-        icon: 'vuestic-iconset-dashboard',
+        icon: "vuestic-iconset-dashboard",
       },
     },
     // {
@@ -83,25 +83,25 @@ export default {
     //   },
     // },
     {
-      name: '404',
-      displayName: 'menu.404',
+      name: "404",
+      displayName: "menu.404",
       meta: {
-        icon: 'vuestic-iconset-files',
+        icon: "vuestic-iconset-files",
       },
     },
     {
-      name: 'preferences',
-      displayName: 'menu.preferences',
+      name: "preferences",
+      displayName: "menu.preferences",
       meta: {
-        icon: 'manage_accounts',
+        icon: "manage_accounts",
       },
     },
     {
-      name: 'settings',
-      displayName: 'menu.settings',
+      name: "settings",
+      displayName: "menu.settings",
       meta: {
-        icon: 'settings',
+        icon: "settings",
       },
     },
   ] as INavigationRoute[],
-}
+};

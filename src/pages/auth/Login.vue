@@ -16,11 +16,15 @@
         :type="isPasswordVisible.value ? 'text' : 'password'"
         class="mb-4"
         label="密码"
-        @clickAppendInner.stop="isPasswordVisible.value = !isPasswordVisible.value"
+        @clickAppendInner.stop="
+          isPasswordVisible.value = !isPasswordVisible.value
+        "
       >
         <template #appendInner>
           <VaIcon
-            :name="isPasswordVisible.value ? 'mso-visibility_off' : 'mso-visibility'"
+            :name="
+              isPasswordVisible.value ? 'mso-visibility_off' : 'mso-visibility'
+            "
             class="cursor-pointer"
             color="secondary"
           />
@@ -35,34 +39,38 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { useForm, useToast } from 'vuestic-ui'
-import { validators } from '../../services/utils'
+import { reactive } from "vue";
+import { useRouter } from "vue-router";
+import { useForm, useToast } from "vuestic-ui";
+import { validators } from "../../services/utils";
 // import { login } from '../../api/user'
-import { setToken } from '../../utils/auth'
-import { generateToken } from '../../services/utils'
+import { setToken } from "../../utils/auth";
+import { generateToken } from "../../services/utils";
 
-const { validate } = useForm('form')
-const { push } = useRouter()
-const { init } = useToast()
+const { validate } = useForm("form");
+const { push } = useRouter();
+const { init } = useToast();
 
 const formData = reactive({
-  username: '',
-  password: '',
+  username: "",
+  password: "",
   keepLoggedIn: false,
-})
+});
 
 const submit = () => {
-  if (validate() && formData.username === 'admin' && formData.password === '123456') {
-    const token = generateToken()
-    setToken(token)
-    init({ message: '登陆成功！', color: 'success' })
-    push({ name: 'dashboard' })
+  if (
+    validate() &&
+    formData.username === "admin" &&
+    formData.password === "123456"
+  ) {
+    const token = generateToken();
+    setToken(token);
+    init({ message: "登陆成功！", color: "success" });
+    push({ name: "dashboard" });
   } else {
-    init({ message: '登陆失败！', color: 'error' })
+    init({ message: "登陆失败！", color: "error" });
   }
-}
+};
 
 // const handleLogin = async () => {
 //   const res = await login(formData)

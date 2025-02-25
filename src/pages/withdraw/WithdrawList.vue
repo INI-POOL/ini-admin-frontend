@@ -5,7 +5,7 @@
     </div>
 
     <!-- 搜索条件 -->
-    <VaCard class="mb-4">
+    <!-- <VaCard class="mb-4">
       <VaCardContent>
         <div class="flex gap-4 flex-wrap">
           <VaSelect v-model="queryParams.status" label="状态" :options="statusOptions" class="w-48" clearable />
@@ -13,7 +13,7 @@
           <VaButton preset="secondary" @click="handleReset">重置</VaButton>
         </div>
       </VaCardContent>
-    </VaCard>
+    </VaCard> -->
 
     <!-- 列表 -->
     <VaCard>
@@ -29,8 +29,6 @@
           :show-select="false"
           hoverable
           class="responsive-table"
-          @update:currentPage="handlePageChange"
-          @update:itemsPerPage="handlePageSizeChange"
         >
           <!-- 提现状态 -->
           <template #cell(status)="{ value }">
@@ -53,7 +51,7 @@
 
           <!-- 操作列 -->
           <template #cell(action)="{ row }">
-            <div class="action-buttons">
+            <div class="action-buttons" style="text-align: center">
               <VaButton
                 v-if="row && Number(row.rowData.audit_status) === 0"
                 size="small"
@@ -62,6 +60,7 @@
               >
                 审核
               </VaButton>
+              <span v-else>--</span>
             </div>
           </template>
         </VaDataTable>
@@ -69,19 +68,17 @@
         <!-- 分页器 -->
         <div class="flex justify-end mt-4">
           <VaPagination
-            v-model="queryParams.page"
+            v-model="currentStartIndex"
+            :page-size="queryParams.pagesize"
+            visible-pages="5"
             :total="total"
-            :items-per-page="queryParams.pagesize"
-            :visible-pages="5"
+            buttons-preset="secondary"
+            boundary-numbers
             @update:modelValue="handlePageChange"
           />
-          <VaSelect
-            v-model="queryParams.pagesize"
-            :options="pageSizeOptions"
-            class="ml-4 w-24"
-            @update:modelValue="handlePageSizeChange"
-          />
-          <span class="ml-4 self-center text-gray-600"> 共 {{ total }} 条记录 </span>
+          <span class="ml-4 self-center text-gray-600">
+            共 {{ total }} 条记录
+          </span>
         </div>
       </VaCardContent>
     </VaCard>
@@ -98,24 +95,24 @@
     >
       <div class="space-y-4">
         <div>
-          <div class="mb-4">当前提现金额：{{ currentItem?.amount || 0 }} USDT</div>
+          <div class="mb-4">
+            当前提现金额：{{ currentItem?.amount || 0 }} USDT
+          </div>
           <div class="mb-2">审核结果</div>
-          <VaRadioGroup v-model="auditForm.audit_status" class="radio-group">
-            <VaRadio
-              v-model="auditForm.audit_status"
-              :value="1"
-              label="通过"
-              class="radio-item"
-              :checked="auditForm.audit_status === 1"
-            />
-            <VaRadio
-              v-model="auditForm.audit_status"
-              :value="2"
-              label="拒绝"
-              class="radio-item"
-              :checked="auditForm.audit_status === 2"
-            />
-          </VaRadioGroup>
+          <VaRadio
+            v-model="auditForm.audit_status"
+            :options="[
+              {
+                text: '同意',
+                value: 1,
+              },
+              {
+                text: '拒绝',
+                value: 2,
+              },
+            ]"
+            value-by="value"
+          />
         </div>
       </div>
     </VaModal>
@@ -123,109 +120,92 @@
 </template>
 
 <script lang="js" setup>
-import { ref, reactive, onMounted } from 'vue'
-import { useToast } from 'vuestic-ui'
-import { getWithdrawList, auditWithdraw } from '../../api/withdraw'
-import { formatDateTime } from '../../utils/date.ts'
+import { ref, reactive, onMounted } from "vue";
+import { useToast } from "vuestic-ui";
+import { getWithdrawList, auditWithdraw } from "../../api/withdraw";
+import { formatDateTime } from "../../utils/date.ts";
 
-const { init: toast } = useToast()
+const { init: toast } = useToast();
 
 // 表格列定义
 const columns = [
-  { key: 'mobile', title: '手机号' },
-  { key: 'amount', title: '提现金额' },
-  { key: 'gas_fee', title: 'gas费' },
-  { key: 'status', title: '提现状态' },
-  { key: 'audit_status', title: '审核状态' },
-  { key: 'created_time', title: '申请时间' },
-  { key: 'action', title: '操作' },
-]
-
-// 状态选项
-const statusOptions = [
-  { text: '待审核', value: 'pending' },
-  { text: '已通过', value: 'approved' },
-  { text: '已拒绝', value: 'rejected' },
-]
-
-// 分页配置
-const pageSizeOptions = [
-  { text: '10条/页', value: 10 },
-  { text: '20条/页', value: 20 },
-  { text: '50条/页', value: 50 },
-  { text: '100条/页', value: 100 },
-]
+  { key: "mobile", title: "手机号" },
+  { key: "amount", title: "提现金额" },
+  { key: "gas_fee", title: "gas费" },
+  { key: "status", title: "提现状态" },
+  { key: "audit_status", title: "审核状态" },
+  { key: "created_time", title: "申请时间" },
+  { key: "action", title: "操作" },
+];
 
 // 查询参数
 const queryParams = reactive({
   page: 1,
   pagesize: 10,
-  // status: '',
-  // startDate: '',
-  // endDate: ''
-})
+});
 
 // 表格数据
-const tableData = ref([])
-const total = ref(0)
-const loading = ref(false)
+const tableData = ref([]);
+const total = ref(0);
+const currentStartIndex = ref(1);
+const loading = ref(false);
 
 // 获取列表数据
 const fetchData = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    const res = await getWithdrawList(queryParams)
-    console.log('API Response:', res)
+    const res = await getWithdrawList(queryParams);
     // 确保返回的数据格式正确
-    if (res && typeof res.Total === 'number') {
-      tableData.value = res.Withdraws || []
-      total.value = parseInt(res.Total) // 确保是数字类型
+    if (res && typeof res.Total === "number") {
+      tableData.value = res.Withdraws || [];
+      total.value = parseInt(res.Total); // 确保是数字类型
     } else {
-      console.error('API返回数据格式错误:', res)
+      console.error("API返回数据格式错误:", res);
       toast({
-        message: '数据格式错误',
-        color: 'danger',
-      })
+        message: "数据格式错误",
+        color: "danger",
+      });
     }
   } catch (error) {
-    console.error('获取数据失败:', error)
+    console.error("获取数据失败:", error);
     toast({
-      message: '获取数据失败',
-      color: 'danger',
-    })
+      message: "获取数据失败",
+      color: "danger",
+    });
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 // 搜索
-const handleSearch = () => {
-  queryParams.page = 1
-  fetchData()
-}
+// const handleSearch = () => {
+//   queryParams.page = 1
+//   fetchData()
+// }
 
 // 重置
-const handleReset = () => {
-  queryParams.status = ''
-  queryParams.startDate = ''
-  queryParams.endDate = ''
-  queryParams.page = 1
-  queryParams.pagesize = 10
-  fetchData()
-}
+// const handleReset = () => {
+//   queryParams.status = ''
+//   queryParams.startDate = ''
+//   queryParams.endDate = ''
+//   queryParams.page = 1
+//   queryParams.pagesize = 10
+//   fetchData()
+// }
 
 // 分页
-const handlePageChange = (page) => {
-  queryParams.page = page
-  fetchData()
-}
+const handlePageChange = (startIndex) => {
+  queryParams.page = Math.ceil(startIndex / queryParams.pagesize);
+  currentStartIndex.value = startIndex;
+  fetchData();
+};
 
 // 每页条数改变
-const handlePageSizeChange = (pageSize) => {
-  queryParams.pagesize = pageSize
-  queryParams.page = 1 // 切换每页条数时重置为第一页
-  fetchData()
-}
+// const handlePageSizeChange = (pageSize) => {
+//   queryParams.pagesize = pageSize.value
+//   queryParams.page = 1 // 切换每页条数时重置为第一页
+//   fetchData()
+// }
 
 // 格式化金额
 // const formatMoney = (value: number) => {
@@ -235,42 +215,42 @@ const handlePageSizeChange = (pageSize) => {
 // 提现状态
 const getWithdrawStatusText = (status) => {
   const map = {
-    0: '申请中',
-    1: '提现成功',
-    2: '提现失败',
-    3: '提现异常',
-  }
-  return map[status] || '未知状态'
-}
+    0: "申请中",
+    1: "提现成功",
+    2: "提现失败",
+    3: "提现异常",
+  };
+  return map[status] || "未知状态";
+};
 
 const getWithdrawStatusColor = (status) => {
   const map = {
-    0: 'warning',
-    1: 'success',
-    2: 'info',
-    3: 'danger',
-  }
-  return map[status] || 'primary'
-}
+    0: "warning",
+    1: "success",
+    2: "info",
+    3: "danger",
+  };
+  return map[status] || "primary";
+};
 
 // 审核状态
 const getAuditStatusText = (status) => {
   const map = {
-    0: '待审核',
-    1: '审核成功',
-    2: '审核失败',
-  }
-  return map[status] || '未知状态'
-}
+    0: "待审核",
+    1: "审核成功",
+    2: "审核失败",
+  };
+  return map[status] || "未知状态";
+};
 
 const getAuditStatusColor = (status) => {
   const map = {
-    0: 'warning',
-    1: 'success',
-    2: 'danger',
-  }
-  return map[status] || 'primary'
-}
+    0: "warning",
+    1: "success",
+    2: "danger",
+  };
+  return map[status] || "primary";
+};
 
 // 审核选项
 // const auditOptions = [
@@ -287,44 +267,43 @@ const getAuditStatusColor = (status) => {
 // ]
 
 // 审核相关
-const auditVisible = ref(false)
-const currentItem = ref(null)
+const auditVisible = ref(false);
+const currentItem = ref(null);
 const auditForm = reactive({
   audit_status: 1, // 默认选中通过
-})
+});
 
 const handleAudit = (row) => {
   if (!row) {
-    return
+    return;
   }
-  currentItem.value = row.rowData
-  auditForm.audit_status = 1 // 每次打开弹窗时重置为通过
-  auditVisible.value = true
-}
+  currentItem.value = row.rowData;
+  auditForm.audit_status = 1; // 每次打开弹窗时重置为通过
+  auditVisible.value = true;
+};
 
 const handleAuditSubmit = async () => {
-  if (!currentItem.value) return
+  if (!currentItem.value) return;
 
   try {
     await auditWithdraw({
       id: currentItem.value.id,
       audit_status: auditForm.audit_status,
-    })
+    });
 
     toast({
-      message: '审核成功',
-      color: 'success',
-    })
-    auditVisible.value = false
-    fetchData()
+      message: "审核成功",
+      color: "success",
+    });
+    auditVisible.value = false;
+    fetchData();
   } catch (error) {
-    console.error('审核失败:', error)
     toast({
-      message: '审核失败',
-      color: 'danger',
-    })
+      message: "审核失败",
+      color: "danger",
+    });
   }
-}
+};
 
 // 查看详情
 // const handleView = (row: any) => {
@@ -337,8 +316,8 @@ const handleAuditSubmit = async () => {
 // }
 
 onMounted(() => {
-  fetchData()
-})
+  fetchData();
+});
 </script>
 
 <style scoped>
@@ -431,7 +410,7 @@ onMounted(() => {
     z-index: 1;
     /* 添加阴影效果 */
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       left: -8px;
       top: 0;
