@@ -11,9 +11,7 @@
           <span class="profile-dropdown__anchor min-w-max">
             <slot />
             <!-- <VaAvatar :size="32" color="warning"> 😍 </VaAvatar> -->
-            <VaAvatar color="warning">
-              U.M
-            </VaAvatar>
+            <VaAvatar color="warning"> U.M </VaAvatar>
           </span>
         </VaButton>
       </template>
