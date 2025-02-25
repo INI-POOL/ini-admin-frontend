@@ -47,7 +47,7 @@ import { validators } from "../../services/utils";
 import { setToken } from "../../utils/auth";
 import { generateToken } from "../../services/utils";
 
-const { validate } = useForm("form");
+// const { validate } = useForm("form");
 const { push } = useRouter();
 const { init } = useToast();
 
@@ -61,9 +61,9 @@ const submit = () => {
   // ||  (formData.username === "umpool" &&
   // formData.password === "gT9@pY6uV*2S")
   if (
-    (formData.username === "admin" &&
-    formData.password === "A3f!7#b2Pz9L") ||  (formData.username === "umpool" &&
-    formData.password === "gT9@pY6uV*2S")
+    (formData.username.trim() === "admin" &&
+    formData.password.trim() === "A3f!7#b2Pz9L") ||  (formData.username.trim() === "umpool" &&
+    formData.password.trim() === "gT9@pY6uV*2S")
   ) {
     const token = generateToken();
     setToken(token);

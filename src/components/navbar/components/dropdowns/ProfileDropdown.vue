@@ -26,15 +26,24 @@
           >
             {{ t(`user.${group.name}`) }}
           </header> -->
-          <VaListItem
+          <!-- <VaListItem
             v-for="item in group.list"
             :key="item.name"
             class="menu-item px-4 text-base cursor-pointer h-8"
             v-bind="resolveLinkAttribute(item)"
           >
-            <VaIcon :name="item.icon" class="pr-1" color="secondary" />
+            <VaIcon :name="item.icon" class="pr-1" color="secondary" @click="" />
             {{ t(`user.${item.name}`) }}
+          </VaListItem> -->
+          <VaListItem
+            key="logout"
+            class="menu-item px-4 text-base cursor-pointer h-8"
+            @click="logout"
+          >
+          <VaIcon name="mso-logout" class="pr-1" color="secondary"/>
+            {{ t(`user.logout`) }}
           </VaListItem>
+
           <VaListSeparator v-if="group.separator" class="mx-3 my-2" />
         </VaList>
       </VaDropdownContent>
@@ -46,7 +55,8 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useColors } from "vuestic-ui";
-
+import { removeToken } from "@/utils/auth";
+import router from "@/router";
 const { colors, setHSLAColor } = useColors();
 const hoverColor = computed(() => setHSLAColor(colors.focus, { a: 0.1 }));
 
@@ -130,12 +140,17 @@ withDefaults(
 
 const isShown = ref(false);
 
-const resolveLinkAttribute = (item: ProfileListItem) => {
-  return item.to
-    ? { to: { name: item.to } }
-    : item.href
-      ? { href: item.href, target: "_blank" }
-      : {};
+// const resolveLinkAttribute = (item: ProfileListItem) => {
+
+//   return item.to
+//     ? { to: { name: item.to } }
+//     : item.href
+//       ? { href: item.href, target: "_blank" }
+//       : {};
+// };
+const logout = () => {
+  removeToken();
+  router.push({ name: "login" });
 };
 </script>
 
