@@ -30,6 +30,16 @@
           hoverable
           class="responsive-table"
         >
+           <!-- 提现状态 -->
+           <template #cell(amount)="{ value }">
+              {{ removeTrailingZeros(value) }}
+          </template>
+
+           <!-- 提现状态 -->
+           <template #cell(gas_fee)="{ value }">
+              {{ removeTrailingZeros(value) }}
+          </template>
+
           <!-- 提现状态 -->
           <template #cell(status)="{ value }">
             <VaBadge :color="getWithdrawStatusColor(value)">
@@ -96,7 +106,7 @@
       <div class="space-y-4">
         <div>
           <div class="mb-4">
-            当前提现金额：{{ currentItem?.amount || 0 }} USDT
+            当前提现金额：{{ removeTrailingZeros(currentItem?.amount) || 0 }} 
           </div>
           <div class="mb-2">审核结果</div>
           <VaRadio
@@ -124,6 +134,7 @@ import { ref, reactive, onMounted } from "vue";
 import { useToast } from "vuestic-ui";
 import { getWithdrawList, auditWithdraw } from "../../api/withdraw";
 import { formatDateTime } from "../../utils/date.ts";
+import {removeTrailingZeros} from "../../utils/index";
 
 const { init: toast } = useToast();
 

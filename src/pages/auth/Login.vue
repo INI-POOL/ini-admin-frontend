@@ -61,8 +61,9 @@ const submit = () => {
   // ||  (formData.username === "umpool" &&
   // formData.password === "gT9@pY6uV*2S")
   if (
-    formData.username === "admin" &&
-    formData.password === "A3f!7#b2Pz9L"
+    (formData.username === "admin" &&
+    formData.password === "A3f!7#b2Pz9L") ||  (formData.username === "umpool" &&
+    formData.password === "gT9@pY6uV*2S")
   ) {
     const token = generateToken();
     setToken(token);
