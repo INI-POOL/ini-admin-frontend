@@ -62,6 +62,14 @@
           <!-- 操作列 -->
           <template #cell(action)="{ row }">
             <div class="action-buttons" style="text-align: center">
+              <!-- <VaButton
+                v-if="row"
+                size="small"
+                preset="primary"
+                @click="handleView(row)"
+              >
+                查看
+              </VaButton> -->
               <VaButton
                 v-if="row && Number(row.rowData.audit_status) === 0"
                 size="small"
@@ -106,6 +114,40 @@
       <div class="space-y-4">
         <div>
           <div class="mb-4">
+            当前提现金额：{{ removeTrailingZeros(currentItem?.amount) || 0 }} {{ currentItem?.currency || '' }} 
+          </div>
+          <div class="mb-2">审核结果</div>
+          <VaRadio
+            v-model="auditForm.audit_status"
+            :options="[
+              {
+                text: '同意',
+                value: 1,
+              },
+              {
+                text: '拒绝',
+                value: 2,
+              },
+            ]"
+            value-by="value"
+          />
+        </div>
+      </div>
+    </VaModal>
+
+    <!--查看详情-->
+    <!-- <VaModal
+      v-model="detailVisible"
+      title="查看详情"
+      :ok-text="'确认'"
+      :cancel-text="'取消'"
+      size="small"
+      class="audit-modal"
+      @ok="handleAuditSubmit"
+    >
+      <div class="space-y-4">
+        <div>
+          <div class="mb-4">
             当前提现金额：{{ removeTrailingZeros(currentItem?.amount) || 0 }} 
           </div>
           <div class="mb-2">审核结果</div>
@@ -125,6 +167,89 @@
           />
         </div>
       </div>
+    </VaModal> -->
+
+       <!-- 转账详情弹框 -->
+      <VaModal v-model="detailVisible" title="转账详情" size="medium"  class="mr-6 my-1"  close-button >
+      <template #content>
+        <!-- 头部信息 -->
+        <div class="transfer-header" style="display: flex; align-items: center; justify-content: center;flex-direction: column;gap: 0.62rem; padding-top: 1rem;">
+             <VaAvatar v-if="transfer.status === 0" color="info">
+              <span class="material-symbols-outlined" style="font-size: 40px;">
+              more_horiz
+              </span>
+             </VaAvatar>
+             <VaAvatar v-else-if="transfer.status === 1" color="success">
+              <span  class="material-symbols-outlined" style="font-size: 40px;">
+              check
+              </span>
+             </VaAvatar>
+             <VaAvatar v-else-if="transfer.status === 2" color="danger" >
+              <span class="material-symbols-outlined" style="font-size: 40px;">
+              close
+              </span>
+             </VaAvatar>
+             <VaAvatar v-else-if="transfer.status === 3" color="warning">
+              <span class="material-symbols-outlined" style="font-size: 40px;">
+              directory_sync
+              </span>
+             </VaAvatar>
+             <VaAvatar v-else-if="transfer.status === 4" color="danger">
+              <span  class="material-symbols-outlined" style="font-size: 40px;">
+              check
+              </span>
+             </VaAvatar>
+          <div class="status">
+            {{ getWithdrawStatusText(transfer.status) }}</div>
+          <div class="time">{{ transfer.time }}</div>
+        </div>
+        <VaDivider />
+
+        <!-- 主要信息 -->
+        <div class="transfer-info">
+          <div class="info-row">
+            <span class="label">数额：</span>
+            <div class="value-box">
+            <span class="value">{{ transfer.amount }} USDT</span>
+            <VaButton icon="copy" @click="copyText(transfer.amount + ' '+transfer.currency)" size="small" preset="secondary" />
+          </div>
+          </div>
+          <div class="info-row">
+            <span class="label">提款手续费：</span>
+            <div class="value-box">
+            <span class="value">{{ transfer.fee }} USDT</span>
+            <VaButton icon="copy" @click="copyText(transfer.fee + ' '+transfer.currency)" size="small" preset="secondary" />
+          </div>
+          </div>
+          <div class="info-row">
+            <span class="label">收款地址：</span>
+            <div class="value-box">
+            <span class="value"  @click="copyText(transfer.to_addr)">{{ transfer.to_addr }}</span>
+            <VaButton icon="copy" @click="copyText(transfer.to_addr)" size="small" preset="secondary" />
+          </div>
+          </div>
+          <div class="info-row">
+            <span class="label">付款地址：</span>
+            <div class="value-box">
+            <span class="value">{{ transfer.sender }}</span>
+            <VaButton icon="copy" @click="copyText(transfer.sender)" size="small" preset="secondary" />
+          </div>
+          </div>
+        </div>
+        <VaDivider />
+
+        <!-- 交易号 -->
+        <div class="transaction-id">
+          <span class="label">交易号：</span>
+          <div class="value-box">
+          <span class="value">{{ transfer.txId }}</span>
+          <VaButton icon="copy" @click="copyText(transfer.txId)" size="small" preset="secondary" />
+        </div></div>
+      </template>
+
+      <!-- <template #footer>
+        <VaButton color="danger" @click="showModal = false">关闭</VaButton>
+      </template> -->
     </VaModal>
   </div>
 </template>
@@ -189,6 +314,16 @@ const fetchData = async () => {
   }
 };
 
+// 复制功能
+const copyText = async (text) => {
+  try {
+    await navigator.clipboard.writeText(text)
+    toast.show(`已复制: ${text}`, { color: "success" })
+  } catch (err) {
+    toast.show("复制失败", { color: "danger" })
+  }
+}
+
 // 搜索
 // const handleSearch = () => {
 //   queryParams.page = 1
@@ -230,7 +365,8 @@ const getWithdrawStatusText = (status) => {
     0: "申请中",
     1: "提现成功",
     2: "提现失败",
-    3: "提现异常",
+    3: "确认中",
+    4: "提现异常",
   };
   return map[status] || "未知状态";
 };
@@ -242,7 +378,9 @@ const getWithdrawStatusColor = (status) => {
     2: "info",
     3: "danger",
   };
-  return map[status] || "primary";
+  let color= map[status] || "primary";
+  console.log(map[status]);
+  return color;
 };
 
 // 审核状态
@@ -263,20 +401,6 @@ const getAuditStatusColor = (status) => {
   };
   return map[status] || "primary";
 };
-
-// 审核选项
-// const auditOptions = [
-//   {
-//     label: '通过审核',
-//     value: 1,
-//     color: 'success', // 可选：设置颜色
-//   },
-//   {
-//     label: '拒绝提现',
-//     value: 2,
-//     color: 'danger', // 可选：设置颜色
-//   },
-// ]
 
 // 审核相关
 const auditVisible = ref(false);
@@ -318,151 +442,195 @@ const handleAuditSubmit = async () => {
 };
 
 // 查看详情
-// const handleView = (row: any) => {
-//   if (!row) {
-//     console.error('行数据为空')
-//     return
-//   }
-//   console.log('查看详情:', row)
-//   // 实现查看详情逻辑
-// }
+const detailVisible = ref(false);
+const transfer = ref(null);
+const handleView = (row) => {
+  if (!row) {
+    console.error('行数据为空')
+    return
+  }
+  transfer.value = row.rowData;
+  auditForm.audit_status = 1; // 每次打开弹窗时重置为通过
+  detailVisible.value = true;
+
+  // console.log('查看详情:', row)
+  // 实现查看详情逻辑
+}
 
 onMounted(() => {
   fetchData();
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .withdraw-list {
-  /* padding: 1rem; */
-}
-
-.audit-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-top: 1rem;
-}
-
-.audit-btn {
-  min-width: 100px;
-  padding: 0.5rem 2rem;
-  background-color: white;
-  color: #666;
-  border: 1px solid white;
-  transition: all 0.3s;
-}
-
-.audit-btn:hover {
-  background-color: white;
-}
-
-.audit-btn.active {
-  &:first-child {
-    background-color: var(--va-success);
-    color: white;
-    border-color: var(--va-success);
+    /* padding: 1rem; */
   }
-
-  &:last-child {
-    background-color: var(--va-danger);
-    color: white;
-    border-color: var(--va-danger);
+  
+  .audit-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1rem;
   }
-}
-
-.radio-group {
-  display: flex;
-  justify-content: center;
-  gap: 3rem;
-  margin-top: 1rem;
-}
-
-.radio-item {
-  padding: 0.5rem 1rem;
-}
-
-:deep(.va-radio__label) {
-  font-size: 1rem;
-  font-weight: 500;
-  margin-left: 0.5rem;
-}
-
-:deep(.va-radio__input) {
-  margin-right: 0.5rem;
-}
-
-:deep(.va-radio--selected) {
-  .va-radio__label {
-    /* color: var(--va-primary); */
+  
+  .audit-btn {
+    min-width: 100px;
+    padding: 0.5rem 2rem;
+    background-color: white;
+    color: #666;
+    border: 1px solid white;
+    transition: all 0.3s;
   }
-}
-
-/* 自定义弹窗样式 */
-:deep(.audit-modal) {
-  max-width: 400px !important; /* 设置最大宽度 */
-}
-
-/* 响应式表格样式 */
-:deep(.responsive-table) {
-  overflow-x: auto;
-
-  /* 确保操作列固定在右侧 */
-  .va-data-table__table {
-    min-width: 800px; /* 设置最小宽度 */
-    position: relative;
+  
+  .audit-btn:hover {
+    background-color: white;
   }
-
-  /* 操作列样式 */
-  th:last-child,
-  td:last-child {
-    text-align: center;
-    position: sticky;
-    right: 0;
-    background: white;
-    z-index: 1;
-    /* 添加阴影效果 */
-    &::after {
-      content: "";
-      position: absolute;
-      left: -5px;
-      top: 0;
-      bottom: 0;
-      width: 5px;
-      background: linear-gradient(to right, transparent, rgba(0,0,0,0.1));
+  
+  .audit-btn.active {
+    &:first-child {
+      background-color: var(--va-success);
+      color: white;
+      border-color: var(--va-success);
+    }
+  
+    &:last-child {
+      background-color: var(--va-danger);
+      color: white;
+      border-color: var(--va-danger);
     }
   }
-}
-
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-  padding-left: 5px;
-  padding-right: 5px;
-  min-width: 40px; /* 确保按钮有足够空间 */
-}
-
-/* 移动端适配 */
-@media screen and (max-width: 768px) {
+  
+  .radio-group {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 1rem;
+  }
+  
+  .radio-item {
+    padding: 0.5rem 1rem;
+  }
+  
+  :deep(.va-radio__label) {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-left: 0.5rem;
+  }
+  
+  :deep(.va-radio__input) {
+    margin-right: 0.5rem;
+  }
+  
+  :deep(.va-radio--selected) {
+    .va-radio__label {
+      /* color: var(--va-primary); */
+    }
+  }
+  
+  /* 自定义弹窗样式 */
+  :deep(.audit-modal) {
+    max-width: 400px !important; /* 设置最大宽度 */
+  }
+  
+  /* 响应式表格样式 */
   :deep(.responsive-table) {
-    /*margin: 0 -1rem; *//* 移除边距 */
-    margin: 0;
-
+    overflow-x: auto;
+  
+    /* 确保操作列固定在右侧 */
     .va-data-table__table {
-      min-width: 600px; /* 调整移动端最小宽度 */
+      min-width: 800px; /* 设置最小宽度 */
+      position: relative;
     }
-
-    /* 调整操作列样式 */
+  
+    /* 操作列样式 */
+    th:last-child,
     td:last-child {
-      padding: 0.5rem;
-      min-width: 80px;
+      text-align: center;
+      position: sticky;
+      right: 0;
+      background: white;
+      z-index: 1;
+      /* 添加阴影效果 */
+      &::after {
+        content: "";
+        position: absolute;
+        left: -5px;
+        top: 0;
+        bottom: 0;
+        width: 5px;
+        background: linear-gradient(to right, transparent, rgba(0,0,0,0.1));
+      }
     }
   }
-
+  
   .action-buttons {
-    flex-direction: column;
-    gap: 0.25rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    padding-left: 5px;
+    padding-right: 5px;
+    min-width: 40px; /* 确保按钮有足够空间 */
   }
-}
+  
+  /* 移动端适配 */
+  @media screen and (max-width: 768px) {
+    :deep(.responsive-table) {
+      /*margin: 0 -1rem; *//* 移除边距 */
+      margin: 0;
+  
+      .va-data-table__table {
+        min-width: 600px; /* 调整移动端最小宽度 */
+      }
+  
+      /* 调整操作列样式 */
+      td:last-child {
+        padding: 0.5rem;
+        min-width: 80px;
+      }
+    }
+  
+    .action-buttons {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+  
+  
+  /* 转账相关样式 */
+  .transfer-header {
+    /* display: flex; */
+    /* justify-content: space-between; */
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .transfer-info .info-row,
+  .transaction-id {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .label {
+    font-weight: bold;
+    width: 120px;
+    text-align: right;
+    margin-right: 10px;
+  
+    color: #A5A5A5;
+  
+  /* Body/Small */
+  font-family: "PingFang SC";
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.25rem; /* 166.667% */
+  }
+  
+  .value {
+    flex-grow: 1;
+    word-break: break-all;
+  }
 </style>
