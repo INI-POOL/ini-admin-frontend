@@ -22,3 +22,8 @@ export function getWithdrawDetail(id: string) {
 export function auditWithdraw(data: { id: string; audit_status: number }) {
   return post("/api/v1/back_stage/withdraw/audit", data);
 }
+
+// 获取热钱包余额
+export function getHotAddressBalance() { 
+  return get("/api/v1/back_stage/hot_address/balance");  
+}

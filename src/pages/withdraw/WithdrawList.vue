@@ -1,7 +1,7 @@
 <template>
   <div class="withdraw-list">
     <div class="mb-4">
-      <h1 class="text-2xl font-bold">提现管理</h1>
+      <h1 class="text-2xl font-bold">提现管理 (热钱包余额：{{ hotAddressBalance || 0 }})</h1>
     </div>
 
     <!-- 搜索条件 -->
@@ -139,7 +139,6 @@
           />
           <div class="mb-2" style="padding-top: 0.62rem;">谷歌认证</div>
           <VaInput v-model="auditForm.google_code" width="200px" placeholder="请输入谷歌认证码" />
-          
         </div>
       </div>
     </VaModal>
@@ -272,7 +271,7 @@
 <script lang="js" setup>
 import { ref, reactive, onMounted } from "vue";
 import { useToast } from "vuestic-ui";
-import { getWithdrawList, auditWithdraw } from "../../api/withdraw";
+import { getWithdrawList, auditWithdraw, getHotAddressBalance } from "../../api/withdraw";
 import { formatDateTime } from "../../utils/date.ts";
 import {removeTrailingZeros} from "../../utils/index";
 import { getUser } from "../../utils/auth";
@@ -441,6 +440,13 @@ const handleAudit = (row) => {
 const handleAuditSubmit = async () => {
   if (!currentItem.value) return;
   let username=getUser();
+  if(!auditForm.google_code){
+    toast({
+      message: "谷歌认证码不能为空",
+      color: "danger",
+    });
+    return;
+  }
 
   try {
     await auditWithdraw({
@@ -480,8 +486,25 @@ const handleView = (row) => {
   // 实现查看详情逻辑
 }
 
+// 获取热钱包余额
+const hotAddressBalance = ref(0);
+const getHotAddressBalanceData = async () => {
+  try {
+    const res = await getHotAddressBalance();
+    
+    if (res) {
+      hotAddressBalance.value = parseFloat(res);
+    } else {
+      console.error('热钱包余额获取失败:', res);
+    }
+  } catch (error) {
+    console.error('热钱包余额获取失败:', error);
+  }
+};
+
 onMounted(() => {
   fetchData();
+  getHotAddressBalanceData();
 });
 </script>
 

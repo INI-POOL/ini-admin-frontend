@@ -7,11 +7,12 @@ import { post, get } from "./request";
 //     "user_name":"123"
 // }
 export function login(data) {
-  // return post("/user/login", data);
   return post("/api/v1/back_stage/google/secret/auth", data);
-  // 
-
 }
+
+
+
+
 // 检查谷歌认证
 // {
 //     "google_code":"045938",
