@@ -1,60 +1,25 @@
 <template>
   <div
-    class="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-6 min-h-[36px] leading-5"
+    class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 min-h-[36px] leading-5"
   >
-    <p class="font-bold w-[200px]">Name</p>
+    <p class="font-bold w-[200px]">绑定谷歌认证器</p>
     <div class="flex-1">
       <div class="max-w-[748px]">
-        {{ store.userName }}
+        <!-- {{ twoFA.content }} -->
+        为您的帐户增加一层额外的安全保护。
+        登录时，除了用户名和密码外，您还需要提供一个谷歌验证码（安全认证器）。
       </div>
     </div>
     <VaButton
+      v-if="umpoolISGoogle==0"
       :style="buttonStyles"
       class="w-fit h-fit"
       preset="primary"
-      @click="emits('openNameModal')"
+      @click="emits('openAuthenticationModal')"
     >
-      Edit
+      绑定
     </VaButton>
-  </div>
-  <VaDivider />
-  <div
-    class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 min-h-[36px] leading-5"
-  >
-    <p class="font-bold w-[200px]">Email</p>
-    <div class="flex-1">
-      <div class="max-w-[748px]">
-        {{ store.email }}
-      </div>
-    </div>
-  </div>
-  <div
-    class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 min-h-[36px] leading-5"
-  >
-    <p class="font-bold w-[200px]">Password</p>
-    <div class="flex-1">
-      <div class="max-w-[748px]">•••••••••••••</div>
-    </div>
-    <VaButton
-      :style="buttonStyles"
-      class="w-fit h-fit"
-      preset="primary"
-      @click="emits('openResetPasswordModal')"
-    >
-      Reset Password
-    </VaButton>
-  </div>
-  <VaDivider />
-  <div
-    class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 min-h-[36px] leading-5"
-  >
-    <p class="font-bold w-[200px]">Two-factor authentication</p>
-    <div class="flex-1">
-      <div class="max-w-[748px]">
-        {{ twoFA.content }}
-      </div>
-    </div>
-    <VaButton
+    <!-- <VaButton
       :style="buttonStyles"
       class="w-fit h-fit"
       preset="primary"
@@ -62,10 +27,10 @@
       @click="toggle2FA"
     >
       {{ twoFA.button }}
-    </VaButton>
+    </VaButton> -->
   </div>
   <VaDivider />
-  <div
+  <!-- <div
     class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 min-h-[36px] leading-5"
   >
     <p class="font-bold w-[200px]">Email subscriptions</p>
@@ -81,20 +46,34 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed,ref,onMounted } from "vue";
 
 import { useToast } from "vuestic-ui";
 
 import { useUserStore } from "../../../stores/user-store";
+import {isNeedGoogle} from "../../../api/user";
 
 import { buttonStyles } from "../styles";
-
 const store = useUserStore();
 
 const { init } = useToast();
+const umpoolISGoogle=ref(0)// 判断umpool是否有谷歌认证
+
+onMounted(async () => {
+  await checkUserGoogleCode();
+});
+const checkUserGoogleCode = async () => {
+  try {
+    const res = await isNeedGoogle('umpool');
+    // console.log(res);
+    umpoolISGoogle.value = res;
+  } catch (error) {
+    console.error("Error checking Google code requirement:", error);
+  }
+}
 
 const toastMessage = computed(() =>
   store.is2FAEnabled ? "2FA successfully enabled" : "2FA successfully disabled",
@@ -124,4 +103,5 @@ const toggle2FA = () => {
 };
 
 const emits = defineEmits(["openNameModal", "openResetPasswordModal"]);
+
 </script>

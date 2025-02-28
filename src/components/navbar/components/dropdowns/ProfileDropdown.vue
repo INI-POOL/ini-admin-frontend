@@ -10,7 +10,6 @@
         <VaButton preset="secondary" color="textPrimary">
           <span class="profile-dropdown__anchor min-w-max">
             <slot />
-            <!-- <VaAvatar :size="32" color="warning"> 😍 </VaAvatar> -->
             <VaAvatar color="warning"> U.M </VaAvatar>
           </span>
         </VaButton>
@@ -26,22 +25,24 @@
           >
             {{ t(`user.${group.name}`) }}
           </header> -->
-          <!-- <VaListItem
+          <VaListItem
             v-for="item in group.list"
             :key="item.name"
             class="menu-item px-4 text-base cursor-pointer h-8"
             v-bind="resolveLinkAttribute(item)"
           >
             <VaIcon :name="item.icon" class="pr-1" color="secondary" @click="" />
-            {{ t(`user.${item.name}`) }}
-          </VaListItem> -->
+            <!-- {{ t(`user.${item.name}`) }} -->
+              双重认证
+          </VaListItem>
           <VaListItem
             key="logout"
             class="menu-item px-4 text-base cursor-pointer h-8"
             @click="logout"
           >
           <VaIcon name="mso-logout" class="pr-1" color="secondary"/>
-            {{ t(`user.logout`) }}
+            <!-- {{ t(`user.logout`) }} -->
+              退出登陆
           </VaListItem>
 
           <VaListSeparator v-if="group.separator" class="mx-3 my-2" />
@@ -81,32 +82,32 @@ withDefaults(
   }>(),
   {
     options: () => [
-      // {
-      //   name: "account",
-      //   separator: true,
-      //   list: [
-      //     {
-      //       name: "profile",
-      //       to: "preferences",
-      //       icon: "mso-account_circle",
-      //     },
-      //     {
-      //       name: "settings",
-      //       to: "settings",
-      //       icon: "mso-settings",
-      //     },
-      //     {
-      //       name: "billing",
-      //       to: "billing",
-      //       icon: "mso-receipt_long",
-      //     },
-      //     {
-      //       name: "projects",
-      //       to: "projects",
-      //       icon: "mso-favorite",
-      //     },
-      //   ],
-      // },
+      {
+        name: "account",
+        separator: true,
+        list: [
+          {
+            name: "profile",
+            to: "preferences",
+            icon: "health_and_safety",
+          },
+          // {
+          //   name: "settings",
+          //   to: "settings",
+          //   icon: "mso-settings",
+          // },
+          // {
+          //   name: "billing",
+          //   to: "billing",
+          //   icon: "mso-receipt_long",
+          // },
+          // {
+          //   name: "projects",
+          //   to: "projects",
+          //   icon: "mso-favorite",
+          // },
+        ],
+      },
       // {
       //   name: "explore",
       //   separator: true,
@@ -123,31 +124,31 @@ withDefaults(
       //     },
       //   ],
       // },
-      {
-        name: "",
-        separator: false,
-        list: [
-          {
-            name: "logout",
-            to: "login",
-            icon: "mso-logout",
-          },
-        ],
-      },
+      // {
+      //   name: "",
+      //   separator: false,
+      //   list: [
+      //     {
+      //       name: "logout",
+      //       to: "login",
+      //       icon: "mso-logout",
+      //     },
+      //   ],
+      // },
     ],
   },
 );
 
 const isShown = ref(false);
 
-// const resolveLinkAttribute = (item: ProfileListItem) => {
+const resolveLinkAttribute = (item: ProfileListItem) => {
 
-//   return item.to
-//     ? { to: { name: item.to } }
-//     : item.href
-//       ? { href: item.href, target: "_blank" }
-//       : {};
-// };
+  return item.to
+    ? { to: { name: item.to } }
+    : item.href
+      ? { href: item.href, target: "_blank" }
+      : {};
+};
 const logout = () => {
   removeToken();
   router.push({ name: "login" });

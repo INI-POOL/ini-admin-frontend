@@ -36,8 +36,8 @@ service.interceptors.response.use(
       return res.data;
     } else {
       // 处理业务错误
-      console.error("API错误:", res.message);
-      return Promise.reject(new Error(res.message || "未知错误"));
+      console.error("API错误:", res.msg);
+      return Promise.reject(new Error(res.msg || "未知错误"));
     }
   },
   (error) => {

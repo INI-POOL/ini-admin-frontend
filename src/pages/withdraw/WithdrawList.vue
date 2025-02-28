@@ -62,20 +62,26 @@
           <!-- 操作列 -->
           <template #cell(action)="{ row }">
             <div class="action-buttons" style="text-align: center">
-              <!-- <VaButton
+              <VaButton
                 v-if="row"
                 size="small"
                 preset="primary"
                 @click="handleView(row)"
               >
                 查看
-              </VaButton> -->
+              </VaButton>
               <VaButton
                 v-if="row && Number(row.rowData.audit_status) === 0"
                 size="small"
                 preset="primary"
                 @click="handleAudit(row)"
               >
+              <!-- <VaButton
+                v-if="row"
+                size="small"
+                preset="primary"
+                @click="handleAudit(row)"
+              > -->
                 审核
               </VaButton>
               <span v-else>--</span>
@@ -131,6 +137,9 @@
             ]"
             value-by="value"
           />
+          <div class="mb-2" style="padding-top: 0.62rem;">谷歌认证</div>
+          <VaInput v-model="auditForm.google_code" width="200px" placeholder="请输入谷歌认证码" />
+          
         </div>
       </div>
     </VaModal>
@@ -201,7 +210,7 @@
              </VaAvatar>
           <div class="status">
             {{ getWithdrawStatusText(transfer.status) }}</div>
-          <div class="time">{{ transfer.time }}</div>
+          <div class="time">{{ formatDateTime(transfer.created_time) }}</div>
         </div>
         <VaDivider />
 
@@ -210,29 +219,32 @@
           <div class="info-row">
             <span class="label">数额：</span>
             <div class="value-box">
-            <span class="value">{{ transfer.amount }} USDT</span>
-            <VaButton icon="copy" @click="copyText(transfer.amount + ' '+transfer.currency)" size="small" preset="secondary" />
+            <span class="value">{{removeTrailingZeros(transfer?.amount) || 0 }} {{ transfer.currency }}</span>
           </div>
           </div>
           <div class="info-row">
             <span class="label">提款手续费：</span>
             <div class="value-box">
-            <span class="value">{{ transfer.fee }} USDT</span>
-            <VaButton icon="copy" @click="copyText(transfer.fee + ' '+transfer.currency)" size="small" preset="secondary" />
+            <span class="value">{{removeTrailingZeros(transfer?.gas_fee) || 0   }} {{ transfer.currency }}</span>
           </div>
           </div>
           <div class="info-row">
             <span class="label">收款地址：</span>
             <div class="value-box">
             <span class="value"  @click="copyText(transfer.to_addr)">{{ transfer.to_addr }}</span>
-            <VaButton icon="copy" @click="copyText(transfer.to_addr)" size="small" preset="secondary" />
+            <VaIcon class="material-icons" @click="copyText(transfer.to_addr)">
+              content_copy
+          </VaIcon>
           </div>
           </div>
           <div class="info-row">
             <span class="label">付款地址：</span>
             <div class="value-box">
-            <span class="value">{{ transfer.sender }}</span>
-            <VaButton icon="copy" @click="copyText(transfer.sender)" size="small" preset="secondary" />
+            <span class="value"  @click="copyText(transfer.from_addr)">{{ transfer.from_addr }}</span>
+            <!-- <VaButton icon="copy" @click="copyText(transfer.sender)" size="small" preset="secondary" /> -->
+            <VaIcon v-if="transfer.from_addr" class="material-icons" @click="copyText(transfer.from_addr)">
+              content_copy
+          </VaIcon>
           </div>
           </div>
         </div>
@@ -242,8 +254,11 @@
         <div class="transaction-id">
           <span class="label">交易号：</span>
           <div class="value-box">
-          <span class="value">{{ transfer.txId }}</span>
-          <VaButton icon="copy" @click="copyText(transfer.txId)" size="small" preset="secondary" />
+          <span class="value"><a  :href="`https://mainnet.aleo123.io/transactionDetail/${transfer.tx_id}`" target="_blank">{{ transfer.tx_id }}</a> </span>
+          <VaIcon  v-if="transfer.tx_id" class="material-icons" @click="copyText(transfer.tx_id)">
+              content_copy
+          </VaIcon>
+          <!-- <VaButton icon="copy" @click="copyText(transfer.tx_id)" size="small" preset="secondary" /> -->
         </div></div>
       </template>
 
@@ -260,11 +275,14 @@ import { useToast } from "vuestic-ui";
 import { getWithdrawList, auditWithdraw } from "../../api/withdraw";
 import { formatDateTime } from "../../utils/date.ts";
 import {removeTrailingZeros} from "../../utils/index";
+import { getUser } from "../../utils/auth";
 
 const { init: toast } = useToast();
 
 // 表格列定义
 const columns = [
+  { key: "id", label: "订单号" },
+  { key: "user_id", label: "用户编号" },
   { key: "mobile", label: "手机号" },
   { key: "amount", label: "提现金额" },
   { key: "gas_fee", label: "gas费" },
@@ -316,11 +334,12 @@ const fetchData = async () => {
 
 // 复制功能
 const copyText = async (text) => {
+ 
   try {
     await navigator.clipboard.writeText(text)
-    toast.show(`已复制: ${text}`, { color: "success" })
+    toast({ message: "复制成功",color: "success"})
   } catch (err) {
-    toast.show("复制失败", { color: "danger" })
+    toast({ message: '复制失败', color: 'danger' })
   }
 }
 
@@ -418,13 +437,17 @@ const handleAudit = (row) => {
   auditVisible.value = true;
 };
 
+// 提交审核
 const handleAuditSubmit = async () => {
   if (!currentItem.value) return;
+  let username=getUser();
 
   try {
     await auditWithdraw({
       id: currentItem.value.id,
       audit_status: auditForm.audit_status,
+      google_code: auditForm.google_code,
+      user_name: username,
     });
 
     toast({
@@ -609,17 +632,23 @@ onMounted(() => {
   .transaction-id {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    
+    // justify-content: space-between;
     margin-bottom: 10px;
   }
-  
-  .label {
-    font-weight: bold;
-    width: 120px;
-    text-align: right;
-    margin-right: 10px;
-  
-    color: #A5A5A5;
+  .info-row{
+
+  }
+
+  /* 左侧标题固定宽度 */
+.label{
+  font-weight: bold;
+  width: 120px;
+  text-align: left;
+  margin-bottom: 5px;
+  color: #A5A5A5;
+  padding: 20px;
+  // box-sizing: border-box;
   
   /* Body/Small */
   font-family: "PingFang SC";
@@ -627,10 +656,43 @@ onMounted(() => {
   font-style: normal;
   font-weight: 400;
   line-height: 1.25rem; /* 166.667% */
-  }
+}
+.time {
+  color: #A5A5A5;
+  font-family: "PingFang SC";
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.25rem; /* 166.667% */
+}
+
+/* 右侧数值区域 */
+.value-box {
+  display: flex;
+  // align-items: center;
+  justify-content: space-between;
+  // background: #f5f5f5;
+  // padding: 5px 10px;
+  // border-radius: 5px;
+  // flex-grow: 1; /* 右侧区域占用剩余空间 */
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+
+}
   
   .value {
-    flex-grow: 1;
+    // flex-grow: 1;
     word-break: break-all;
+    margin-right: 10px;
+    color: #000;
+
+    /* Body/Small */
+    font-family: "PingFang SC";
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.25rem; /* 166.667% */
+    white-space: normal; /* 让文本自动换行 */
   }
 </style>

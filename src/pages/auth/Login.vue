@@ -8,6 +8,7 @@
       class="mb-4"
       label="用户名"
       type="text"
+      @input="checkIsNeedGoogleCode"
     />
     <VaValue v-slot="isPasswordVisible" :default-value="false">
       <VaInput
@@ -32,6 +33,14 @@
       </VaInput>
     </VaValue>
 
+    <VaInput
+      v-if="isGoogle"
+      v-model="formData.google_code"
+      class="mb-4"
+      label="谷歌验证码"
+      type="text"
+    />
+
     <div class="flex justify-center mt-4">
       <VaButton class="w-full" @click="submit"> 登陆</VaButton>
     </div>
@@ -39,34 +48,86 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { reactive, ref,onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useForm, useToast } from "vuestic-ui";
 import { validators } from "../../services/utils";
 // import { login } from '../../api/user'
-import { setToken } from "../../utils/auth";
+import { setToken,setUser} from "../../utils/auth";
 import { generateToken } from "../../services/utils";
+import {checkGoogleCode,isNeedGoogle} from "../../api/user";
 
 // const { validate } = useForm("form");
 const { push } = useRouter();
 const { init } = useToast();
+const isGoogle=ref(false)// 判断用户是否有谷歌认证
+const umpoolISGoogle=ref(0)// 判断umpool是否有谷歌认证
 
 const formData = reactive({
   username: "",
   password: "",
+  google_code:"",
   keepLoggedIn: false,
 });
 
+const checkIsNeedGoogleCode = () => {
+  console.log("umpoolISGoogle",umpoolISGoogle)
+  if(formData.username.trim() === "umpool" && umpoolISGoogle.value===1 ){
+    console.log("checkIsNeedGoogleCode")
+    isGoogle.value=true // 默认为true
+  }else{
+    isGoogle.value=false
+  }  
+} 
+
+onMounted(async () => {
+  await checkUserGoogleCode();
+});
+const checkUserGoogleCode = async () => {
+  console.log("checkUserGoogleCode")
+  try {
+    const res = await isNeedGoogle('umpool');
+    console.log(res);
+    umpoolISGoogle.value = res;
+  } catch (error) {
+    console.error("Error checking Google code requirement:", error);
+  }
+}
+
+
 const submit = () => {
-  // ||  (formData.username === "umpool" &&
-  // formData.password === "gT9@pY6uV*2S")
-  if (
+  if(umpoolISGoogle.value===1 && formData.google_code==""){
+    init({ message: "谷歌认证码不能为空", color: "danger" });
+    return;
+  }
+  if(formData.username.trim() === "umpool" && formData.password.trim() === "gT9@pY6uV*2S" && umpoolISGoogle.value===1  ){
+    checkGoogleCode({"user_name":formData.username, "google_code":formData.google_code}).then(res => {  
+      if(res===1){
+        const token = generateToken();
+        setToken(token);
+        setUser(formData.username);
+        init({ message: "登陆成功！", color: "success" });
+        push({ name: "withdraw" });
+      }else{
+        init({ message: "谷歌认证码错误", color: "danger" });
+      }
+    }).catch(err => {   
+      if(err.response){  
+        init({ message: err.response.data.msg, color: "danger" });
+      }else{
+        init({ message: "无效参数", color: "danger" }); 
+      }
+    }) 
+  }
+  else if (
     (formData.username.trim() === "admin" &&
-    formData.password.trim() === "A3f!7#b2Pz9L") ||  (formData.username.trim() === "umpool" &&
-    formData.password.trim() === "gT9@pY6uV*2S")
+    formData.password.trim() === "A3f!7#b2Pz9L") ||  (formData.username === "umpool" &&
+    formData.password === "gT9@pY6uV*2S")
   ) {
     const token = generateToken();
     setToken(token);
+    setUser(formData.username);
+  
     init({ message: "登陆成功！", color: "success" });
     push({ name: "withdraw" });
   } else {

@@ -1,5 +1,5 @@
 <template>
-  <h1 class="page-title">Preferences</h1>
+  <h1 class="page-title">双重认证</h1>
   <div class="flex flex-col p-4 space-y-10 bg-backgroundSecondary rounded-lg">
     <div class="flex space-x-5">
       <PreferencesHeader />
@@ -8,6 +8,7 @@
       <Settings
         @openNameModal="isEditNameModalOpen = true"
         @openResetPasswordModal="isResetPasswordModalOpen = true"
+        @openAuthenticationModal="isEditAuthenticationModalOpen = true"
       />
     </div>
   </div>
@@ -15,10 +16,14 @@
     v-if="isEditNameModalOpen"
     @cancel="isEditNameModalOpen = false"
   />
-  <ResetPasswordModal
+  <EditAuthenticationModal
+    v-if="isEditAuthenticationModalOpen"
+    @cancel="isEditAuthenticationModalOpen = false"
+  />
+   <!--<ResetPasswordModal
     v-if="isResetPasswordModalOpen"
     @cancel="isResetPasswordModalOpen = false"
-  />
+  /> -->
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
@@ -26,8 +31,10 @@ import { ref } from "vue";
 import PreferencesHeader from "./preferences-header/PreferencesHeader.vue";
 import Settings from "./settings/Settings.vue";
 import EditNameModal from "./modals/EditNameModal.vue";
-import ResetPasswordModal from "./modals/ResetPasswordModal.vue";
+import EditAuthenticationModal  from "./modals/EditAuthenticationModal.vue";
+// import ResetPasswordModal from "./modals/ResetPasswordModal.vue";
 
 const isEditNameModalOpen = ref(false);
 const isResetPasswordModalOpen = ref(false);
+const isEditAuthenticationModalOpen = ref(false);
 </script>

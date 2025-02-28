@@ -1,7 +1,8 @@
 // Token 相关的 key 常量
 const TOKEN_KEY = "token";
+const USER_KEY = "adminUser";
 const TOKEN_EXPIRY_KEY = "token_expiry";
-const TOKEN_EXPIRY_TIME = 24 * 60 * 60 * 1000; // 24小时分钟，单位毫秒
+const TOKEN_EXPIRY_TIME = 7 * 24 * 60 * 60 * 1000; // 24小时分钟，单位毫秒
 
 // 设置token和过期时间
 export const setToken = (token) => {
@@ -18,6 +19,27 @@ export const getToken = () => {
 // 移除token
 export const removeToken = () => {
   localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(TOKEN_EXPIRY_KEY);
+};
+
+
+
+// 设置token和过期时间
+export const setUser = (token) => {
+  const expiry = new Date().getTime() + TOKEN_EXPIRY_TIME;
+  localStorage.setItem(USER_KEY, token);
+  localStorage.setItem(TOKEN_EXPIRY_KEY, expiry.toString());
+};
+
+// 获取token
+export const getUser = () => {
+  
+  return localStorage.getItem(USER_KEY);
+};
+
+// 移除token
+export const removeUser = () => {
+  localStorage.removeItem(USER_KEY);
   localStorage.removeItem(TOKEN_EXPIRY_KEY);
 };
 
