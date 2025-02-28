@@ -71,9 +71,7 @@ const formData = reactive({
 });
 
 const checkIsNeedGoogleCode = () => {
-  console.log("umpoolISGoogle",umpoolISGoogle)
   if(formData.username.trim() === "umpool" && umpoolISGoogle.value===1 ){
-    console.log("checkIsNeedGoogleCode")
     isGoogle.value=true // 默认为true
   }else{
     isGoogle.value=false
@@ -84,10 +82,8 @@ onMounted(async () => {
   await checkUserGoogleCode();
 });
 const checkUserGoogleCode = async () => {
-  console.log("checkUserGoogleCode")
   try {
     const res = await isNeedGoogle('umpool');
-    console.log(res);
     umpoolISGoogle.value = res;
   } catch (error) {
     console.error("Error checking Google code requirement:", error);
@@ -96,11 +92,11 @@ const checkUserGoogleCode = async () => {
 
 
 const submit = () => {
-  if(umpoolISGoogle.value===1 && formData.google_code==""){
+  if(isGoogle.value===true && formData.google_code==""){
     init({ message: "谷歌认证码不能为空", color: "danger" });
     return;
   }
-  if(formData.username.trim() === "umpool" && formData.password.trim() === "gT9@pY6uV*2S" && umpoolISGoogle.value===1  ){
+  if(formData.username.trim() === "umpool" && formData.password.trim() === "gT9@pY6uV*2S" && isGoogle.value===true ){
     checkGoogleCode({"user_name":formData.username, "google_code":formData.google_code}).then(res => {  
       if(res===1){
         const token = generateToken();

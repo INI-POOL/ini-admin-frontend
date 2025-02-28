@@ -30,23 +30,7 @@
     </VaButton> -->
   </div>
   <VaDivider />
-  <!-- <div
-    class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 min-h-[36px] leading-5"
-  >
-    <p class="font-bold w-[200px]">Email subscriptions</p>
-    <div class="flex-1">
-      <div class="max-w-[748px]">
-        <p>To manage what emails you get, visit the</p>
-        <div class="flex space-x-1 w-fit">
-          <RouterLink
-            :to="{ name: 'settings' }"
-            class="font-semibold text-primary"
-            >Notification settings</RouterLink
-          >
-        </div>
-      </div>
-    </div>
-  </div> -->
+ 
 </template>
 <script lang="ts" setup>
 import { computed,ref,onMounted } from "vue";

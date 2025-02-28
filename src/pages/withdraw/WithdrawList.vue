@@ -644,10 +644,12 @@ onMounted(() => {
 .label{
   font-weight: bold;
   width: 120px;
+  min-width: 120px;
   text-align: left;
   margin-bottom: 5px;
   color: #A5A5A5;
   padding: 20px;
+  padding-right: 0;
   // box-sizing: border-box;
   
   /* Body/Small */
