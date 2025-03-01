@@ -39,6 +39,7 @@ import { useToast } from "vuestic-ui";
 
 import { useUserStore } from "../../../stores/user-store";
 import {isNeedGoogle} from "../../../api/user";
+import { getUser } from "../../../utils/auth";
 
 import { buttonStyles } from "../styles";
 const store = useUserStore();
@@ -51,7 +52,8 @@ onMounted(async () => {
 });
 const checkUserGoogleCode = async () => {
   try {
-    const res = await isNeedGoogle('umpool');
+    const username=getUser();
+    const res = await isNeedGoogle(username);
     // console.log(res);
     umpoolISGoogle.value = res;
   } catch (error) {
