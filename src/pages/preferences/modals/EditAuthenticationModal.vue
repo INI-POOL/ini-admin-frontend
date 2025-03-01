@@ -112,9 +112,11 @@ const copyText = async (text) => {
 
  if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
-      console.log('复制成功');
+      // console.log('复制成功');
+      init({ message: "复制成功",color: "success"})
     }).catch(err => {
-      console.error('复制失败', err);
+      // console.error('复制失败', err);
+      init({ message: '复制失败', color: 'danger' })
     });
   } else {
     // 备用方式，比如使用 document.execCommand()
@@ -124,7 +126,8 @@ const copyText = async (text) => {
     textarea.select();
     document.execCommand('copy');
     document.body.removeChild(textarea);
-    console.log('复制成功');
+    // console.log('复制成功');
+    init({ message: "复制成功",color: "success"})
   }
 
 
