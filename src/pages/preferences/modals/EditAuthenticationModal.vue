@@ -16,6 +16,12 @@
           class="w-full md:w-1/2 lg:w-1/3"
           :src="googleInfo?.qr_secret"
         />
+       <div class="mt-4" @click="copyText(googleInfo?.secret)"> {{ googleInfo?.secret}}
+
+        <VaIcon  class="material-icons" @click="copyText(googleInfo?.secret)">
+              content_copy
+          </VaIcon>
+       </div>
         <!-- <VaInput v-model="googleInfo?.secret" class="mb-4" label="Email" placeholder="谷歌密钥" /> -->
         <VaInput v-model="google_code" class="mb-4" label="Name" placeholder="请输入谷歌认证码" />
         <div
@@ -92,6 +98,17 @@ const getGoogleInfo=async()=>{
   console.log(googleInfo.value);
 }
 getGoogleInfo();
+
+// 复制功能
+const copyText = async (text) => {
+ 
+ try {
+   await navigator.clipboard.writeText(text)
+   init({ message: "复制成功",color: "success"})
+ } catch (err) {
+   init({ message: '复制失败', color: 'danger' })
+ }
+}
 </script>
   
 <style lang="scss">
