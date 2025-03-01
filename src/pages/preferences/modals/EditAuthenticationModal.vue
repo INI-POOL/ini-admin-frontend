@@ -18,7 +18,7 @@
         />
        <div class="mt-4" @click="copyText(googleInfo?.secret)"> {{ googleInfo?.secret}}
 
-        <VaIcon  class="material-icons" @click="copyText(googleInfo?.secret)">
+        <VaIcon  class="material-icons">
               content_copy
           </VaIcon>
        </div>
