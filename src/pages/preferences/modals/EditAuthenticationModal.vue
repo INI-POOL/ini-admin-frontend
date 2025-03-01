@@ -102,12 +102,33 @@ getGoogleInfo();
 // 复制功能
 const copyText = async (text) => {
  
- try {
-   await navigator.clipboard.writeText(text)
-   init({ message: "复制成功",color: "success"})
- } catch (err) {
-   init({ message: '复制失败', color: 'danger' })
- }
+//  try {
+//    await navigator.clipboard.writeText(text)
+//    init({ message: "复制成功",color: "success"})
+//  } catch (err) {
+//    init({ message: '复制失败', color: 'danger' })
+//  }
+
+
+ if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      console.log('复制成功');
+    }).catch(err => {
+      console.error('复制失败', err);
+    });
+  } else {
+    // 备用方式，比如使用 document.execCommand()
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    console.log('复制成功');
+  }
+
+
+
 }
 </script>
   
