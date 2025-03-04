@@ -22,6 +22,10 @@ export function checkGoogleCode(data) {
   return post("/api/v1/back_stage/google/secret/auth",data);
 }
 
+export function bindGoogleCode(data) {
+  return post("/api/v1/back_stage/google/secret/bind",data);
+}
+
 // 1、获取指定用户的密钥
 // GET: /api/v1/back_stage/google/secret/get?user_name=123
 export function getGoogle(user_name) {

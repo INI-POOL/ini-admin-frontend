@@ -51,7 +51,7 @@
   import { ref } from "vue";
   import { useUserStore } from "../../../stores/user-store";
   import { getUser } from "../../../utils/auth";
-  import { getGoogle, checkGoogleCode } from "../../../api/user";
+  import { getGoogle, bindGoogleCode } from "../../../api/user";
   import { buttonStyles } from "../styles";
   import { useToast } from "vuestic-ui";
   
@@ -72,7 +72,7 @@
     }
     if (google_code.value) {
       const username=getUser(); 
-      checkGoogleCode({user_name:username, google_code:google_code.value}).then(res=>{ 
+      bindGoogleCode({user_name:username, google_code:google_code.value}).then(res=>{ 
         if(res==1){
           init({ message: "谷歌认证绑定成功", color: "success" }); 
           emits('cancel') 
