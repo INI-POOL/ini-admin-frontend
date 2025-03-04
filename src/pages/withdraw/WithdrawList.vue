@@ -399,9 +399,9 @@ const handlePageChange = (startIndex) => {
 // 提现状态
 const getWithdrawStatusText = (status) => {
   const map = {
-    0: "申请中",
-    1: "提现成功",
-    2: "提现失败",
+    0: "处理中",
+    1: "成功",
+    2: "失败",
     3: "确认中",
     4: "提现异常",
   };
@@ -424,8 +424,8 @@ const getWithdrawStatusColor = (status) => {
 const getAuditStatusText = (status) => {
   const map = {
     0: "待审核",
-    1: "审核成功",
-    2: "审核失败",
+    1: "已通过",
+    2: "未通过",
   };
   return map[status] || "未知状态";
 };
@@ -468,22 +468,30 @@ const handleAuditSubmit = async () => {
   }
 
   try {
-    await auditWithdraw({
+    let data = await auditWithdraw({
       id: currentItem.value.id,
       audit_status: auditForm.audit_status,
       google_code: auditForm.google_code,
       user_name: username,
     });
-
-    toast({
-      message: "审核成功",
-      color: "success",
-    });
-    auditVisible.value = false;
-    fetchData();
+	
+	console.log("data is",data)
+	if (data == 0){
+		toast({
+		  message: "审核失败, 余额不足",
+		  color: "warning",
+		});
+	}else{
+		toast({
+		  message: "审核成功",
+		  color: "success",
+		});
+		auditVisible.value = false;
+		fetchData();
+	}
   } catch (error) {
     toast({
-      message: "审核失败",
+      message: error,
       color: "danger",
     });
   }
