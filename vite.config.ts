@@ -33,7 +33,7 @@ export default defineConfig({
     proxy: {
       "/api": {
         target: "http://172.28.56.107:12002",
-        // target: "http://172.28.56.107:12002"
+        // target: "http://api.umpool.io:12001",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },

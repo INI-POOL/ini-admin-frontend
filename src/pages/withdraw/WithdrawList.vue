@@ -4,17 +4,6 @@
       <h1 class="text-2xl font-bold">提现管理 (热钱包余额：{{ hotAddressBalance || 0 }})</h1>
     </div>
 
-    <!-- 搜索条件 -->
-    <!-- <VaCard class="mb-4">
-      <VaCardContent>
-        <div class="flex gap-4 flex-wrap">
-          <VaSelect v-model="queryParams.status" label="状态" :options="statusOptions" class="w-48" clearable />
-          <VaButton @click="handleSearch">搜索</VaButton>
-          <VaButton preset="secondary" @click="handleReset">重置</VaButton>
-        </div>
-      </VaCardContent>
-    </VaCard> -->
-
     <!-- 列表 -->
     <VaCard>
       <VaCardContent>
@@ -41,9 +30,9 @@
           </template>
 
           <!-- 提现状态 -->
-          <template #cell(status)="{ value }">
-            <VaBadge :color="getWithdrawStatusColor(value)">
-              {{ getWithdrawStatusText(value) }}
+          <template #cell(status)="{ row }">
+            <VaBadge :color="getWithdrawStatusColor(row.rowData.status)">
+              {{ getWithdrawStatusText(row.rowData.status,row.rowData.id) }}
             </VaBadge>
           </template>
 
@@ -143,41 +132,7 @@
       </div>
     </VaModal>
 
-    <!--查看详情-->
-    <!-- <VaModal
-      v-model="detailVisible"
-      title="查看详情"
-      :ok-text="'确认'"
-      :cancel-text="'取消'"
-      size="small"
-      class="audit-modal"
-      @ok="handleAuditSubmit"
-    >
-      <div class="space-y-4">
-        <div>
-          <div class="mb-4">
-            当前提现金额：{{ removeTrailingZeros(currentItem?.amount) || 0 }} 
-          </div>
-          <div class="mb-2">审核结果</div>
-          <VaRadio
-            v-model="auditForm.audit_status"
-            :options="[
-              {
-                text: '同意',
-                value: 1,
-              },
-              {
-                text: '拒绝',
-                value: 2,
-              },
-            ]"
-            value-by="value"
-          />
-        </div>
-      </div>
-    </VaModal> -->
-
-       <!-- 转账详情弹框 -->
+      <!-- 转账详情弹框 -->
       <VaModal v-model="detailVisible" title="转账详情" size="medium"  class="mr-6 my-1"  close-button >
       <template #content>
         <!-- 头部信息 -->
@@ -208,7 +163,10 @@
               </span>
              </VaAvatar>
           <div class="status">
-            {{ getWithdrawStatusText(transfer.status) }}</div>
+
+            {{ getWithdrawStatusText(transfer.status,transfer.id) }}
+          
+          </div>
           <div class="time">{{ formatDateTime(transfer.created_time) }}</div>
         </div>
         <VaDivider />
@@ -240,7 +198,6 @@
             <span class="label">付款地址：</span>
             <div class="value-box">
             <span class="value"  @click="copyText(transfer.from_addr)">{{ transfer.from_addr }}</span>
-            <!-- <VaButton icon="copy" @click="copyText(transfer.sender)" size="small" preset="secondary" /> -->
             <VaIcon v-if="transfer.from_addr" class="material-icons" @click="copyText(transfer.from_addr)">
               content_copy
           </VaIcon>
@@ -257,13 +214,8 @@
           <VaIcon  v-if="transfer.tx_id" class="material-icons" @click="copyText(transfer.tx_id)">
               content_copy
           </VaIcon>
-          <!-- <VaButton icon="copy" @click="copyText(transfer.tx_id)" size="small" preset="secondary" /> -->
         </div></div>
       </template>
-
-      <!-- <template #footer>
-        <VaButton color="danger" @click="showModal = false">关闭</VaButton>
-      </template> -->
     </VaModal>
   </div>
 </template>
@@ -334,12 +286,6 @@ const fetchData = async () => {
 // 复制功能
 const copyText = async (text) => {
  
-  // try {
-  //   await navigator.clipboard.writeText(text)
-  //   toast({ message: "复制成功",color: "success"})
-  // } catch (err) {
-  //   toast({ message: '复制失败', color: 'danger' })
-  // }
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
       // console.log('复制成功');
@@ -397,7 +343,7 @@ const handlePageChange = (startIndex) => {
 // }
 
 // 提现状态
-const getWithdrawStatusText = (status) => {
+const getWithdrawStatusText = (status,id) => {
   const map = {
     0: "处理中",
     1: "成功",
@@ -405,6 +351,11 @@ const getWithdrawStatusText = (status) => {
     3: "确认中",
     4: "提现异常",
   };
+  console.log(status,id);
+  if(status==2 && id>15){
+    return 'Aleo网络异常'
+  }
+    
   return map[status] || "未知状态";
 };
 
