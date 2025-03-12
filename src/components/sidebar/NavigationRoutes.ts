@@ -11,13 +11,13 @@ export default {
     displayName: "navigationRoutes.home",
   },
   routes: [
-    {
-      name: "machines",
-      displayName: "机器列表",
-      meta: {
-        icon: "vuestic-iconset-dashboard", 
-      },
-    },
+    // {
+    //   name: "machines",
+    //   displayName: "机器列表",
+    //   meta: {
+    //     icon: "vuestic-iconset-dashboard", 
+    //   },
+    // },
     {
       name: "withdraw",
       displayName: "提现列表",
