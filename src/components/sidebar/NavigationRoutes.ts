@@ -11,6 +11,20 @@ export default {
     displayName: "navigationRoutes.home",
   },
   routes: [
+    {
+      name: "machines",
+      displayName: "机器列表",
+      meta: {
+        icon: "vuestic-iconset-dashboard", 
+      },
+    },
+    {
+      name: "withdraw",
+      displayName: "提现列表",
+      meta: {
+        icon: "credit_card",
+      },
+    },
     // {
     //   name: "dashboard",
     //   displayName: "menu.dashboard",
@@ -82,13 +96,7 @@ export default {
     //     icon: 'quiz',
     //   },
     // },
-    {
-      name: "withdraw",
-      displayName: "提现列表",
-      meta: {
-        icon: "vuestic-iconset-files",
-      },
-    },
+    
     // {
     //   name: "404",
     //   displayName: "menu.404",
