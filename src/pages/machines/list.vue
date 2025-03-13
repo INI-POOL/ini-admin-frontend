@@ -2,17 +2,32 @@
     <va-card class="machines-list">
         <!-- 搜索和过滤区域 -->
         <div class="mb-4">
-            <va-input v-model="searchQuery" placeholder="搜索矿机..." class="mb-2" :style="{ maxWidth: '100%' }">
+            <va-input v-model="searchMachine" placeholder="搜索机器名" class="mb-1 mr-5" :style="{ maxWidth: '20%'}">
                 <template #prepend>
-                    <va-icon name="search" />
+                    <!-- <va-icon name="va-calendar" /> -->
                 </template>
             </va-input>
-
-            <div class="filters-row">
-                <va-select v-model="statusFilter" :options="statusOptions" placeholder="状态筛选" class="filter-item" />
-                <va-button @click="refreshList" class="ml-2">
-                    <va-icon name="refresh" />
-                    刷新
+            <va-input v-model="searchMobile" placeholder="搜索手机号" class="mb-1 mr-5" :style="{ maxWidth: '20%' }">
+                <template #prepend>
+                    <!-- <va-icon name="mobile" /> -->
+                </template>
+            </va-input>
+			<va-input v-model="searchSubUser" placeholder="搜索子账户" class="mb-1 mr-5" :style="{ maxWidth: '20%' }">
+			    <template #prepend>
+			        <!-- <va-icon name="sub" /> -->
+			    </template>
+			</va-input>
+			<va-input v-model="searchUid" placeholder="搜索用户UID" class="mb-1 mr-5" :style="{ maxWidth: '20%' }">
+			    <template #prepend>
+			        <!-- <va-icon name="sub" /> -->
+			    </template>
+			</va-input>
+            <div class="filters-row mt-4">
+				<va-select v-model="searchCurrency" :options="currencyOptions" placeholder="币种筛选" class="filter-item mr-5" :style="{ maxWidth: '16%' }" />
+               <va-select v-model="searchIdc" :options="idcOptions" placeholder="机房筛选" class="filter-item" :style="{ maxWidth: '16%' }" />
+                <va-button @click="refreshList" class="ml-5">
+                    <!-- <va-icon name="refresh" /> -->
+                    搜索
                 </va-button>
             </div>
         </div>
@@ -25,15 +40,61 @@
                 <template #cell(created_time)="{ value }">
                     {{ formatDateTime(value) }}
                 </template>
+				<template #cell(last_seen)="{ value }">
+				    {{ convertDateTime(value) }}
+				</template>
 
                 <template #cell(actions)="{ row }">
                     <va-button-group>
                         <va-button small icon="edit" color="primary" @click="editMachine(row)" />
-                        <va-button small icon="delete" color="danger" @click="deleteMachine(row)" />
+                        <!-- <va-button small icon="delete" color="danger" @click="deleteMachine(row)" /> -->
                     </va-button-group>
                 </template>
             </VaDataTable>
-
+			
+			<VaModal
+			  v-model="isEditModalVisible"
+			  title="编辑机器信息"
+			  @cancel="onCancel"
+			  @ok="onOk"
+			>
+			  <VaForm>
+			    <VaInput
+			      v-model="editForm.hostname"
+			      label="机器名"
+			      placeholder="请输入机器名"
+				  class="mb-2"
+			    />
+				<VaInput
+				  v-model="editForm.sub_user_name"
+				  label="子账户名"
+				  placeholder="请输入子账户名"
+				  class="mb-2"
+				/>
+				<va-select
+				        v-model="editForm.currency"
+				        label="币种"
+				        :options="currencyOptions"
+				        placeholder="请选择币种"
+				        class="mb-2"
+				/>
+				<va-select
+				        v-model="editForm.group"
+				        label="分组"
+				        :options="groupOptions"
+				        placeholder="请选择分组"
+				        class="mb-2"
+			    />
+			    <va-select
+					 v-model="editForm.is_in_black_list"
+					 label="是否参与分配"
+					 :options="allocateOptions"
+					 placeholder="请选择"
+					 class="mb-2"
+			    />		  
+			  </VaForm>
+			</VaModal>
+			
             <!-- 移动端显示卡片列表 -->
             <!-- <div class="mobile-list hidden-md-and-up">
                 <va-card v-for="machine in filteredMachines" :key="machine.id" class="mb-3">
@@ -78,76 +139,34 @@
           </span>
         </div>
     </va-card>
-
-
-      <!-- 转账详情弹框 -->
-      <VaModal v-model="detailVisible" title="转账详情" size="medium"  class="mr-6 my-1"  close-button >
-      <template #content>
-        <!-- 头部信息 -->
-        <div class="transfer-header" style="display: flex; align-items: center; justify-content: center;flex-direction: column;gap: 0.62rem; padding-top: 1rem;">
-          <div class="time">{{ formatDateTime(transfer.created_time) }}</div>
-        </div>
-        <VaDivider />
-
-        <!-- 主要信息 -->
-        <div class="transfer-info">
-          <div class="info-row">
-            <span class="label">数额：</span>
-            <div class="value-box">
-            <span class="value">{{removeTrailingZeros(transfer?.amount) || 0 }} {{ transfer.currency }}</span>
-          </div>
-          </div>
-          <div class="info-row">
-            <span class="label">提款手续费：</span>
-            <div class="value-box">
-            <span class="value">{{removeTrailingZeros(transfer?.gas_fee) || 0   }} {{ transfer.currency }}</span>
-          </div>
-          </div>
-          <div class="info-row">
-            <span class="label">收款地址：</span>
-            <div class="value-box">
-            <span class="value"  @click="copyText(transfer.to_addr)">{{ transfer.to_addr }}</span>
-            <VaIcon class="material-icons" @click="copyText(transfer.to_addr)">
-              content_copy
-          </VaIcon>
-          </div>
-          </div>
-          <div class="info-row">
-            <span class="label">付款地址：</span>
-            <div class="value-box">
-            <span class="value"  @click="copyText(transfer.from_addr)">{{ transfer.from_addr }}</span>
-            <VaIcon v-if="transfer.from_addr" class="material-icons" @click="copyText(transfer.from_addr)">
-              content_copy
-          </VaIcon>
-          </div>
-          </div>
-        </div>
-        <VaDivider />
-
-        <!-- 交易号 -->
-        <div class="transaction-id">
-          <span class="label">交易号：</span>
-          <div class="value-box">
-          <span class="value"><a  :href="`https://mainnet.aleo123.io/transactionDetail/${transfer.tx_id}`" target="_blank">{{ transfer.tx_id }}</a> </span>
-          <VaIcon  v-if="transfer.tx_id" class="material-icons" @click="copyText(transfer.tx_id)">
-              content_copy
-          </VaIcon>
-        </div></div>
-      </template>
-    </VaModal>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue'
 import { machinList, updateMachine } from "../../api/machines"
-import { formatDateTime } from "../../utils/date.ts";
+import { formatDateTime,convertDateTime } from "../../utils/date.ts";
 import { useToast } from "vuestic-ui";
 
 const { init: toast } = useToast()
 
 // 响应式状态
-const searchQuery = ref('')
-const statusFilter = ref(null)
+const searchMachine = ref('');
+const searchMobile = ref('');
+const searchSubUser = ref('');
+const searchCurrency = ref('');
+const searchUid = ref('');
+const searchIdc = ref('');
+const statusFilter = ref(null);
+const isEditModalVisible = ref(false);
+const editForm = reactive({
+  id: null,
+  hostname: "",
+  sub_user_name: "",
+  currency: "",
+  group: "",
+  is_in_black_list: "",
+});
+
 const currentStartIndex = ref(1);
 const totalItems = ref(100)
 const machines = ref([])
@@ -165,18 +184,37 @@ const statusOptions = [
     { value: 'error', text: '错误' }
 ]
 
+const currencyOptions = [
+    { value: 'aleo', text: 'aleo' },
+	{ value: 'ltc', text: 'ltc' },
+]
+
+const groupOptions = [
+    { value: 'default', text: 'default' },
+	{ value: 'um001', text: 'um001' },
+]
+
+const allocateOptions = [
+    { value: '0', text: '是' },
+	{ value: '1', text: '否' },
+]
+
+const idcOptions = [
+	{ value: 'HAIAN', text: 'HAIAN' },
+	{ value: 'QINGPU', text: 'QINGPU' },
+]
+
 const columns = [
 
     { key: 'id', label: '机器ID' },
     { key: 'hostname', label: '机器名' },
     { key: 'idc', label: '机房' },
-    { key: 'hostname', label: '名称' },
     { key: 'currency', label: '币种' },
     { key: 'model_name', label: '机器类型' },
     { key:'sub_user_name', label: '子账户名' },
     { key:'uid', label: '用户UID' },
     { key: 'mobile', label: '手机号' },
-    {key: 'last_seen', label: '上次提交时间' },
+    {key: 'last_seen', label: '最近提交时间' },
     {key: 'created_time', label: '创建时间' },
     // { key: 'status', label: '状态' },
     { key: 'actions', label: '操作' }
@@ -202,12 +240,21 @@ const handlePageChange = (startIndex) => {
 const fetchData = async () => {
     loading.value = true
     try {
-        const res = await machinList(queryParams)
+		const params = {
+		      ...queryParams,
+		      mobile: searchMobile.value,
+		      hostname: searchMachine.value,
+			  sub_user_name: searchSubUser.value,
+			  currency: searchCurrency.value.value,
+			  uid: searchUid.value,
+			  idc: searchIdc.value.value
+		    };
+        const res = await machinList(params)
 
-        if (res && typeof res.total === "number") {
-            machines.value = res.machines || []
-            totalItems.value = res.total
-        } else {
+        if (res && Array.isArray(res.machines) && typeof res.total === "number") {
+              machines.value = res.machines;
+              totalItems.value = res.total;
+		} else {
             console.error("API返回数据格式错误:", res)
             toast({
                 message: "数据格式错误",
@@ -238,22 +285,64 @@ const refreshList = () => {
     fetchData()
 }
 
-const editMachine = async (machine) => {
-    try {
-        await updateMachine(machine.id, machine)
-        toast({
-            message: "更新成功",
-            color: "success",
-        })
-        await fetchData()
-    } catch (error) {
-        console.error("更新失败:", error)
-        toast({
-            message: "更新失败",
-            color: "danger",
-        })
-    }
+const editMachine = (machine) => {
+  // 绑定当前行的数据到编辑表单
+  editForm.id = machine.rowData.id;
+  editForm.hostname = machine.rowData.hostname;
+  editForm.sub_user_name = machine.rowData.sub_user_name;
+  editForm.currency = machine.rowData.currency;
+  editForm.group = machine.rowData.group;
+  editForm.idc = machine.rowData.idc;
+  editForm.is_in_black_list = getAllocate(machine.rowData.is_in_black_list);
+  // 显示弹窗
+  isEditModalVisible.value = true;
+};
+
+const getAllocate = (isNotAllocate) => {
+	if (isNotAllocate === '0') {
+		return '是'
+	}
+	return '否'
 }
+
+const onCancel = () => {
+  isEditModalVisible.value = false;
+  resetForm();
+};
+
+const onOk = async () => {
+  try {
+    // 提交修改
+    const msg = await updateMachine(editForm.id, {
+      hostname: editForm.hostname,
+	  sub_user_name: editForm.sub_user_name,
+	  idc: editForm.idc,
+	  currency:editForm.currency.value,
+	  is_in_black_list:editForm.is_in_black_list.value,
+	  group:editForm.group.value
+    });
+    toast({
+      message: msg,
+      color: "success",
+    });
+    // 刷新数据
+    await fetchData();
+    // 关闭弹窗
+    isEditModalVisible.value = false;
+  } catch (error) {
+    console.error("更新失败:", error);
+    toast({
+      message: "更新失败",
+      color: "danger",
+    });
+  }
+};
+
+const resetForm = () => {
+  editForm.id = null;
+  editForm.hostname = "";
+  editForm.mobile = "";
+};
 
 const deleteMachine = async (machine) => {
     // 实现删除逻辑
@@ -307,5 +396,9 @@ fetchData()
         width: 100%;
         min-width: unset;
     }
+}
+
+.custom-modal .va-modal-footer {
+  display: none; /* 隐藏默认的 footer */
 }
 </style>

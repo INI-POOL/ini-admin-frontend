@@ -33,6 +33,9 @@ service.interceptors.response.use(
     const res = response.data;
     if (res.code === 200) {
       // 假设后端用 code=200 表示成功
+	  if (res.data === null) {
+		  return res.msg;
+	  }
       return res.data;
     } else {
       // 处理业务错误

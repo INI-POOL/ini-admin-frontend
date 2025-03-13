@@ -34,3 +34,22 @@ export function del(url) {
     method: "delete",
   });
 }
+
+export function patch(url, data) {
+  return service({
+    url,
+    method: "patch",
+    data,
+  })    .then((response) => {
+      console.log("请求成功，完整响应:", response); 
+      return response;
+    })
+    .catch((error) => {
+      console.error("请求失败:", error); 
+      if (error.response) {
+        console.error("响应数据:", error.response.data); 
+        console.error("状态码:", error.response.status); 
+      }
+      throw error;
+    });
+}
