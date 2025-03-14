@@ -1,5 +1,9 @@
 import { patch,get,post } from "./request";
 
+// 查询机器可选项
+export function machineOptions() {
+  return get("/api/v1/back_stage/machine/options");
+}
 
 // 查询机器列表
 export function machinList(data) {

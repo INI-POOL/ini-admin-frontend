@@ -29,6 +29,10 @@
                     <!-- <va-icon name="refresh" /> -->
                     搜索
                 </va-button>
+				<va-button @click="refreshData" class="ml-5">
+				    <!-- <va-icon name="refresh" /> -->
+				    刷新
+				</va-button>
             </div>
         </div>
 
@@ -42,6 +46,9 @@
                 </template>
 				<template #cell(last_seen)="{ value }">
 				    {{ convertDateTime(value) }}
+				</template>
+				<template #cell(is_in_black_list)="{ value }">
+				    {{ getAllocate(value) }}
 				</template>
 
                 <template #cell(actions)="{ row }">
@@ -65,26 +72,34 @@
 			      placeholder="请输入机器名"
 				  class="mb-2"
 			    />
-				<VaInput
-				  v-model="editForm.sub_user_name"
-				  label="子账户名"
-				  placeholder="请输入子账户名"
-				  class="mb-2"
+				<VaSelect
+				        v-model="editForm.sub_user_name"
+				        label="子账户名"
+				        :options="subUserOptions"
+				        placeholder="请选择账户"
+						selected-top-shown
+				        class="mb-2"
 				/>
 				<va-select
 				        v-model="editForm.currency"
 				        label="币种"
 				        :options="currencyOptions"
 				        placeholder="请选择币种"
+						selected-top-shown
 				        class="mb-2"
 				/>
-				<va-select
-				        v-model="editForm.group"
-				        label="分组"
-				        :options="groupOptions"
-				        placeholder="请选择分组"
-				        class="mb-2"
-			    />
+				<VaInput
+				  v-model="editForm.group"
+				  label="分组"
+				  placeholder="请输入分组"
+				  class="mb-2"
+				/>
+				<VaInput
+				  v-model="editForm.idc"
+				  label="机房"
+				  placeholder="请输入机房"
+				  class="mb-2"
+				/>
 			    <va-select
 					 v-model="editForm.is_in_black_list"
 					 label="是否参与分配"
@@ -143,7 +158,7 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
-import { machinList, updateMachine } from "../../api/machines"
+import { machinList, updateMachine,machineOptions } from "../../api/machines"
 import { formatDateTime,convertDateTime } from "../../utils/date.ts";
 import { useToast } from "vuestic-ui";
 
@@ -156,7 +171,9 @@ const searchSubUser = ref('');
 const searchCurrency = ref('');
 const searchUid = ref('');
 const searchIdc = ref('');
-const statusFilter = ref(null);
+const currencyOptions = ref([])
+const idcOptions = ref([])
+const subUserOptions = ref([])
 const isEditModalVisible = ref(false);
 const editForm = reactive({
   id: null,
@@ -177,32 +194,27 @@ const queryParams = reactive({
   pagesize: 10,
 })
 
-// 常量数据
-const statusOptions = [
-    { value: 'active', text: '运行中' },
-    { value: 'inactive', text: '已停止' },
-    { value: 'error', text: '错误' }
-]
-
-const currencyOptions = [
-    { value: 'aleo', text: 'aleo' },
-	{ value: 'ltc', text: 'ltc' },
-]
-
-const groupOptions = [
-    { value: 'default', text: 'default' },
-	{ value: 'um001', text: 'um001' },
-]
-
 const allocateOptions = [
     { value: '0', text: '是' },
 	{ value: '1', text: '否' },
 ]
 
-const idcOptions = [
-	{ value: 'HAIAN', text: 'HAIAN' },
-	{ value: 'QINGPU', text: 'QINGPU' },
-]
+const convertToOptions = (arr) => 
+  arr.map(item => ({ value: item, text: item }))
+  
+const fetchMachineOptions = async () => {
+  try {
+    const response = await machineOptions()
+      // 带空值保护的转换
+      currencyOptions.value = convertToOptions(response.currencies || [])
+      idcOptions.value = convertToOptions(response.idcs || [])
+      subUserOptions.value = convertToOptions(response.sub_users || [])
+    
+  } catch (error) {
+    console.error('接口调用失败:', error)
+    // 异常处理逻辑
+  }
+}
 
 const columns = [
 
@@ -211,23 +223,14 @@ const columns = [
     { key: 'idc', label: '机房' },
     { key: 'currency', label: '币种' },
     { key: 'model_name', label: '机器类型' },
+	{ key:'uid', label: '用户UID' },
     { key:'sub_user_name', label: '子账户名' },
-    { key:'uid', label: '用户UID' },
     { key: 'mobile', label: '手机号' },
     {key: 'last_seen', label: '最近提交时间' },
     {key: 'created_time', label: '创建时间' },
-    // { key: 'status', label: '状态' },
+	{key: 'is_in_black_list', label: '是否参与分配'},
     { key: 'actions', label: '操作' }
 ]
-
-// 计算属性
-// const filteredMachines = computed(() => {
-//     return machines.value.filter(machine => {
-//         const matchesSearch = machine.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-//         const matchesStatus = !statusFilter.value || machine.status === statusFilter.value
-//         return matchesSearch && matchesStatus
-//     })
-// })
 
 // 分页
 const handlePageChange = (startIndex) => {
@@ -254,10 +257,12 @@ const fetchData = async () => {
         if (res && Array.isArray(res.machines) && typeof res.total === "number") {
               machines.value = res.machines;
               totalItems.value = res.total;
+		} else if (res.machines === null) {
+			machines.value = [];
+			totalItems.value = 0;
 		} else {
-            console.error("API返回数据格式错误:", res)
             toast({
-                message: "数据格式错误",
+                message: "查询错误",
                 color: "danger",
             })
         }
@@ -289,7 +294,7 @@ const editMachine = (machine) => {
   // 绑定当前行的数据到编辑表单
   editForm.id = machine.rowData.id;
   editForm.hostname = machine.rowData.hostname;
-  editForm.sub_user_name = machine.rowData.sub_user_name;
+  editForm.sub_user_name = machine.rowData.sub_user_name+" ("+machine.rowData.uid+")";
   editForm.currency = machine.rowData.currency;
   editForm.group = machine.rowData.group;
   editForm.idc = machine.rowData.idc;
@@ -299,7 +304,7 @@ const editMachine = (machine) => {
 };
 
 const getAllocate = (isNotAllocate) => {
-	if (isNotAllocate === '0') {
+	if ((isNotAllocate === 0) || (isNotAllocate === '0')) {
 		return '是'
 	}
 	return '否'
@@ -310,16 +315,28 @@ const onCancel = () => {
   resetForm();
 };
 
+const refreshData = () => {
+	fetchData();
+	fetchMachineOptions();
+}
+
 const onOk = async () => {
   try {
     // 提交修改
+	let sub_user_name = editForm.sub_user_name.value
+	if (sub_user_name != undefined) {
+		sub_user_name = sub_user_name.substring(0,sub_user_name.indexOf(" "))
+	}
+	// console.log("res is",editForm.sub_user_name.value)
+	// console.log("value is",editForm.sub_user_name.value.substring(0,7))
+	// console.log("num is",editForm.sub_user_name.value.indexOf(" "))
     const msg = await updateMachine(editForm.id, {
       hostname: editForm.hostname,
-	  sub_user_name: editForm.sub_user_name,
+	  sub_user_name: sub_user_name,
 	  idc: editForm.idc,
 	  currency:editForm.currency.value,
 	  is_in_black_list:editForm.is_in_black_list.value,
-	  group:editForm.group.value
+	  group:editForm.group
     });
     toast({
       message: msg,
@@ -341,7 +358,7 @@ const onOk = async () => {
 const resetForm = () => {
   editForm.id = null;
   editForm.hostname = "";
-  editForm.mobile = "";
+  editForm.sub_user_name = "";
 };
 
 const deleteMachine = async (machine) => {
@@ -350,6 +367,7 @@ const deleteMachine = async (machine) => {
 
 // 初始化加载数据
 fetchData()
+fetchMachineOptions()
 </script>
 
 <style scoped>
