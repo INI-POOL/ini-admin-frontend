@@ -66,6 +66,15 @@ const routes: Array<RouteRecordRaw> = [
           title: "机器管理",
         },
       },
+	  {
+	    name: "pre_machines",
+	    path: "pre_machines",
+	    component: () => import("../pages/machines/pre.vue"),
+	    meta: {
+	      requiresAuth: true,
+	      title: "预分配机器管理",
+	    },
+	  },
     ],
   },
 

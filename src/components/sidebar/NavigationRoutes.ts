@@ -25,6 +25,22 @@ export default {
         icon: "credit_card",
       },
     },
+	{
+	  name: 'pre_alloc',
+	  displayName: '预分配',
+	  meta: {
+	    icon: 'credit_card',
+	  },
+	  children: [
+	    {
+	      name: 'pre_machines',
+	      displayName: '机器运行情况',
+		  meta: {
+		    icon: "vuestic-iconset-dashboard",
+		  },
+	    },
+	  ],
+	},
     // {
     //   name: "dashboard",
     //   displayName: "menu.dashboard",

@@ -20,3 +20,8 @@ export function updateMachine(id, data) {
       return response;
     });
 }
+
+export function preMachineList(data) {
+  return post("/api/v1/back_stage/pre_allocate/machine", data);
+}
+
