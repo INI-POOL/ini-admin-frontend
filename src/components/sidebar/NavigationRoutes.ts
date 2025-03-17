@@ -39,6 +39,13 @@ export default {
 		    icon: "vuestic-iconset-dashboard",
 		  },
 	    },
+      {
+	      name: 'node_revenue',
+	      displayName: '节点收益',
+		  meta: {
+		    icon: "vuestic-iconset-dashboard",
+		  },
+	    },
 	  ],
 	},
     // {

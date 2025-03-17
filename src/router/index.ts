@@ -75,6 +75,15 @@ const routes: Array<RouteRecordRaw> = [
 	      title: "预分配机器管理",
 	    },
 	  },
+    {
+	    name: "node_revenue",
+	    path: "node_revenue",
+	    component: () => import("../pages/node_revenue/list.vue"),
+	    meta: {
+	      requiresAuth: true,
+	      title: "节点收益",
+	    },
+	  },
     ],
   },
 
