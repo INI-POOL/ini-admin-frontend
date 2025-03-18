@@ -2,13 +2,13 @@
     <va-card class="machines-list">
         <!-- 搜索和过滤区域 -->
         <div class="mb-4">
-            <va-date-input
-                v-model="searchDate"
-                placeholder="选择日期"
-                class="mb-1 mr-5"
-                :style="{ maxWidth: '20%'}"
-            />
-            <div class="filters-row mt-4">
+            <div class="filters-row">
+                <va-date-input
+                    v-model="searchDate"
+                    placeholder="选择日期"
+                    class="filter-item mr-5"
+                    :style="{ maxWidth: '20%'}"
+                />
                 <va-select
                     v-model="searchCurrency"
                     :options="currencyOptions"
@@ -33,7 +33,7 @@
                     {{ value ? value.split('T')[0] : '' }}
                 </template>
                 <template #cell(need_allocate)="{ value }">
-                    {{ value === 1 ? '是' : '否' }}
+                    {{ getIsAllocate(value)}}
                 </template>
                 <template #cell(pool_type)="{ value }">
                     {{ poolTypeMap[value] || '未知' }}
@@ -159,7 +159,6 @@ const fetchData = async () => {
         // 因为拦截器已经处理了 res.data 的解构，这里直接使用返回值
         if (res?.pool_profits) {
             poolProfits.value = res.pool_profits
-            console.log(poolProfits.value)
             totalItems.value = res.total
         } else {
             poolProfits.value = []
@@ -214,20 +213,26 @@ const editForm = reactive({
     id: null,
     real_power: '',
     real_reward: '',
-    need_allocate: ''
+    need_allocate: '',
 })
 
 const allocateOptions = [
-    { value: '是', text: '是' },
-    { value: '否', text: '否' }
+    { value: '1', text: '是' },
+    { value: '0', text: '否' },
 ]
 
+const getIsAllocate = (need_allocate) => {
+	if (need_allocate === 1 || need_allocate === "1") {
+		return '是'
+	}
+	return '否'
+}
+
 const editProfit = (row) => {
-    console.log('row:', row)
     editForm.id = row.rowData.id
     editForm.real_power = row.rowData.real_power
     editForm.real_reward = row.rowData.real_reward
-    editForm.need_allocate = row.rowData.need_allocate === 1 ? '是' : '否'
+    editForm.need_allocate = row.rowData.need_allocate === 1 ? "是" : "否" 
     isEditModalVisible.value = true
 }
 
@@ -236,7 +241,7 @@ const onOk = async () => {
         await updatePoolProfit(editForm.id, {
             real_power: Number(editForm.real_power),
             real_reward: Number(editForm.real_reward),
-            need_allocate: editForm.need_allocate === '是' ? 1 : 0
+            need_allocate: Number(editForm.need_allocate.value)
         })
         toast({
             message: "修改成功",
@@ -294,6 +299,7 @@ fetchData()
     flex-wrap: wrap;
     gap: 10px;
     align-items: center;
+    margin-top: 0; /* 移除之前的 mt-4 */
 }
 
 .filter-item {
