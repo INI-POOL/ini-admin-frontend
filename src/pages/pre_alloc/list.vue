@@ -289,7 +289,7 @@ const allocOnline = async (row,allocType) => {
 	     color: "info",
 	     duration: 5000
 	})
-	await simulateStep(1000);
+	await simulateStep(2000);
 		
 	const response = await alloc(params)
 		
@@ -300,6 +300,7 @@ const allocOnline = async (row,allocType) => {
 		 duration: 3000
 	})
 	await simulateStep(2000);
+	
 	currentStep.value = '正在检查机器运行情况...';
 	toast({
 	    message: currentStep.value,
