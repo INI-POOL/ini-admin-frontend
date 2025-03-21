@@ -75,15 +75,33 @@ const routes: Array<RouteRecordRaw> = [
 	      title: "预分配机器管理",
 	    },
 	  },
-    {
-	    name: "node_revenue",
-	    path: "node_revenue",
-	    component: () => import("../pages/node_revenue/list.vue"),
-	    meta: {
-	      requiresAuth: true,
-	      title: "节点收益",
+	  {
+			name: "node_revenue",
+			path: "node_revenue",
+			component: () => import("../pages/node_revenue/list.vue"),
+			meta: {
+			  requiresAuth: true,
+			  title: "节点收益",
+			}
+	   },
+	   {
+		  name: "alloc_tasks",
+		  path: "alloc_tasks",
+		  component: () => import("../pages/pre_alloc/list.vue"),
+		  meta: {
+		    requiresAuth: true,
+		    title: "分配任务",
+		  },
+		},
+		{
+		  name: "allocated",
+		  path: "allocated",
+		  component: () => import("../pages/allocate/allocate.vue"),
+		  meta: {
+			requiresAuth: true,
+			title: "分配记录",
+		  },
 	    },
-	  },
     ],
   },
 
