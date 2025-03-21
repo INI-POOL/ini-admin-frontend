@@ -233,7 +233,7 @@ const { init: toast } = useToast();
 // 表格列定义
 const columns = [
   { key: "id", label: "订单号" },
-  { key: "user_id", label: "用户编号" },
+  { key: "uid", label: "用户编号" },
   { key: "mobile", label: "手机号" },
   { key: "amount", label: "提现金额" },
   { key: "gas_fee", label: "gas费" },
