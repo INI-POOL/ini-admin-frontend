@@ -17,7 +17,6 @@
 
 		<div class="mb-4">
 		  <va-progress-bar
-			:model-value="progress"
 			:indeterminate="isLoading"
 			:label="currentStep"
 			color="primary"
@@ -161,7 +160,7 @@ const allocOptions = ref([
 ])
 
 const currentStep = ref(''); // 当前步骤
-const progress = ref(0); // 进度百分比
+// const progress = ref(0); // 进度百分比
 const isLoading = ref(false);
 
 
@@ -253,8 +252,10 @@ const fetchDataAndShowModal = async (row,allocType) => {
     apiData.value = response; // 存储返回数据
     isModalVisible.value = true; // 显示弹出框
   } catch (error) {
-    console.error('获取数据失败:', error);
-    alert('获取数据失败，请重试！');
+    toast({
+      message: error,
+      color: "danger",
+    });
   } finally {
     loading.value = false; // 隐藏加载状态
   }
@@ -271,43 +272,60 @@ const allocOnline = async (row,allocType) => {
     });
     return;
   }
-  
-  console.log("data is",row.rowData)
-  
+    
   try {	  
- //    currentStep.value = '正在检查机器运行情况...';
-	// toast({
-	//     message: currentStep.value,
-	//     color: "info",
-	// 	duration: 5000
-	// })
-	// progress.value = 33;
-    // await simulateStep(2000); // 模拟 2 秒执行时间
-	// currentStep.value = '正在检查节点收益...';
-	// toast({
-	//     message: currentStep.value,
-	//     color: "info",
-	// 	duration: 5000
-	// })
-	// progress.value = 66; // 66%
-	// await simulateStep(2000); // 模拟 2 秒执行时间
-
+	const params = {
+	  date: convertDateTimeToDate(row.rowData.record_date),
+	  currency: row.rowData.currency,
+	  group: row.rowData.group,
+	  alloc_type: allocType,
+	  user_name: username,
+	  google_code: auditForm.google_code
+	};
+		
+	currentStep.value = '正在校验参数...';
+	toast({
+	     message: currentStep.value,
+	     color: "info",
+	     duration: 5000
+	})
+	await simulateStep(1000);
+		
+	const response = await alloc(params)
+		
+	currentStep.value = '正在确认分配任务...';
+	toast({
+		 message: currentStep.value,
+		 color: "info",
+		 duration: 3000
+	})
 	await simulateStep(2000);
-    const params = {
-        date: convertDateTimeToDate(row.rowData.record_date),
-        currency: row.rowData.currency,
-		group: row.rowData.group,
-		alloc_type: allocType,
-		user_name: username,
-		google_code: auditForm.google_code
-    }
-    const response = await alloc(params)
+	currentStep.value = '正在检查机器运行情况...';
+	toast({
+	    message: currentStep.value,
+	    color: "info",
+		duration: 3000
+	})
+	await simulateStep(2000); // 模拟 2 秒执行时间
 	
-	// currentStep.value = '分配成功，请前往分配记录查看';
-	// progress.value = 100; // 100%
-    showSuccessToast();
+	currentStep.value = '正在检查节点收益...';
+	toast({
+	    message: currentStep.value,
+	    color: "info",
+		duration: 3000
+	})
+	await simulateStep(2000); // 模拟 2 秒执行时间
 	
-	fetchData();
+	currentStep.value = '开始分配...';
+	toast({
+	    message: currentStep.value,
+	    color: "info",
+		duration: 5000
+	})
+	await simulateStep(5000);
+	
+	currentStep.value = '分配成功，请前往分配记录查看';
+	showSuccessToast();
   } catch (error) {
     toast({
         message: error || "获取数据失败",
@@ -315,8 +333,7 @@ const allocOnline = async (row,allocType) => {
     })
   } finally {
     isLoading.value = false; // 隐藏加载状态
-	// currentStep.value = '';
-	// progress.value = 0;
+	fetchData();
   }
 };
 
@@ -344,7 +361,6 @@ const fetchData = async () => {
             tasks.value = []
             totalItems.value = 0
         }
-		progress.value = 100
     } catch (error) {
         console.error("获取数据失败:", error)
         toast({
