@@ -1,2 +1,0 @@
-function Y(t,o="YYYY-MM-DD HH:mm:ss"){if(!t)return"-";const n=Number(t),e=new Date(n<1e10?n*1e3:n);if(isNaN(e.getTime()))return"-";const s=e.getFullYear(),c=r(e.getMonth()+1),a=r(e.getDate()),i=r(e.getHours()),u=r(e.getMinutes()),g=r(e.getSeconds());return o.replace("YYYY",s.toString()).replace("MM",c).replace("DD",a).replace("HH",i).replace("mm",u).replace("ss",g)}function r(t){return t<10?`0${t}`:t.toString()}export{Y as f};
-//# sourceMappingURL=date-BVCtguWR.js.map
