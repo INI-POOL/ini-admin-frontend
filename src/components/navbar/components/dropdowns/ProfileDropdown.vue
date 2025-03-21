@@ -1,5 +1,13 @@
 <template>
   <div class="profile-dropdown-wrapper">
+	      <div class="language-switcher mr-4">
+	        <VaSelect
+	          v-model="selectedLanguage"
+	          :options="languageOptions"
+	          @update:modelValue="changeLanguage"
+	          class="language-select"
+	        />
+	      </div>
     <VaDropdown
       v-model="isShown"
       :offset="[9, 0]"
@@ -14,6 +22,7 @@
           </span>
         </VaButton>
       </template>
+
       <VaDropdownContent
         class="profile-dropdown__content md:w-60 px-0 py-4 w-full"
         :style="{ '--hover-color': hoverColor }"
@@ -32,8 +41,7 @@
             v-bind="resolveLinkAttribute(item)"
           >
             <VaIcon :name="item.icon" class="pr-1" color="secondary" @click="" />
-            <!-- {{ t(`user.${item.name}`) }} -->
-              双重认证
+            {{ t(`admin.doubleCheck`) }}
           </VaListItem>
           <VaListItem
             key="logout"
@@ -41,8 +49,7 @@
             @click="logout"
           >
           <VaIcon name="mso-logout" class="pr-1" color="secondary"/>
-            <!-- {{ t(`user.logout`) }} -->
-              退出登陆
+            {{ t(`admin.logOut`) }}
           </VaListItem>
 
           <VaListSeparator v-if="group.separator" class="mx-3 my-2" />
@@ -62,6 +69,24 @@ const { colors, setHSLAColor } = useColors();
 const hoverColor = computed(() => setHSLAColor(colors.focus, { a: 0.1 }));
 
 const { t } = useI18n();
+
+// 语言选项
+const languageOptions = [
+  { value: 'cn', text: '中文' },
+  { value: 'en', text: 'English' },
+];
+const selectedLanguage = ref(t.value || languageOptions[0]); // 当前选中的语言
+
+
+
+// 切换语言
+const changeLanguage = (language) => {
+	console.log("t.value is",t.value)
+	console.log("language is",language)
+	// console.log('当前语言包:', i18n.global.messages);
+  t.value = language; // 更新 i18n 的 locale
+  localStorage.setItem('language', language.value); // 将语言设置保存到 localStorage
+};
 
 type ProfileListItem = {
   name: string;

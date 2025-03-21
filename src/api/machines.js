@@ -25,3 +25,13 @@ export function preMachineList(data) {
   return post("/api/v1/back_stage/pre_allocate/machine", data);
 }
 
+export function preMachineModify(data) {
+  return patch(`/api/v1/back_stage/pre_allocate/machine/modify`, data)
+    .then((response) => {
+      if (!response) {
+        throw new Error("请求失败，未返回响应数据");
+      }
+      return response;
+    });
+}
+

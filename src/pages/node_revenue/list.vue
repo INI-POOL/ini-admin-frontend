@@ -32,6 +32,13 @@
                 <template #cell(record_date)="{ value }">
                     {{ value ? value.split('T')[0] : '' }}
                 </template>
+				formatHashRate
+				<template #cell(power)="{ value }">
+				    {{ formatHashRate(value) }}
+				</template>
+				<template #cell(real_power)="{ value }">
+				    {{ formatHashRate(value) }}
+				</template>
                 <template #cell(need_allocate)="{ value }">
                     {{ getIsAllocate(value)}}
                 </template>
@@ -99,7 +106,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { getPoolProfits, updatePoolProfit } from "../../api/node"
-import { formatDateTime } from "../../utils/date.ts"
+import { formatDateTime,formatHashRate } from "../../utils/date.ts"
 import { useToast } from "vuestic-ui"
 
 const { init: toast } = useToast()
@@ -202,7 +209,8 @@ const columns = [
     { key: 'real_power', label: '实际算力' },
     { key: 'currency', label: '币种' },
     { key: 'pool_type', label: '矿池类型' },
-    { key: 'addr', label: '地址' },
+    // { key: 'addr', label: '地址' },
+	{ key: 'group', label: '分组' },
     { key: 'need_allocate', label: '是否需要分配' },
     { key: 'actions', label: '操作' }  // 添加操作列
 ]
@@ -238,13 +246,14 @@ const editProfit = (row) => {
 
 const onOk = async () => {
     try {
-        await updatePoolProfit(editForm.id, {
+		console.log("editForm.need_allocate is",editForm.need_allocate)
+        const msg = await updatePoolProfit(editForm.id, {
             real_power: Number(editForm.real_power),
             real_reward: Number(editForm.real_reward),
-            need_allocate: Number(editForm.need_allocate.value)
+            need_allocate: Number(editForm.need_allocate?.value)
         })
         toast({
-            message: "修改成功",
+            message: msg,
             color: "success",
         })
         await fetchData()

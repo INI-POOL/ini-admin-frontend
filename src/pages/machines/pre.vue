@@ -2,38 +2,30 @@
     <va-card class="machines-list">
         <!-- 搜索和过滤区域 -->
         <div class="mb-4">
-            <va-input v-model="searchMachine" placeholder="搜索机器名" class="mb-1 mr-5" :style="{ maxWidth: '20%'}">
-                <template #prepend>
-                    <!-- <va-icon name="va-calendar" /> -->
-                </template>
-            </va-input>
-            <va-input v-model="searchMobile" placeholder="搜索手机号" class="mb-1 mr-5" :style="{ maxWidth: '20%' }">
-                <template #prepend>
-                    <!-- <va-icon name="mobile" /> -->
-                </template>
-            </va-input>
-			<va-input v-model="searchSubUser" placeholder="搜索子账户" class="mb-1 mr-5" :style="{ maxWidth: '20%' }">
+			机器名：
+			<va-input v-model="searchMachine" placeholder="搜索机器名" class="mb-1 mr-8" :style="{ maxWidth: '15%'}">
 			    <template #prepend>
-			        <!-- <va-icon name="sub" /> -->
+			        <!-- <va-icon name="va-calendar" /> -->
 			    </template>
 			</va-input>
-			<va-input v-model="searchUid" placeholder="搜索用户UID" class="mb-1 mr-5" :style="{ maxWidth: '20%' }">
-			    <template #prepend>
-			        <!-- <va-icon name="sub" /> -->
-			    </template>
-			</va-input>
-            <div class="filters-row mt-4">
-				<va-select v-model="searchCurrency" :options="currencyOptions" placeholder="币种筛选" class="filter-item mr-5" :style="{ maxWidth: '16%' }" />
-               <va-select v-model="searchIdc" :options="idcOptions" placeholder="机房筛选" class="filter-item" :style="{ maxWidth: '16%' }" />
-                <va-button @click="refreshList" class="ml-5">
-                    <!-- <va-icon name="refresh" /> -->
-                    搜索
-                </va-button>
-				<va-button @click="refreshData" class="ml-5">
-				    <!-- <va-icon name="refresh" /> -->
-				    刷新
-				</va-button>
-            </div>
+			记录日期：
+			<va-date-input
+			      v-model="searchDate"
+			      placeholder="选择日期"
+			      class="mb-1 mr-5"
+			      :style="{ maxWidth: '16%'}"
+				  :allowed-days="(date) => !isDateDisabled(date)"
+			/>
+			分组：
+			<va-select v-model="searchGroup" :options="groupOptions" placeholder="组名" class="filter-item mb-1 mr-8" :style="{ maxWidth: '13%' }" />
+			参与分配：
+			<va-select v-model="searchAlloc" :options="allocateOptions" placeholder="是否参与分配" class="filter-item mb-1 mr-8" :style="{ maxWidth: '10%' }" />
+			<va-button @click="refreshList" class="mb-1 mr-8">
+			搜索
+			</va-button>
+			<va-button @click="refreshData" class="mb-1 mr-8">
+			刷新
+			</va-button>
         </div>
 
         <!-- 列表区域 -->
@@ -44,8 +36,11 @@
                 <template #cell(created_time)="{ value }">
                     {{ formatDateTime(value) }}
                 </template>
-				<template #cell(last_seen)="{ value }">
-				    {{ convertDateTime(value) }}
+				<template #cell(hashrate)="{ value }">
+				    {{ formatHashRate(value) }}
+				</template>
+				<template #cell(record_date)="{ value }">
+				    {{ convertDateTimeToDate(value) }}
 				</template>
 				<template #cell(is_in_black_list)="{ value }">
 				    {{ getAllocate(value) }}
@@ -61,7 +56,7 @@
 			
 			<VaModal
 			  v-model="isEditModalVisible"
-			  title="编辑机器信息"
+			  title="修改机器信息"
 			  @cancel="onCancel"
 			  @ok="onOk"
 			>
@@ -69,44 +64,37 @@
 			    <VaInput
 			      v-model="editForm.hostname"
 			      label="机器名"
-			      placeholder="请输入机器名"
 				  class="mb-2"
+				  readonly
 			    />
-				<VaSelect
-				        v-model="editForm.sub_user_name"
-				        label="子账户名"
-				        :options="subUserOptions"
-				        placeholder="请选择账户"
+				<VaInput
+				  v-model="editForm.record_date"
+				  label="记录日期"
+				  class="mb-2"
+				  readonly
+				/>
+				<va-input
+				        v-model="editForm.online_points"
+				        label="在线时长点数"
+						type="number"
+						placeholder="请输入0~288的整数"
+						:min="0"
+						:max="288"
 						selected-top-shown
 				        class="mb-2"
-				/>
-				<va-select
-				        v-model="editForm.currency"
-				        label="币种"
-				        :options="currencyOptions"
-				        placeholder="请选择币种"
-						selected-top-shown
-				        class="mb-2"
-				/>
+						@input="validateOnlinePoints"
+				>
+				  <template #messages>
+					<div v-if="errorMessage" class="va-text-danger">{{ errorMessage }}</div>
+				  </template>
+				</va-input>
 				<VaInput
-				  v-model="editForm.group"
-				  label="分组"
-				  placeholder="请输入分组"
+				  v-model="editForm.hashrate"
+				  label="算力"
+				  type="number"
+				  placeholder="请输入算力"
 				  class="mb-2"
-				/>
-				<VaInput
-				  v-model="editForm.idc"
-				  label="机房"
-				  placeholder="请输入机房"
-				  class="mb-2"
-				/>
-			    <va-select
-					 v-model="editForm.is_in_black_list"
-					 label="是否参与分配"
-					 :options="allocateOptions"
-					 placeholder="请选择"
-					 class="mb-2"
-			    />		  
+				/>	  
 			  </VaForm>
 			</VaModal>
 			
@@ -157,79 +145,86 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import { machinList, updateMachine,machineOptions } from "../../api/machines"
-import { formatDateTime,convertDateTime } from "../../utils/date.ts";
-import { useToast } from "vuestic-ui";
+import { ref, reactive, computed } from 'vue'
+import { preMachineList, preMachineModify, machineOptions } from "../../api/machines"
+import { formatDateTime,convertDateTimeToDate,isDateDisabled,getYesterday,formatHashRate } from "../../utils/date.ts";
+import { useToast,VaDatePicker, VaButton, VaIcon,VaPopover } from "vuestic-ui";
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
 
 const { init: toast } = useToast()
-
-// 响应式状态
-const searchMachine = ref('');
-const searchMobile = ref('');
-const searchSubUser = ref('');
-const searchCurrency = ref('');
-const searchUid = ref('');
-const searchIdc = ref('');
-const currencyOptions = ref([])
-const idcOptions = ref([])
-const subUserOptions = ref([])
-const isEditModalVisible = ref(false);
-const editForm = reactive({
-  id: null,
-  hostname: "",
-  sub_user_name: "",
-  currency: "",
-  group: "",
-  is_in_black_list: "",
-});
-
-const currentStartIndex = ref(1);
-const totalItems = ref(100)
-const machines = ref([])
-const loading = ref(false)
-// 查询参数
-const queryParams = reactive({
-  page: 1,
-  pagesize: 10,
-})
 
 const allocateOptions = [
     { value: '0', text: '是' },
 	{ value: '1', text: '否' },
-]
+];
+const groupOptions = ref([]);
+
+const searchDate = ref(getYesterday(8)) // 存储 Date 对象
+const searchMachine = ref('');
+const searchAlloc = ref(allocateOptions[0]);
+const searchGroup = ref(groupOptions[0]);
+
+const isEditModalVisible = ref(false);
+
+const editForm = reactive({
+  id: null,
+  online_points: 0.0,
+  hashrate: 0.0,
+  record_date: ''
+});
+
+const errorMessage = ref('');
+const validateOnlinePoints = (value) => {
+  const num = Number(value.data);
+  console.log("num is",num)
+  if (isNaN(num)) {
+    errorMessage.value = '必须输入数字';
+  } else if (!Number.isInteger(num)) {
+    errorMessage.value = '必须为整数';
+  } else if (num < 0 || num > 288) {
+    errorMessage.value = '范围0~288';
+  } else {
+    errorMessage.value = '';
+  }
+};
 
 const convertToOptions = (arr) => 
-  arr.map(item => ({ value: item, text: item }))
-  
+  arr.map(item => ({ value: item, text: item }));
 const fetchMachineOptions = async () => {
   try {
     const response = await machineOptions()
       // 带空值保护的转换
-      currencyOptions.value = convertToOptions(response.currencies || [])
-      idcOptions.value = convertToOptions(response.idcs || [])
-      subUserOptions.value = convertToOptions(response.sub_users || [])
-    
+      groupOptions.value = convertToOptions(response.groups || [])
   } catch (error) {
     console.error('接口调用失败:', error)
     // 异常处理逻辑
   }
 }
 
-const columns = [
+const currentStartIndex = ref(1);
+const totalItems = ref(100)
+const machines = ref([])
+const loading = ref(false)
+const queryParams = reactive({
+  page: 1,
+  pagesize: 10,
+})
 
-    { key: 'id', label: '机器ID' },
-    { key: 'hostname', label: '机器名' },
-    { key: 'idc', label: '机房' },
-    { key: 'currency', label: '币种' },
-    { key: 'model_name', label: '机器类型' },
-	{ key:'uid', label: '用户UID' },
-    { key:'sub_user_name', label: '子账户名' },
-    { key: 'mobile', label: '手机号' },
-    {key: 'last_seen', label: '最近提交时间' },
-    {key: 'created_time', label: '创建时间' },
-	{key: 'is_in_black_list', label: '是否参与分配'},
-    { key: 'actions', label: '操作' }
+const columns = [
+	// { key: 'id',label: 'ID'},
+    { key: 'mid', label: t('admin.mid') },
+    { key: 'hostname', label: t('admin.mName') },
+    { key: 'record_date', label: t('admin.recordDate') },
+    { key: 'currency', label: t('admin.currency') },
+	{ key:'uid', label: t('admin.userUid') },
+    { key:'sub_user_name', label: t('admin.subUserName') },
+    {key: 'online_time', label: t('admin.onlineTimes') },
+    {key: 'online_points', label: t('admin.onlinePoints') },
+	{ key: 'hashrate', label: t('admin.avgHashrate') },
+	{key: 'is_in_black_list', label: t('admin.needAllocate')},
+	{key: 'group', label: t('admin.groupName')},
+    { key: 'actions', label: t('admin.operation') }
 ]
 
 // 分页
@@ -239,25 +234,37 @@ const handlePageChange = (startIndex) => {
     fetchData();
 };
 
+const formatDate = (date) => {
+    if (!date) return ''
+    const d = new Date(date)
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+}
+
 // 方法
 const fetchData = async () => {
     loading.value = true
     try {
+	
 		const params = {
 		      ...queryParams,
-		      mobile: searchMobile.value,
-		      hostname: searchMachine.value,
-			  sub_user_name: searchSubUser.value,
-			  currency: searchCurrency.value.value,
-			  uid: searchUid.value,
-			  idc: searchIdc.value.value
+			  is_in_black_list: searchAlloc.value.value,
+			  hostname: searchMachine.value,
+			  group: searchGroup.value?.value
 		    };
-        const res = await machinList(params)
+			
+		if (searchDate.value) {
+			params.record_date = formatDate(searchDate.value)
+		}
+			
+        const res = await preMachineList(params)
 
-        if (res && Array.isArray(res.machines) && typeof res.total === "number") {
-              machines.value = res.machines;
+        if (res && Array.isArray(res.machine_info) && typeof res.total === "number") {
+              machines.value = res.machine_info;
               totalItems.value = res.total;
-		} else if (res.machines === null) {
+		} else if (res.machine_info === null) {
 			machines.value = [];
 			totalItems.value = 0;
 		} else {
@@ -287,18 +294,17 @@ const getStatusColor = (status) => {
 }
 
 const refreshList = () => {
-    fetchData()
+    fetchData();
+	fetchMachineOptions();
 }
 
 const editMachine = (machine) => {
   // 绑定当前行的数据到编辑表单
   editForm.id = machine.rowData.id;
   editForm.hostname = machine.rowData.hostname;
-  editForm.sub_user_name = machine.rowData.sub_user_name+" ("+machine.rowData.uid+")";
-  editForm.currency = machine.rowData.currency;
-  editForm.group = machine.rowData.group;
-  editForm.idc = machine.rowData.idc;
-  editForm.is_in_black_list = getAllocate(machine.rowData.is_in_black_list);
+  editForm.online_points = machine.rowData.online_points;
+  editForm.hashrate = machine.rowData.hashrate;
+  editForm.record_date = convertDateTimeToDate(machine.rowData.record_date);
   // 显示弹窗
   isEditModalVisible.value = true;
 };
@@ -316,27 +322,25 @@ const onCancel = () => {
 };
 
 const refreshData = () => {
+	searchMachine.value = "";
+	// searchAlloc.value.value = "0";
+	// searchAlloc.value.text = "是";
+	// 分组不刷新
+	if (searchDate.value) {
+		searchDate.value = formatDate(getYesterday(8));
+	}
 	fetchData();
 	fetchMachineOptions();
 }
 
 const onOk = async () => {
   try {
-    // 提交修改
-	let sub_user_name = editForm.sub_user_name.value
-	if (sub_user_name != undefined) {
-		sub_user_name = sub_user_name.substring(0,sub_user_name.indexOf(" "))
-	}
-	// console.log("res is",editForm.sub_user_name.value)
-	// console.log("value is",editForm.sub_user_name.value.substring(0,7))
-	// console.log("num is",editForm.sub_user_name.value.indexOf(" "))
-    const msg = await updateMachine(editForm.id, {
-      hostname: editForm.hostname,
-	  sub_user_name: sub_user_name,
-	  idc: editForm.idc,
-	  currency:editForm.currency.value,
-	  is_in_black_list:editForm.is_in_black_list.value,
-	  group:editForm.group
+	  console.log("record_date is",editForm.record_date)
+    const msg = await preMachineModify({
+	  hostname: editForm.hostname,
+	  record_date: editForm.record_date,
+      online_points: editForm.online_points,
+	  hashrate: editForm.hashrate,
     });
     toast({
       message: msg,
@@ -349,7 +353,7 @@ const onOk = async () => {
   } catch (error) {
     console.error("更新失败:", error);
     toast({
-      message: "更新失败",
+      message: error,
       color: "danger",
     });
   }
@@ -357,8 +361,8 @@ const onOk = async () => {
 
 const resetForm = () => {
   editForm.id = null;
-  editForm.hostname = "";
-  editForm.sub_user_name = "";
+  editForm.online_points = 0.0;
+  editForm.hashrate = 0.0;
 };
 
 const deleteMachine = async (machine) => {
@@ -366,8 +370,8 @@ const deleteMachine = async (machine) => {
 }
 
 // 初始化加载数据
-fetchData()
-fetchMachineOptions()
+fetchData();
+fetchMachineOptions();
 </script>
 
 <style scoped>
@@ -419,4 +423,13 @@ fetchMachineOptions()
 .custom-modal .va-modal-footer {
   display: none; /* 隐藏默认的 footer */
 }
+
+.va-popover__content {
+  z-index: 1000 !important;
+  position: relative !important;
+}
+.va-date-picker {
+  min-width: 300px !important;
+}
+
 </style>

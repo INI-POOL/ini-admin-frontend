@@ -5,6 +5,12 @@ export interface INavigationRoute {
   children?: INavigationRoute[];
 }
 
+  // "admin" : {
+  // 	  "preAlloc":"Pre Alloc",
+  // 	  "machines":"Machine List",
+  // 	  "preMachines":"Pre-alloc Machine Info",
+  // 	  "withdrawList":"Withdraw List",
+  // }
 export default {
   root: {
     name: "/",
@@ -12,41 +18,55 @@ export default {
   },
   routes: [
     {
-      name: "machines",
-      displayName: "机器列表",
-      meta: {
-        icon: "vuestic-iconset-dashboard", 
-      },
-    },
-    {
       name: "withdraw",
-      displayName: "提现列表",
+      displayName: "admin.withdrawList",
       meta: {
         icon: "credit_card",
       },
     },
 	{
-	  name: 'pre_alloc',
-	  displayName: '预分配',
+	  name: "machines",
+	  displayName: "admin.machines",
 	  meta: {
-	    icon: 'credit_card',
+	    icon: "vuestic-iconset-dashboard", 
+	  },
+	},
+	{
+	  name: 'pre_alloc',
+	  displayName: "admin.preAlloc",
+	  meta: {
+	    icon: "more_horiz",
 	  },
 	  children: [
 	    {
 	      name: 'pre_machines',
-	      displayName: '机器运行情况',
+	      displayName: "admin.preMachines",
 		  meta: {
 		    icon: "vuestic-iconset-dashboard",
 		  },
 	    },
-      {
+        {
 	      name: 'node_revenue',
-	      displayName: '节点收益',
+	      displayName: 'admin.nodeRevenue',
 		  meta: {
 		    icon: "vuestic-iconset-dashboard",
 		  },
 	    },
+		{
+		  name: 'alloc_tasks',
+		  displayName: 'admin.allocTask',
+		  meta: {
+		    icon: "vuestic-iconset-dashboard",
+		  },
+		},
 	  ],
+	},
+	{
+	  name: "allocated",
+	  displayName: "分配记录",
+	  meta: {
+	    icon: "vuestic-iconset-dashboard", 
+	  },
 	},
     // {
     //   name: "dashboard",

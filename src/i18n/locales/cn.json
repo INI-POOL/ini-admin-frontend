@@ -247,5 +247,33 @@
     "inputField": "输入框",
     "fileTypeIncorrect": "文件类型不正确",
     "select": "选择一个选项"
+  },
+  "admin" : {
+	  "preAlloc":"预分配数据",
+	  "machines":"机器列表",
+	  "preMachines":"机器运行情况",
+	  "withdrawList":"提现列表",
+	  "nodeRevenue":"节点收益",
+	  "allocTask":"预分配",
+	  "doubleCheck":"双重认证",
+	  "logOut":"退出登录",
+	  "mid":"机器ID",
+	  "mName":"机器名",
+	  "recordDate":"记录日期",
+	  "currency":"币种",
+	  "userUid":"用户Uid",
+	  "subUserName":"子账户",
+	  "onlineTimes":"在线时长",
+	  "onlinePoints":"时长点数",
+	  "avgHashrate":"24小时平均算力",
+	  "needAllocate":"是否参与分配",
+	  "groupName":"组名",
+	  "operation":"操作",
+	  "searchMachine":"搜索机器名",
+	  "group":"分组",
+	  "yes":"是",
+	  "no":"否",
+	  "search":"搜索",
+	  "refresh":"刷新"
   }
 }

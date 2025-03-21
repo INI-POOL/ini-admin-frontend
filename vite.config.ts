@@ -12,7 +12,7 @@ export default defineConfig({
   },
   plugins: [
     vuestic({
-      devtools: true,
+      // devtools: true,
       cssLayers: true,
     }),
     vue(),
@@ -29,10 +29,11 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5173,
+    port: 5172,
     proxy: {
       "/api": {
         target: "http://172.28.56.107:12002",
+	    // target: "http://127.0.0.1:12002",
         // target: "http://api.umpool.io:12001",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
