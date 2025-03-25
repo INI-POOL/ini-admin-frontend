@@ -325,8 +325,16 @@ const allocOnline = async (row,allocType) => {
 	})
 	await simulateStep(5000);
 	
-	currentStep.value = '分配成功，请前往分配记录查看';
-	showSuccessToast();
+	if (response === '分币成功') {
+		currentStep.value = '分配成功，请前往分配记录查看';
+		showSuccessToast();
+	}else {	
+		toast({
+			message: response,
+			color: "danger",
+			duration: 50000
+		})
+	}
   } catch (error) {
     toast({
         message: error || "获取数据失败",
