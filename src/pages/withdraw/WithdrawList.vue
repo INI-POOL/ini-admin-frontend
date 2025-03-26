@@ -116,13 +116,16 @@
 		        <div class="grid grid-cols-2 gap-4">
 		          <div>
 					<va-text class="font-bold">总收益：</va-text>
-					<va-text>{{ (userDetail.balance_amount || 0) + (userDetail.total_withdraw || 0) }}</va-text>
+					<va-text>{{ (userDetail.balance_amount || 0) + (userDetail.total_withdraw_pending || 0) + (userDetail.total_withdraw_completed || 0)}}</va-text>
 					<br><br>
-		            <va-text class="font-bold">当前余额：</va-text>
+		            <va-text class="font-bold">可用余额：</va-text>
 		            <va-text>{{ userDetail.balance_amount || 0 }}</va-text>
+					<br><br>
+					<va-text class="font-bold">冻结 (提现中)：</va-text>
+					<va-text>{{ userDetail.total_withdraw_pending || 0 }}</va-text>
 				    <br><br>
 				    <va-text class="font-bold">已提现 (含手续费)：</va-text>
-				    <va-text>{{ userDetail.total_withdraw || 0 }}</va-text>
+				    <va-text>{{ userDetail.total_withdraw_completed || 0 }}</va-text>
 		          </div>
 		        </div>
 		      </va-card-content>
