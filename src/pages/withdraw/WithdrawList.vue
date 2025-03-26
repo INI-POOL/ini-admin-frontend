@@ -1,7 +1,7 @@
 <template>
   <div class="withdraw-list">
     <div class="mb-4">
-      <h1 class="text-2xl font-bold">提现管理 (热钱包余额：{{ hotAddressBalance || 0 }})</h1>
+      <h1 class="text-2xl font-bold">提现管理&nbsp;&nbsp;(热钱包余额：{{ hotAddressBalance || 0 }})</h1>
     </div>
 
     <!-- 列表 -->
@@ -28,6 +28,15 @@
            <template #cell(gas_fee)="{ value }">
               {{ removeTrailingZeros(value) }}
           </template>
+		  
+		  <template #cell(uid)="{ row }">
+		    <span 
+		      class="text-primary cursor-pointer hover:underline" 
+		      @click="handleUidClick(row.rowData)"
+		    >
+		      {{ row.rowData.uid }}
+		    </span>
+		  </template>
 
           <!-- 提现状态 -->
           <template #cell(status)="{ row }">
@@ -96,6 +105,34 @@
       </VaCardContent>
     </VaCard>
 
+	<VaModal v-model="showUidModal" title="用户详情" size="medium" hide-default-actions>
+	  <div v-if="loadingDetail" class="text-center p-4">
+		<VaProgressCircle indeterminate />
+	  </div>
+	  <div v-else-if="userDetail">
+		<!-- 根据接口返回数据渲染详情 -->
+		<va-card class="mb-1">
+		      <va-card-content>
+		        <div class="grid grid-cols-2 gap-4">
+		          <div>
+					<va-text class="font-bold">总收益：</va-text>
+					<va-text>{{ (userDetail.balance_amount || 0) + (userDetail.total_withdraw || 0) }}</va-text>
+					<br><br>
+		            <va-text class="font-bold">当前余额：</va-text>
+		            <va-text>{{ userDetail.balance_amount || 0 }}</va-text>
+				    <br><br>
+				    <va-text class="font-bold">已提现 (含手续费)：</va-text>
+				    <va-text>{{ userDetail.total_withdraw || 0 }}</va-text>
+		          </div>
+		        </div>
+		      </va-card-content>
+		</va-card>
+	  </div>
+	  <div v-else class="text-danger p-4">
+		数据加载失败，请重试。
+	  </div>
+	</VaModal>
+	
     <!-- 审核弹窗 -->
     <VaModal
       v-model="auditVisible"
@@ -225,6 +262,7 @@ import { ref, reactive, onMounted } from "vue";
 import { useToast } from "vuestic-ui";
 import { getWithdrawList, auditWithdraw, getHotAddressBalance } from "../../api/withdraw";
 import { formatDateTime } from "../../utils/date.ts";
+import { getUserList } from "../../api/user";
 import {removeTrailingZeros} from "../../utils/index";
 import { getUser } from "../../utils/auth";
 
@@ -397,6 +435,11 @@ const auditForm = reactive({
   audit_status: 1, // 默认选中通过
 });
 
+// 用户余额相关
+const showUidModal = ref(false);
+const loadingDetail = ref(false);
+const userDetail = ref(null);
+
 const handleAudit = (row) => {
   if (!row) {
     return;
@@ -405,6 +448,28 @@ const handleAudit = (row) => {
   auditForm.audit_status = 1; // 每次打开弹窗时重置为通过
   auditVisible.value = true;
 };
+
+const handleUidClick = async (row) => {
+	 console.log("row is",row)
+    showUidModal.value = true;
+    loadingDetail.value = true;
+	let params = {
+		page: 1,
+		pagesize: 10,
+		uid: row.uid,
+		currency : row.currency
+	}
+    try {
+      const response = await getUserList(params);
+	  console.log("response is",response)
+      userDetail.value = response?.[0];
+    } catch (error) {
+      console.error('获取用户详情失败:', error);
+      userDetail.value = null;
+    } finally {
+      loadingDetail.value = false;
+    }
+}
 
 // 提交审核
 const handleAuditSubmit = async () => {

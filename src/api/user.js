@@ -10,9 +10,6 @@ export function login(data) {
   return post("/api/v1/back_stage/google/secret/auth", data);
 }
 
-
-
-
 // 检查谷歌认证
 // {
 //     "google_code":"045938",
@@ -44,4 +41,9 @@ export function getUserInfo() {
 // 用户登出
 export function logout() {
   return post("/user/logout");
+}
+
+// 获取用户列表
+export function getUserList(params) {
+	return get("/api/v1/back_stage/user/list",params)
 }
