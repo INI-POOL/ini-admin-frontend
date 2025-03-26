@@ -1,2 +1,0 @@
-import{g as o,p as t}from"./request-BugqCKoK.js";function g(e){return t("/api/v1/back_stage/google/secret/auth",e)}function s(e){return t("/api/v1/back_stage/google/secret/bind",e)}function n(e){return o("/api/v1/back_stage/google/secret/get?user_name="+e)}function r(e){return o("/api/v1/back_stage/google_auth/judge?user_name="+e)}export{s as b,g as c,n as g,r as i};
-//# sourceMappingURL=user-BGQ1Cqua.js.map
