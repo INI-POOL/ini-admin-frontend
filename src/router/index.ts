@@ -58,8 +58,8 @@ const routes: Array<RouteRecordRaw> = [
         },
       },
       {
-        name: "machines",
-        path: "machines",
+        name: "machines_root",
+        path: "machines_root",
         component: () => import("../pages/machines/list.vue"),
         meta: {
           requiresAuth: true,
@@ -69,7 +69,7 @@ const routes: Array<RouteRecordRaw> = [
 	  {
 	    name: "pre_machines",
 	    path: "pre_machines",
-	    component: () => import("../pages/machines/pre.vue"),
+	    component: () => import("../pages/pre_alloc/pre_machine.vue"),
 	    meta: {
 	      requiresAuth: true,
 	      title: "预分配机器管理",
@@ -78,7 +78,7 @@ const routes: Array<RouteRecordRaw> = [
 	  {
 			name: "node_revenue",
 			path: "node_revenue",
-			component: () => import("../pages/node_revenue/list.vue"),
+			component: () => import("../pages/pre_alloc/node_revenue.vue"),
 			meta: {
 			  requiresAuth: true,
 			  title: "节点收益",
@@ -87,7 +87,7 @@ const routes: Array<RouteRecordRaw> = [
 	   {
 		  name: "alloc_tasks",
 		  path: "alloc_tasks",
-		  component: () => import("../pages/pre_alloc/list.vue"),
+		  component: () => import("../pages/pre_alloc/pre_alloc.vue"),
 		  meta: {
 		    requiresAuth: true,
 		    title: "分配任务",
@@ -102,6 +102,24 @@ const routes: Array<RouteRecordRaw> = [
 			title: "分配记录",
 		  },
 	    },
+		{
+		  name: "version",
+		  path: "version",
+		  component: () => import("../pages/version/version.vue"),
+		  meta: {
+			requiresAuth: true,
+			title: "版本管理",
+		  },
+		},
+		{
+		  name: "sub_user",
+		  path: "sub_user",
+		  component: () => import("../pages/user/sub_user.vue"),
+		  meta: {
+			requiresAuth: true,
+			title: "子账户管理",
+		  },
+		},
     ],
   },
 

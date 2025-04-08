@@ -5,18 +5,35 @@ export interface INavigationRoute {
   children?: INavigationRoute[];
 }
 
-  // "admin" : {
-  // 	  "preAlloc":"Pre Alloc",
-  // 	  "machines":"Machine List",
-  // 	  "preMachines":"Pre-alloc Machine Info",
-  // 	  "withdrawList":"Withdraw List",
-  // }
 export default {
   root: {
     name: "/",
     displayName: "navigationRoutes.home",
   },
   routes: [
+	  // {
+	  //   name: "dashboard",
+	  //   displayName: "仪表盘",
+	  //   meta: {
+	  //     icon: "",
+	  //   },
+	  // },
+	{
+	    name: "user",
+	    displayName: "用户管理",
+	    meta: {
+	      icon: "manage_accounts",
+	    },
+		children: [
+			{
+				name: 'sub_user',
+				displayName: "子账户管理",
+				meta: {
+				  icon: "contact_page",
+				},
+			},
+		],
+	},
     {
       name: "withdraw",
       displayName: "admin.withdrawList",
@@ -25,10 +42,10 @@ export default {
       },
     },
 	{
-	  name: "machines",
+	  name: "machines_root",
 	  displayName: "admin.machines",
 	  meta: {
-	    icon: "vuestic-iconset-dashboard", 
+	    icon: "storage", 
 	  },
 	},
 	{
@@ -38,19 +55,19 @@ export default {
 	    icon: "more_horiz",
 	  },
 	  children: [
-	    {
-	      name: 'pre_machines',
-	      displayName: "admin.preMachines",
-		  meta: {
-		    icon: "vuestic-iconset-dashboard",
-		  },
-	    },
+		{
+		    name: 'pre_machines',
+		    displayName: "admin.preMachines",
+		    meta: {
+		      icon: "vuestic-iconset-dashboard",
+		    },
+		},
         {
-	      name: 'node_revenue',
-	      displayName: 'admin.nodeRevenue',
-		  meta: {
-		    icon: "vuestic-iconset-dashboard",
-		  },
+	        name: 'node_revenue',
+	        displayName: 'admin.nodeRevenue',
+		    meta: {
+		      icon: "vuestic-iconset-dashboard",
+		    },
 	    },
 		{
 		  name: 'alloc_tasks',
@@ -65,7 +82,14 @@ export default {
 	  name: "allocated",
 	  displayName: "分配记录",
 	  meta: {
-	    icon: "vuestic-iconset-dashboard", 
+	    icon: "text_snippet", 
+	  },
+	},
+	{
+	  name: "version",
+	  displayName: "版本管理",
+	  meta: {
+	    icon: "publish", 
 	  },
 	},
     // {
