@@ -30,6 +30,10 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response) => {
     // 根据后端的响应格式进行相应调整
+	if (response.config.responseType === 'blob') {
+	  return response; // 直接返回 Blob
+	}
+	
     const res = response.data;
     if (res.code === 200) {
       // 假设后端用 code=200 表示成功

@@ -9,6 +9,14 @@ export function get(url, params) {
   });
 }
 
+export function getWithConfig(url, config = {}) {
+  return service({
+    url,
+    method: 'get',
+    ...config // 包含 params, headers 等所有配置
+  })
+}
+
 // 封装POST请求
 export function post(url, data) {
   return service({

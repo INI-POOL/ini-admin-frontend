@@ -38,6 +38,24 @@ export function formatDateTime(
     .replace("ss", seconds);
 }
 
+export function formatReleaseTime(timeStr) {
+    // 处理默认无效时间
+    if (timeStr === '0001-01-01T00:00:00Z') return '--';
+    
+    // 创建Date对象（自动处理时区）
+    const date = new Date(timeStr);
+    
+    // 提取时间组件（注意时区处理）
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 export function convertDateTime(isoString: string): string {
     const date = new Date(isoString);
     const year = date.getFullYear();
