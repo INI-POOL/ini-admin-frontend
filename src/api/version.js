@@ -1,4 +1,4 @@
-import { patch,get,post,getWithConfig } from "./request";
+import { patch,get,post,getWithConfig,deleteFunc } from "./request";
 
 // 查询机器可选项
 export function versionList(params) {
@@ -44,7 +44,6 @@ export function uploadApk(data) {
 	})
 }
 
-
 export function downloadApk(params) {
   return getWithConfig(`/api/v1/back_stage/version/download`, {
     // ✅ 正确参数结构
@@ -59,4 +58,9 @@ export function downloadApk(params) {
 	},
 	timeout: 60000
   })
+}
+
+export function deleteVersion(data) {
+	return deleteFunc(`/api/v1/back_stage/version/delete?version=${data.version}&system=${data.system}`, {
+	})
 }

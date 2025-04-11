@@ -17,6 +17,14 @@ export function getWithConfig(url, config = {}) {
   })
 }
 
+export function deleteFunc(url, data) {
+  return service({
+    url,
+    method: "delete",
+    data,
+  });
+}
+
 // 封装POST请求
 export function post(url, data) {
   return service({

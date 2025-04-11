@@ -141,7 +141,7 @@
 					        size="small"
 					        icon="edit"
 					        color="rgb(47, 148, 172)"
-					        @click="editProfit(row)"
+					        @click="editVersion(row)"
 					        title="修改版本信息"
 					        class="action-icon"
 					      />
@@ -178,6 +178,7 @@
 					        class="action-icon"
 							:loading="downloading[row?.rowData?.id]"
 					      />
+						  
 					    </va-button-group>					
 						<va-file-upload
 						  v-model="uploadFiles[row?.rowData?.id]"
@@ -198,6 +199,14 @@
 								:loading="uploading[row?.rowData?.id]"
 							/>
 						</va-file-upload>
+						<va-button
+						  size="small"
+						  icon="delete"
+						  color="rgb(208, 24, 39)"
+						  title="删除版本"
+						  @click="openDeleteConfirm(row.rowData)"
+						  class="action-icon delete-icon"
+						/>
 					  </div>
                 </template>
             </VaDataTable>
@@ -251,7 +260,6 @@
 			    <VaDateInput v-model="date" />
 				<VaTimeInput v-model="time" class="ml-2" />
 			
-			<!-- onCronCancel -->
 			    <va-button-group>
 					<va-button
 					  block 
@@ -291,13 +299,39 @@
 			
 				<div class="dialog-content">
 				  <p class="version-info">
-					即将发布版本：<span class="version-highlight">{{ pendingVersion }}</span>
+					即将为 <span class="system-highlight">{{ getSystemText(pendingSystem) }}</span> 系统发布版本：<span class="version-highlight">{{ pendingVersion }}</span>
 				  </p>
 				  <va-divider />
 				  <p class="confirm-text">该操作将立即生效且不可逆转，请确认是否继续？</p>
 				</div>
 			  </VaModal>
 			  
+			    <VaModal
+			      v-model="isDeleteConfirmVisible"
+			      title="系统提示"
+			      size="small"
+			      :message="deleteConfirmMessage"
+			      @ok="confirmDelete"
+			      @cancel="cancelDelete"
+			      ok-text="确认"
+			      cancel-text="取消"
+			      :ok-props="{ color: 'danger' }"
+			    >
+					<template #header>
+					  <div class="dialog-header">
+						<va-icon name="warning" color="warning" />
+						<span class="header-text">版本删除确认</span>
+					  </div>
+					</template>
+								
+					<div class="dialog-content">
+					  <p class="version-info">
+						即将为 <span class="system-highlight">{{ getSystemText(selectedSystem) }}</span> 系统删除版本：<span class="version-highlight">{{ selectedVersion }}</span>
+					  </p>
+					  <va-divider />
+					  <p class="confirm-text">该操作将立即生效且不可逆转，请确认是否继续？</p>
+					</div>
+				</VaModal>
         </div>
 
         <!-- 分页 -->
@@ -320,10 +354,9 @@
 
 <script setup>
 import dayjs from 'dayjs'
-import { ElMessage, ElLoading } from 'element-plus'
-import { ref, reactive,computed } from 'vue'
-import { getPoolProfits, updatePoolProfit } from "../../api/node"
-import { versionList, addVersion, modifyVersion, publishVersion,uploadApk,downloadApk,timedPublishVersion } from "../../api/version"
+import { ElMessage } from 'element-plus'
+import { ref, reactive, computed } from 'vue'
+import { versionList, addVersion, modifyVersion, publishVersion,uploadApk,downloadApk,timedPublishVersion,deleteVersion } from "../../api/version"
 import { formatHashRate,convertDateTimeToDate,formatReleaseTime } from "../../utils/date.ts"
 import { useToast, useForm } from "vuestic-ui"
 import { saveAs } from 'file-saver'
@@ -336,9 +369,39 @@ const requiredAddRule = (value) => {
   return !!value?.trim() || '该字段为必填项'
 }
 
-const basic = ref([])
+const isDeleteConfirmVisible = ref(false)
+const selectedVersion = ref(null)
+const selectedSystem = ref(null)
 
-const hasMoreActions = ref(false)
+const openDeleteConfirm = (rowData) => {
+  selectedVersion.value = rowData.version
+  selectedSystem.value = rowData.system
+  isDeleteConfirmVisible.value = true
+}
+
+const confirmDelete = async () => {
+  try {
+    await deleteVersion({
+      version: selectedVersion.value,
+      system: selectedSystem.value
+    })
+    toast({ message: '删除成功', color:'rgb(47, 148, 172)' })
+    // 这里可以触发表格刷新逻辑
+	fetchData()
+  } catch (error) {
+    toast({ 
+      message: `删除失败: ${error.message || '未知错误'}`, 
+      color: 'danger' 
+    })
+  } finally {
+    isDeleteConfirmVisible.value = false
+  }
+}
+
+const cancelDelete = () => {
+  toast({ message: '已取消删除', color: 'info' })
+  isDeleteConfirmVisible.value = false
+}
 
 const uploading = ref({})
 const downloading = ref({})
@@ -494,12 +557,6 @@ const openDatePicker = (row) => {
   isDatePickerVisible.value = true
 }
 
-// 禁用过去日期
-const disabledDate = current => {
-	
-  return current && current < dayjs().startOf('day')
-}
-
 const getSystemText = (system) => {
 	if (system === "android") {
 		return "Android"
@@ -507,142 +564,7 @@ const getSystemText = (system) => {
 		return "IOS"
 	}
 }
-
-// 时间禁用规则
-const disabledTime = (current) => {
-  const now = dayjs()
   
-  // 如果是今天
-  if (current.isSame(now, 'day')) {
-    return {
-      disabledHours: () => [...Array(now.hour()).keys()], // 禁用过去小时
-      disabledMinutes: (selectedHour) => {
-        if (selectedHour === now.hour()) {
-          return [...Array(now.minute() + 1).keys()] // 禁用当前小时已过分钟
-        }
-        return []
-      },
-      // 只允许整点和30分钟
-      // disabledSeconds: () => [1,60].filter(v => v % 30 !== 0)
-    }
-  }
-  
-  // 未来日期允许所有时间但必须整点或30分
-  return {
-    // disabledSeconds: () => [1,60].filter(v => v % 30 !== 0)
-  }
-}
-
-// 判断是否是今天
-const isToday = current => {
-  return dayjs().isSame(current, 'day')
-}
-
-
-
-
-
-// 响应式状态
-// 获取默认日期（当前日期减一天）
-const currentDate = new Date()
-const currentYear = currentDate.getFullYear();
-const currentMonth = currentDate.getMonth()+1;
-const currentDay = currentDate.getDate();
-
-const currentHour = currentDate.getHours()
-const currentMinute = currentDate.getMinutes()
-
-const selectedMonth = ref({
-    text: `${currentMonth}月`,
-    value: currentMonth
-  })
-
-const selectedDay = ref(null)
-  
-const selectedTime = ref(null)
-const isFormValid = computed(() => 
-  selectedMonth.value !== null &&
-  selectedDay.value !== null &&
-  selectedTime.value !== null
-)
-
-// const requiredRule = v => !!v || '必填项'
-const timeValidationRule = () => {
-  // const [hour, minute] = selectedTime.value.split(':').map(Number)
-  // const selectedDate = new Date(
-  //   currentDate.getFullYear(),
-  //   selectedMonth.value,
-  //   selectedDay.value,
-  //   hour,
-  //   minute
-  // )
-  
-  // return selectedDate > currentDate || '时间必须晚于当前'
-}
-
-const monthOptions = Array.from({ length: 6 }, (_, i) => {
-  const date = new Date()
-  date.setMonth(date.getMonth() + i + 1)
-  return {
-    text: `${date.getMonth()}月`,
-    value: date.getMonth()
-  }
-})
-
-const dayOptions = ref([])
-
-const updateDateOptions = (selectedMonth) => {
-	
-  const year = new Date().getFullYear()
-  const daysInMonth = new Date(year, selectedMonth?.value+1, 0).getDate()
-  
-  
-  dayOptions.value = Array.from({ length: daysInMonth }, (_, i) => {
-    const day = i + 1
-	 const isValid = (
-	    ((selectedMonth?.value) > currentMonth) ||
-	    ((selectedMonth?.value) === currentMonth && day >= currentDay)
-	  )
-	  return isValid ? { text: `${day}日`, value: day } : null
-  }).filter(Boolean);
-
-  selectedDay.value = dayOptions.value[0]
-  // .filter(day => {
-  //   const isCurrentMonth = selectedMonth === currentDate.getMonth()
-  //   return !isCurrentMonth || day.value > currentDate.getDate()
-  // })
-  
-  
-  
-   console.log("daysInMonth  is ",daysInMonth)
-  console.log("dayOptions after is ",dayOptions)
-}
-
-const timeOptions = ref([])
-const updateTimeOptions = () => {
-  const startHour = selectedDay.value === currentDay 
-    ? currentHour + (currentMinute >= 30 ? 1 : 0)
-    : 0
-  
-  const hours = Array.from({ length: 24 - startHour }, (_, i) => startHour + i)
-  
-  timeOptions.value = hours.flatMap(hour => [
-    { text: `${hour}:00`, value: `${hour}:00` },
-    { text: `${hour}:30`, value: `${hour}:30` }
-  ]).filter(time => {
-    if (selectedDay.value === currentDay) {
-      const [h, m] = time.value.split(':').map(Number)
-      return h > currentHour || (h === currentHour && m >= currentMinute)
-    }
-    return true
-  })
-}
-
-const currencyOptions = ref([
-    { value: 'aleo', text: 'Aleo' },
-    // 其他币种选项
-])
-
 const currentStartIndex = ref(1)
 const totalItems = ref(0)
 const versions = ref([])
@@ -651,6 +573,8 @@ const loading = ref(false)
 const showConfirmDialog = ref(false)
 const pendingVersion = ref(null)
 const pendingSystem = ref(null)
+const deletePendingVersion = ref(null)
+const deletePendingSystem = ref(null)
 
 const confirmPublish = (row) => {
   pendingVersion.value = row.rowData.version
@@ -660,8 +584,6 @@ const confirmPublish = (row) => {
 }
 
 const handleConfirm = async () => {
-	console.log("Version is",pendingVersion.value)
-	console.log("system is",pendingSystem.value)
   try {
 	await publishNewVersion(pendingVersion.value,pendingSystem.value)
   } catch (error) {
@@ -737,12 +659,6 @@ const addVersionForm = () => {
     isAddModalVisible.value = true
 }
 
-const publishVersionForm = () => {
-	updateDateOptions(selectedMonth)
-	updateTimeOptions()
-	isPublishVisible.value = true
-}
-
 const truncateText = (text, maxLength) => {
       if (!text) return ''
       return text.length > maxLength 
@@ -814,7 +730,7 @@ const editForm = reactive({
 	download_url: ''
 })
 
-const editProfit = (row) => {
+const editVersion = (row) => {
     editForm.version = row.rowData.version
 	editForm.system = row.rowData.system
 	editForm.download_url = row.rowData.download_url
@@ -882,7 +798,6 @@ const cronPublishVersion = async (params) => {
 }
 
 const onAddOk = async () => {
-
 		try {
 		    const msg = await addVersion({
 		        version: addForm.version,
@@ -903,8 +818,7 @@ const onAddOk = async () => {
 		        message: error.message || "修改失败",
 		        color: "danger",
 		    })
-		}
-	
+		}	
 }
 
 const onCancel = () => {
@@ -913,9 +827,6 @@ const onCancel = () => {
 }
 
 const onCronCancel = () => {
-	selectedMonth.value = null
-	selectedDay.value = null
-	selectedTime.value = null
 	isDatePickerVisible.value = false
 }
 
@@ -957,13 +868,6 @@ fetchData()
 </script>
 
 <style scoped>
-/* 	.va-modal {
-	  max-width: 400px;
-	}
-	
-	.va-date-input {
-	  width: 100%;
-	} */
 .time-indicator {
   font-size: 12px;
   color: #1890ff;
@@ -1004,6 +908,12 @@ fetchData()
 
 .version-highlight {
   color: var(--va-success);
+  font-weight: 500;
+  font-family: monospace;
+}
+
+.system-highlight {
+  color: #126fc4;
   font-weight: 500;
   font-family: monospace;
 }
@@ -1106,6 +1016,10 @@ fetchData()
     height: 100%;
     cursor: pointer;
   }
+}
+
+.delete-icon {
+	 margin-left: -2px;
 }
 
 /* 悬停效果增强 */
