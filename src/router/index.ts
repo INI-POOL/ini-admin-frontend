@@ -57,24 +57,24 @@ const routes: Array<RouteRecordRaw> = [
           title: "提现管理",
         },
       },
-      {
-        name: "machines_root",
-        path: "machines_root",
-        component: () => import("../pages/machines/list.vue"),
-        meta: {
-          requiresAuth: true,
-          title: "机器管理",
-        },
-      },
-	  {
-	    name: "pre_machines",
-	    path: "pre_machines",
-	    component: () => import("../pages/pre_alloc/pre_machine.vue"),
-	    meta: {
-	      requiresAuth: true,
-	      title: "预分配机器管理",
-	    },
-	  },
+      // {
+      //   name: "machines_root",
+      //   path: "machines_root",
+      //   component: () => import("../pages/machines/list.vue"),
+      //   meta: {
+      //     requiresAuth: true,
+      //     title: "机器管理",
+      //   },
+      // },
+	  // {
+	  //   name: "pre_machines",
+	  //   path: "pre_machines",
+	  //   component: () => import("../pages/pre_alloc/pre_machine.vue"),
+	  //   meta: {
+	  //     requiresAuth: true,
+	  //     title: "预分配机器管理",
+	  //   },
+	  // },
 	  {
 			name: "node_revenue",
 			path: "node_revenue",
@@ -102,15 +102,24 @@ const routes: Array<RouteRecordRaw> = [
 			title: "分配记录",
 		  },
 	    },
-		{
-		  name: "version",
-		  path: "version",
-		  component: () => import("../pages/version/version.vue"),
-		  meta: {
-			requiresAuth: true,
-			title: "版本管理",
-		  },
-		},
+		// {
+		//   name: "version",
+		//   path: "version",
+		//   component: () => import("../pages/version/version.vue"),
+		//   meta: {
+		// 	requiresAuth: true,
+		// 	title: "版本管理",
+		//   },
+		// },
+		// {
+		//   name: "notice",
+		//   path: "notice",
+		//   component: () => import("../pages/notice/notice.vue"),
+		//   meta: {
+		// 	requiresAuth: true,
+		// 	title: "通知管理",
+		//   },
+		// },
 		{
 		  name: "sub_user",
 		  path: "sub_user",

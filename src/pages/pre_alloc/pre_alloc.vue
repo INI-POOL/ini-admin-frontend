@@ -10,6 +10,7 @@
                 :style="{ maxWidth: '20%'}"
 				:allowed-days="(date) => !isDateDisabled(date)"
             />
+			<va-select v-model="searchCurrency" :options="currencyOptions" placeholder="币种筛选" class="mb-1 mr-5" :style="{ maxWidth: '16%' }" />
            <va-button @click="refreshData" class="ml-5" color="rgb(47, 148, 172)">
                刷新
            </va-button>
@@ -151,10 +152,8 @@ const { init: toast } = useToast()
 const searchDate = ref(getYesterday(8))
 
 const searchCurrency = ref('')
-// const currencyOptions = ref([
-//     { value: 'aleo', text: 'Aleo' },
-//     // 其他币种选项
-// ])
+const currencyOptions = ref([])
+
 const allocOptions = ref([
     { value: 'hashrate', text: '算力' },
     { value: 'time', text: '时长' },
@@ -344,6 +343,7 @@ const allocOnline = async (row,allocType) => {
   } finally {
     isLoading.value = false; // 隐藏加载状态
 	fetchData();
+	fetchMachineOptions()
   }
 };
 
@@ -355,7 +355,9 @@ const fetchMachineOptions = async () => {
       // 带空值保护的转换
 	  
 	  const defaultOption = { value: '', text: '所有' };
+	  currencyOptions.value = [defaultOption, ...convertToOptions(response.currencies || [])];
 	  groupOptions.value = [defaultOption, ...convertToOptions(response.groups || [])];
+	  
   } catch (error) {
     console.error('接口调用失败:', error)
     // 异常处理逻辑
@@ -368,7 +370,7 @@ const fetchData = async () => {
     try {
         const params = {
             date: queryParams.date,
-            currency: searchCurrency.value?.value || 'aleo'
+            currency: searchCurrency.value?.value
         }
         
         // 只有当选择了日期时才添加日期参数
@@ -406,6 +408,7 @@ watch([searchDate, searchCurrency], () => {
     queryParams.page = 1
     currentStartIndex.value = 1
     fetchData()
+	fetchMachineOptions()
 })
 
 const statusMap = {
@@ -458,18 +461,22 @@ const handlePageChange = (startIndex) => {
     queryParams.page = Math.ceil(startIndex / queryParams.pagesize)
     currentStartIndex.value = startIndex
     fetchData()
+	fetchMachineOptions()
 }
 
 const refreshList = () => {
     fetchData()
+	fetchMachineOptions()
 }
 
 const refreshData = () => {
     fetchData()
+	fetchMachineOptions()
 }
 
 // 初始化加载数据
 fetchData()
+fetchMachineOptions()
 </script>
 
 <style scoped>

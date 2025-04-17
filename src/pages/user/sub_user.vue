@@ -2,6 +2,11 @@
     <va-card class="machines-list">
         <!-- 搜索和过滤区域 -->
         <div class="mb-4">
+			<va-input v-model="searchUid" label="用户UID" placeholder="搜索用户UID" class="mb-1 mr-8" :style="{ maxWidth: '13%' }">
+			    <template #prepend>
+			        <!-- <va-icon name="mobile" /> -->
+			    </template>
+			</va-input>
 			<va-input v-model="searchSub" label="子账户" placeholder="搜索子账户" class="mb-1 mr-8" :style="{ maxWidth: '13%' }">
 			    <template #prepend>
 			        <!-- <va-icon name="mobile" /> -->
@@ -126,6 +131,8 @@ const currencyOptions = ref([])
 const searchSub = ref('')
 const sub_users = ref([])
 
+const searchUid = ref('')
+
 const currentStartIndex = ref(1)
 const totalItems = ref(0)
 
@@ -161,7 +168,8 @@ const fetchData = async () => {
 			page: queryParams.page,
 			pagesize: queryParams.pagesize,
             currency: searchCurrency.value?.value || 'aleo',
-			sub_user_name: searchSub?.value
+			sub_user_name: searchSub?.value,
+			uid: searchUid?.value
         }
         
         const res = await getSubUsers(params)
@@ -188,7 +196,7 @@ const fetchData = async () => {
 // 添加 watch 以监听搜索条件变化
 import { watch } from 'vue'
 
-watch([searchCurrency,searchSub], () => {
+watch([searchCurrency,searchSub,searchUid], () => {
     queryParams.page = 1
     currentStartIndex.value = 1
     fetchData()
@@ -214,6 +222,7 @@ const handlePageChange = (startIndex) => {
 
 const refreshData = () => {
 	searchSub.value = ''
+	searchUid.value = ''
     fetchData()
 	fetchMachineOptions()
 }

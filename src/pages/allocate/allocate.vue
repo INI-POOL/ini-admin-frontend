@@ -11,7 +11,7 @@
 				:allowed-days="(date) => !isDateDisabled(date)"
             />
 			分组：
-			<va-select v-model="searchGroup" :options="groupOptions" placeholder="组名" class="filter-item mb-1 mr-8" :style="{ maxWidth: '13%' }" />
+			<va-select v-model="searchGroup" :options="groupOptions" placeholder="组名" class="filter-item mb-1 mr-5" :style="{ maxWidth: '13%' }" />
 <!--            <div class="filters-row mt-4">
                 <va-button @click="refreshList" class="ml-5">
                     搜索
@@ -20,6 +20,8 @@
                     刷新
                 </va-button>
             </div> -->
+			币种筛选：
+			<va-select v-model="searchCurrency" :options="currencyOptions" placeholder="币种" class="mb-1 mr-5" :style="{ maxWidth: '16%' }" />
         </div>
 
         <!-- 列表区域 -->
@@ -72,10 +74,7 @@ const { init: toast } = useToast()
 const searchDate = ref(getYesterday(8))
 
 const searchCurrency = ref('')
-// const currencyOptions = ref([
-//     { value: 'aleo', text: 'Aleo' },
-//     // 其他币种选项
-// ])
+const currencyOptions = ref([])
 const searchMachine = ref('');
 
 const allocOptions = ref([
@@ -115,6 +114,7 @@ const fetchMachineOptions = async () => {
   try {
     const response = await machineOptions()
     const defaultOption = { value: '', text: '所有' };
+	currencyOptions.value = [defaultOption, ...convertToOptions(response.currencies || [])];
     groupOptions.value = [defaultOption, ...convertToOptions(response.groups || [])];
   } catch (error) {
     console.error('接口调用失败:', error)
@@ -163,7 +163,7 @@ const fetchData = async () => {
 			page: queryParams.page,
 			pagesize: queryParams.pagesize,
             date: queryParams.date,
-            currency: searchCurrency.value?.value || 'aleo'
+            currency: searchCurrency.value?.value
         }
         
         // 只有当选择了日期时才添加日期参数

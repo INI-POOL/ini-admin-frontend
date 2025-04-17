@@ -131,8 +131,8 @@ const fetchMachineOptions = async () => {
   try {
     const response = await machineOptions()
       // 带空值保护的转换
-	  currencyOptions.value = convertToOptions(response.currencies || [])
 	  const defaultOption = { value: '', text: '所有' };
+	  currencyOptions.value = [defaultOption, ...convertToOptions(response.currencies || [])];
 	  groupOptions.value = [defaultOption, ...convertToOptions(response.groups || [])];
   } catch (error) {
     console.error('接口调用失败:', error)
