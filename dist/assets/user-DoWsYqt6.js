@@ -1,2 +1,0 @@
-import{g as t,p as a}from"./request-CXVB8vf5.js";function g(e){return a("/api/v1/back_stage/google/secret/auth",e)}function s(e){return a("/api/v1/back_stage/google/secret/bind",e)}function r(e){return t("/api/v1/back_stage/google/secret/get?user_name="+e)}function n(e){return t("/api/v1/back_stage/google_auth/judge?user_name="+e)}function i(e){return t("/api/v1/back_stage/user/list",e)}export{i as a,s as b,g as c,r as g,n as i};
-//# sourceMappingURL=user-DoWsYqt6.js.map
