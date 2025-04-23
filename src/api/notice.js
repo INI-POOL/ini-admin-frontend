@@ -6,7 +6,13 @@ export function noticeList(params) {
 }
 
 export function addNotice(data) {
-  return put("/api/v1/back_stage/notice/add",data);
+  return put("/api/v1/back_stage/notice/add",data)
+  .then((response) => {
+    if (!response) {
+      throw new Error("请求失败，未返回响应数据");
+    }
+    return response;
+  });
 }
 
 export function modifyNotice(id, data) {
@@ -37,4 +43,8 @@ export function pushNotice(data) {
       }
       return response;
     });
+}
+
+export function noticeTypes() {
+	return get("/api/v1/back_stage/notice/type");
 }

@@ -7,19 +7,19 @@
                     v-model="searchDate"
                     placeholder="选择日期"
                     class="mr-5"
-                    :style="{ maxWidth: '18%'}"
+                    :style="{ maxWidth: '12%'}"
 					:allowed-days="(date) => !isDateDisabled(date)"
                 />
+				
                 <va-select
                     v-model="searchCurrency"
                     :options="currencyOptions"
                     placeholder="币种筛选"
                     class="mr-5"
-                    :style="{ maxWidth: '16%' }"
+                    :style="{ maxWidth: '12%' }"
                 />
-				分组：
-				<va-select v-model="searchGroup" :options="groupOptions" placeholder="组名" class="filter-item mb-1 mr-8" :style="{ maxWidth: '13%' }" />
-                <va-button @click="refreshData" class="ml-5" color="rgb(47, 148, 172)">
+				<va-select v-model="searchGroup" :options="groupOptions" placeholder="组名" class="filter-item mr-6" :style="{ maxWidth: '12%' }" />
+                <va-button @click="refreshData" class="" color="rgb(47, 148, 172)">
                     刷新
                 </va-button>
             </div>
@@ -119,7 +119,7 @@ const { init: toast } = useToast()
 // 修改初始值
 const searchDate = ref()
 
-const searchCurrency = ref('aleo')
+const searchCurrency = ref('')
 const currencyOptions = ref([])
 
 const groupOptions = ref([]);
@@ -150,7 +150,7 @@ const queryParams = reactive({
     page: 1,
     pagesize: 15,
     date: new Date().toISOString().split('T')[0],
-    currency: 'aleo'
+    currency: ''
 })
 
 // 添加日期格式化函数
@@ -170,7 +170,7 @@ const fetchData = async () => {
         const params = {
             page: queryParams.page,
             pagesize: queryParams.pagesize,
-            currency: searchCurrency.value?.value || 'aleo',
+            currency: searchCurrency.value?.value,
 			group: searchGroup.value?.value
         }
         
@@ -215,7 +215,8 @@ const poolTypeMap = {
                 0: '未知',
                 1: 'zkwork',
                 2: 'oula',
-                3: 'daxiang'
+                3: 'daxiang',
+				4: 'f2pool'
             }
 
 const columns = [
@@ -308,6 +309,7 @@ const handlePageChange = (startIndex) => {
 const refreshData = () => {
 	searchDate.value = null;
 	searchGroup.value = '';
+	searchCurrency.value = '';
     fetchData()
 	fetchMachineOptions()
 }

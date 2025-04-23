@@ -3,18 +3,24 @@
         <!-- 搜索和过滤区域 -->
         <div class="mb-4">
             <div class="filters-row">
-<!-- 				选择系统:
+				内容查询：
+				<va-input v-model="searchContent" placeholder="请输入消息内容" class="mb-1 mr-6" :style="{ maxWidth: '13%' }">
+				    <template #prepend>
+				        <!-- <va-icon name="mobile" /> -->
+				    </template>
+				</va-input>
+				类型筛选：
 				<va-select
-				    v-model="searchSystem"
-				    :options="systemOptions"
-				    placeholder="系统筛选"
-				    class="ml-2"
-				    :style="{ maxWidth: '10%' }"
-				/> -->
-				<va-button @click="addVersionForm" color="rgb(47, 148, 172)" class="ml-5">
+				    v-model="selectNotice"
+				    :options="noticeTypeOptions"
+				    placeholder="请选择通知类型"
+				    class="mb-1"
+				    :style="{ maxWidth: '16%' }"
+				/>
+				<va-button @click="addVersionForm" color="rgb(47, 148, 172)" class="mb-1 ml-6">
 				    新增通知
 				</va-button>
-				<va-button @click="refreshData" color="rgb(47, 148, 172)" class="ml-2">
+				<va-button @click="refreshData" color="rgb(47, 148, 172)" class="mb-1 ml-6">
 				    刷新
 				</va-button>
 				<VaModal
@@ -84,7 +90,7 @@
 					  <div class="action-container">
 					    <!-- 主要操作：紧凑图标按钮 -->
 						<va-button-group>
-							<va-button 
+							<!-- <va-button 
 								size="small"
 								icon="edit"
 								color="rgb(47, 148, 172)"
@@ -99,7 +105,7 @@
 							  title="推送"
 							  @click="confirmPublish(row)"
 							  class="action-icon"
-							/>
+							/> -->
 							<va-button
 							  size="small"
 							  icon="delete"
@@ -222,17 +228,9 @@
 					<template #header>
 					  <div class="dialog-header">
 						<va-icon name="warning" color="warning" />
-						<span class="header-text">版本删除确认</span>
+						<span class="header-text">确认删除？</span>
 					  </div>
 					</template>
-								
-					<div class="dialog-content">
-					  <p class="version-info">
-						即将为 <span class="system-highlight">{{ getSystemText(selectedSystem) }}</span> 系统删除版本：<span class="version-highlight">{{ selectedVersion }}</span>
-					  </p>
-					  <va-divider />
-					  <p class="confirm-text">该操作将立即生效且不可逆转，请确认是否继续？</p>
-					</div>
 				</VaModal>
 				
 				<va-modal v-model="showAddModal" hide-default-actions size="medium">
@@ -335,7 +333,7 @@ import dayjs from 'dayjs'
 import { ElMessage } from 'element-plus'
 import { ref, reactive, computed } from 'vue'
 import { versionList, addVersion, modifyVersion, publishVersion,uploadApk,downloadApk,timedPublishVersion,deleteVersion } from "../../api/version"
-import { noticeList, addNotice, modifyNotice, pushNotice,deleteNotice } from "../../api/notice"
+import { noticeList, addNotice, modifyNotice, pushNotice,deleteNotice,noticeTypes } from "../../api/notice"
 import { formatDateTime } from "../../utils/date.ts"
 import { useToast, useForm } from "vuestic-ui"
 import { saveAs } from 'file-saver'
@@ -351,31 +349,55 @@ const requiredAddRule = (value) => {
 const isDeleteConfirmVisible = ref(false)
 const selectedVersion = ref(null)
 const selectedSystem = ref(null)
+const deleteId = ref(null)
+
+const searchContent = ref('')
+
+const selectNotice = ref('')
 
 const showAddModal = ref(false)
 const title = ref('')
 const spec = ref('')
 const content = ref('')
 
+const noticeTypeOptions = ref([])
+
 const openDeleteConfirm = (rowData) => {
-  selectedVersion.value = rowData.version
-  selectedSystem.value = rowData.system
+  deleteId.value = rowData.id
   isDeleteConfirmVisible.value = true
 }
 
+const convertToOptions = (arr) => 
+  arr.map(item => ({ value: item, text: item }));
+const fetchNoticeOptions = async () => {
+  try {
+    const response = await noticeTypes()
+	const defaultOption = { value: '', text: '所有' };
+	noticeTypeOptions.value = [defaultOption, ...convertToOptions(response || [])];
+  } catch (error) {
+    toast({
+      message: error,
+      color: 'danger'
+    })
+  }
+}
+
 const titleLength = () => {
-	return title.trim().length
+	return title.value.trim().length
 }
 
 const specLength = () => {
-	return spec.trim().length
+	return spec.value.trim().length
 }
 
 const contentLength = () => {
-	return content.trim().length
+	return content.value.trim().length
 }
 
 const isFormValid = () => {
+	console.log("titleLength is",titleLength())
+		console.log("contentLength is",contentLength())
+			console.log("specLength is",specLength())
 	return titleLength() > 0 && 
 		 titleLength() <= 50 &&
 		 specLength() > 0 &&
@@ -390,8 +412,8 @@ const resetAddNoticeForm = () => {
    content.value = ''
 }
 
-const handleSubmit = () => {
-      if (!isFormValid) {
+const handleSubmit = async () => {
+      if (!isFormValid()) {
         toast({
           message: '请检查输入内容是否符合要求',
           color: 'danger'
@@ -400,21 +422,24 @@ const handleSubmit = () => {
       }
 	  
 	  const params = {
-			  title: title.value,
-			  title_en: title.value,
-			  spec: spec.value
+		  title: title.value,
+		  title_en: title.value,
+		  spec: spec.value,
+		  spec_en: spec.value,
+		  content: content.value,
+		  content_en: content.value
 	  }
-	  	  
-	  try {		  
-	    addNotice(params)
+	
+	  try {				  
+	    await addNotice(params)
 	    toast({ message: '新增成功', color:'rgb(47, 148, 172)' })
-	  	fetchData()
 	  } catch (error) {
 	    toast({ 
 	      message: `删除失败: ${error.message || '未知错误'}`, 
 	      color: 'danger' 
 	    })
 	  } finally {
+		fetchData()
 		resetAddNoticeForm()
 	    showAddModal.value = false
 	  }
@@ -427,19 +452,17 @@ const cancel = () => {
 
 const confirmDelete = async () => {
   try {
-    await deleteVersion({
-      version: selectedVersion.value,
-      system: selectedSystem.value
-    })
+    await deleteNotice(deleteId.value)
     toast({ message: '删除成功', color:'rgb(47, 148, 172)' })
     // 这里可以触发表格刷新逻辑
-	fetchData()
   } catch (error) {
     toast({ 
       message: `删除失败: ${error.message || '未知错误'}`, 
       color: 'danger' 
     })
   } finally {
+	fetchData()
+	fetchNoticeOptions()
     isDeleteConfirmVisible.value = false
   }
 }
@@ -489,6 +512,7 @@ const handleUpload = async (files, row) => {
 		  duration: 5000
 	  })
 	  fetchData()
+	  fetchNoticeOptions()
   } catch (error) {
 	console.error('上传失败:', {
 	  request: error.config,
@@ -719,6 +743,8 @@ const fetchData = async () => {
         const params = {
             page: queryParams.page,
             pagesize: queryParams.pagesize,
+			content: searchContent?.value,
+			type: selectNotice.value?.value
         }
 		
 		if (searchSystem) {
@@ -749,10 +775,11 @@ const fetchData = async () => {
 
 import { watch } from 'vue'
 
-watch([searchSystem], () => {
+watch([searchSystem,searchContent,selectNotice], () => {
     queryParams.page = 1
     currentStartIndex.value = 1
     fetchData()
+	fetchNoticeOptions()
 })
 
 const columns = [
@@ -814,6 +841,7 @@ const publishNewVersion = async (version,system) => {
 		  duration: 3000
 		})
         await fetchData()
+		fetchNoticeOptions()
     } catch (error) {
         toast({
             message: error.message || "发布失败",
@@ -832,6 +860,7 @@ const cronPublishVersion = async (params) => {
 		  duration: 30000
 		})
         await fetchData()
+		fetchNoticeOptions()
     } catch (error) {
         toast({
             message: error.message || "定时发布失败",
@@ -900,15 +929,20 @@ const handlePageChange = (startIndex) => {
     queryParams.page = Math.ceil(startIndex / queryParams.pagesize)
     currentStartIndex.value = startIndex
     fetchData()
+	fetchNoticeOptions()
 }
 
 const refreshData = () => {
 	searchSystem.value = ''
+	searchContent.value = ''
+	selectNotice.value = ''
     fetchData()
+	fetchNoticeOptions()
 }
 
 // 初始化加载数据
 fetchData()
+fetchNoticeOptions()
 </script>
 
 <style scoped>

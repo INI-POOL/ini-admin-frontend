@@ -2,15 +2,14 @@
     <va-card class="machines-list">
         <!-- 搜索和过滤区域 -->
         <div class="mb-4">
-			选择日期：
             <va-date-input
                 v-model="searchDate"
                 placeholder="选择日期"
-                class="mb-1 mr-5"
-                :style="{ maxWidth: '20%'}"
+                class="mb-1 mr-8"
+                :style="{ maxWidth: '12%'}"
 				:allowed-days="(date) => !isDateDisabled(date)"
             />
-			<va-select v-model="searchCurrency" :options="currencyOptions" placeholder="币种筛选" class="mb-1 mr-5" :style="{ maxWidth: '16%' }" />
+			<va-select v-model="searchCurrency" :options="currencyOptions" placeholder="币种筛选" class="mb-1 mr-5" :style="{ maxWidth: '12%' }" />
            <va-button @click="refreshData" class="ml-5" color="rgb(47, 148, 172)">
                刷新
            </va-button>
@@ -470,6 +469,8 @@ const refreshList = () => {
 }
 
 const refreshData = () => {
+	searchDate.value = getYesterday(8);
+	searchCurrency.value = '';
     fetchData()
 	fetchMachineOptions()
 }

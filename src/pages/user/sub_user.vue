@@ -153,7 +153,8 @@ const convertToOptions = (arr) =>
 const fetchMachineOptions = async () => {
   try {
     const response = await machineOptions()
-    currencyOptions.value = convertToOptions(response.currencies || [])
+	const defaultOption = { value: '', text: '所有' };
+	currencyOptions.value = [defaultOption, ...convertToOptions(response.currencies || [])];
   } catch (error) {
     console.error('接口调用失败:', error)
     // 异常处理逻辑
