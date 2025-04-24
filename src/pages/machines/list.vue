@@ -31,7 +31,7 @@
                 </va-button>
 				<va-button @click="refreshData" class="ml-5" color="rgb(47, 148, 172)">
 				    <!-- <va-icon name="refresh" /> -->
-				    刷新
+				    重置
 				</va-button>
             </div>
         </div>
@@ -157,7 +157,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { machinList, updateMachine,machineOptions } from "../../api/machines"
 import { formatDateTime,convertDateTime } from "../../utils/date.ts";
 import { useToast } from "vuestic-ui";
@@ -204,11 +204,12 @@ const convertToOptions = (arr) =>
   
 const fetchMachineOptions = async () => {
   try {
-    const response = await machineOptions()
+	  const response = await machineOptions()
       // 带空值保护的转换
-      currencyOptions.value = convertToOptions(response.currencies || [])
-      idcOptions.value = convertToOptions(response.idcs || [])
-      subUserOptions.value = convertToOptions(response.sub_users || [])
+	  const defaultOption = { value: '', text: '所有' };
+	  currencyOptions.value = [defaultOption, ...convertToOptions(response.currencies || [])];
+	  idcOptions.value = [defaultOption, ...convertToOptions(response.idcs || [])];
+	  subUserOptions.value = [defaultOption, ...convertToOptions(response.sub_users || [])];
     
   } catch (error) {
     console.error('接口调用失败:', error)
@@ -277,6 +278,12 @@ const fetchData = async () => {
     }
 }
 
+watch([searchMachine, searchMobile,searchSubUser,searchCurrency,searchUid,searchIdc], () => {
+    queryParams.page = 1
+    currentStartIndex.value = 1
+    fetchData()
+})
+
 const getStatusColor = (status) => {
     const colors = {
         active: 'success',
@@ -316,6 +323,12 @@ const onCancel = () => {
 };
 
 const refreshData = () => {
+	searchMachine.value = '' 
+	searchMobile.value = ''
+	searchSubUser.value = '' 
+	searchCurrency.value = ''
+	searchUid.value = ''
+	searchIdc.value = ''
 	fetchData();
 	fetchMachineOptions();
 }

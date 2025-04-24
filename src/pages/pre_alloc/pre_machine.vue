@@ -146,7 +146,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import { preMachineList, preMachineModify, machineOptions } from "../../api/machines"
 import { formatDateTime,convertDateTimeToDate,isDateDisabled,getYesterday,formatHashRate } from "../../utils/date.ts";
 import { useToast,VaDatePicker, VaButton, VaIcon,VaPopover } from "vuestic-ui";
@@ -298,8 +298,6 @@ const getStatusColor = (status) => {
     }
     return colors[status] || 'gray'
 }
-
-import { watch } from 'vue'
 
 watch([searchDate, searchAlloc,searchGroup,searchMachine,searchCurrency], () => {
     queryParams.page = 1
