@@ -3,6 +3,11 @@
         <!-- 搜索和过滤区域 -->
         <div class="mb-4">
             <div class="filters-row">
+				<va-input v-model="searchHotkey" placeholder="搜索地址名" class="mr-5" :style="{ maxWidth: '13%'}">
+				    <template #prepend>
+				        <!-- <va-icon name="va-calendar" /> -->
+				    </template>
+				</va-input>
                 <va-date-input
                     v-model="searchDate"
                     placeholder="选择日期"
@@ -10,17 +15,9 @@
                     :style="{ maxWidth: '12%'}"
 					:allowed-days="(date) => !isDateDisabled(date)"
                 />
-				
-                <va-select
-                    v-model="searchCurrency"
-                    :options="currencyOptions"
-                    placeholder="币种筛选"
-                    class="mr-5"
-                    :style="{ maxWidth: '12%' }"
-                />
 				<va-select v-model="searchGroup" :options="groupOptions" placeholder="组名" class="filter-item mr-6" :style="{ maxWidth: '12%' }" />
                 <va-button @click="refreshData" class="" color="rgb(47, 148, 172)">
-                    刷新
+                    重置
                 </va-button>
             </div>
         </div>
@@ -32,19 +29,9 @@
                 <template #cell(record_date)="{ value }">
                     {{ value ? value.split('T')[0] : '' }}
                 </template>
-				formatHashRate
-				<template #cell(power)="{ value }">
-				    {{ formatHashRate(value) }}
+				<template #cell(need_allocate)="{ value }">
+				    {{ getIsAllocate(value)}}
 				</template>
-				<template #cell(real_power)="{ value }">
-				    {{ formatHashRate(value) }}
-				</template>
-                <template #cell(need_allocate)="{ value }">
-                    {{ getIsAllocate(value)}}
-                </template>
-                <template #cell(pool_type)="{ value }">
-                    {{ poolTypeMap[value] || '未知' }}
-                </template>
                 <template #cell(actions)="{ row }">
                     <va-button-group>
                         <va-button icon="edit" size="small" color="rgb(47, 148, 172)" @click="editProfit(row)" />
@@ -60,20 +47,6 @@
                 @ok="onOk"
             >
                 <VaForm>
-                    <VaInput
-                        v-model="editForm.real_power"
-                        label="实际算力"
-                        type="number"
-                        placeholder="请输入实际算力"
-                        class="mb-2"
-                    />
-                    <VaInput
-                        v-model="editForm.real_reward"
-                        label="实际奖励"
-                        type="number"
-                        placeholder="请输入实际奖励"
-                        class="mb-2"
-                    />
                     <va-select
                         v-model="editForm.need_allocate"
                         label="是否需要分配"
@@ -104,23 +77,22 @@
 </template>
 
 <script setup>
-import { ref, reactive,h } from 'vue'
+import { ref, reactive } from 'vue'
 import { getPoolProfits, updatePoolProfit } from "../../api/node"
 import { machineOptions } from "../../api/machines"
-import { formatDateTime,formatHashRate,isDateDisabled } from "../../utils/date.ts"
+import { formatDateTime,isDateDisabled } from "../../utils/date.ts"
 import { useToast } from "vuestic-ui"
 
 const { init: toast } = useToast()
 
-import { useRouter } from 'vue-router';
+// 响应式状态
+// 获取默认日期（当前日期减一天）
 
-const router = useRouter();
 
 // 修改初始值
 const searchDate = ref()
-
+const searchHotkey = ref()
 const searchCurrency = ref('')
-const currencyOptions = ref([])
 
 const groupOptions = ref([]);
 const searchGroup = ref(groupOptions[0]);
@@ -129,10 +101,9 @@ const convertToOptions = (arr) =>
   arr.map(item => ({ value: item, text: item }));
 const fetchMachineOptions = async () => {
   try {
-    const response = await machineOptions()
+    const response = await machineOptions('tao')
       // 带空值保护的转换
 	  const defaultOption = { value: '', text: '所有' };
-	  currencyOptions.value = [defaultOption, ...convertToOptions(response.currencies || [])];
 	  groupOptions.value = [defaultOption, ...convertToOptions(response.groups || [])];
   } catch (error) {
     console.error('接口调用失败:', error)
@@ -170,8 +141,9 @@ const fetchData = async () => {
         const params = {
             page: queryParams.page,
             pagesize: queryParams.pagesize,
-            currency: searchCurrency.value?.value,
-			group: searchGroup.value?.value
+            currency: 'tao',
+			group: searchGroup.value?.value,
+			hotkey: searchHotkey.value
         }
         
         // 只有当选择了日期时才添加日期参数
@@ -201,58 +173,29 @@ const fetchData = async () => {
     }
 }
 
-const goToTaoAlloc = () => {
-  router.push({ name: "tao_revenue" });
-};
-
 // 添加 watch 以监听搜索条件变化
 import { watch } from 'vue'
 
-watch([searchDate, searchCurrency,searchGroup], () => {
+watch([searchDate, searchCurrency,searchGroup,searchHotkey], () => {
     queryParams.page = 1
     currentStartIndex.value = 1
-	console.log("searchCurrency.value is",searchCurrency.value)
-	if (searchCurrency.value?.value === 'tao') {
-		toast({
-		  message: "",
-		  color: "info",
-			duration: 5000,
-		  render: () =>
-		      h(
-		        "a",
-		        {
-		          href: "javascript:void(0);",
-		          style: "color: #fff; text-decoration: underline;",
-		          onClick: () => goToTaoAlloc(),
-		        },
-		        "请去TAO收益页面查看"
-		      ),
-		});
-		return
-	}
     fetchData()
 	fetchMachineOptions()
 })
 
-const poolTypeMap = {
-                0: '未知',
-                1: 'zkwork',
-                2: 'oula',
-                3: 'daxiang',
-				4: 'f2pool'
-            }
 
 const columns = [
     { key: 'id', label: 'ID' },
     { key: 'record_date', label: '记录日期' },
-    { key: 'reward', label: '奖励' },
-    { key: 'real_reward', label: '实际奖励' },
-    { key: 'power', label: '算力' },
-    { key: 'real_power', label: '实际算力', },
-    { key: 'currency', label: '币种' },
-    { key: 'pool_type', label: '矿池类型' },
-    // { key: 'addr', label: '地址' },
-	{ key: 'group', label: '分组' },
+    { key: 'hotkey', label: '热钱包地址',width:'520px' },
+	// { key: 'coldkey', label: '冷钱包地址' },
+    { key: 'network', label: '网络' },
+    { key: 'subnet', label: '子网' },
+    { key: 'profit', label: '收益'},
+    { key: 'created_date', label: '地址创建日期'},
+ //    { key: 'pool_type', label: '矿池类型' },
+ //    // { key: 'addr', label: '地址' },
+	// { key: 'group', label: '分组' },
     { key: 'need_allocate', label: '是否需要分配' },
     { key: 'actions', label: '操作' }  // 添加操作列
 ]
@@ -333,6 +276,7 @@ const refreshData = () => {
 	searchDate.value = null;
 	searchGroup.value = '';
 	searchCurrency.value = '';
+	searchHotkey.value = ''
     fetchData()
 	fetchMachineOptions()
 }

@@ -1,8 +1,8 @@
 import { patch,get,post } from "./request";
 
 // 查询机器可选项
-export function machineOptions() {
-  return get("/api/v1/back_stage/machine/options");
+export function machineOptions(currency='') {
+  return get(`/api/v1/back_stage/machine/options?currency=${currency}`);
 }
 
 // 查询机器列表

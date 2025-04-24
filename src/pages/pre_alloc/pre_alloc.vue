@@ -39,10 +39,12 @@
                 </template>
                 <template #cell(actions)="{ row }">
                     <va-button-group>
-                        <va-button size="medium" color="rgb(47, 148, 172)" class="mr-4"  @click="fetchDataAndShowModal(row,'hashrate')">模拟 (算力)</va-button>
-						<va-button size="medium" color="rgb(47, 148, 172)" class="mr-4" @click="fetchDataAndShowModal(row,'time')">模拟 (时长)</va-button>
-						<va-button size="medium" :disabled="row.rowData.status === 1" color="danger" class="mr-4" @click="confirmAlloc(row)">实际分配 (算力)</va-button>
-                    </va-button-group>
+                        <va-button v-if="row.rowData.currency != 'tao'" size="medium" color="rgb(47, 148, 172)" class="mr-4"  @click="fetchDataAndShowModal(row,'hashrate')">模拟 (算力)</va-button>
+						<va-button v-if="row.rowData.currency != 'tao'" size="medium" color="rgb(47, 148, 172)" class="mr-4" @click="fetchDataAndShowModal(row,'time')">模拟 (时长)</va-button>
+						<va-button v-if="row.rowData.currency != 'tao'" size="medium" :disabled="row.rowData.status === 1" color="danger" class="mr-4" @click="confirmAlloc(row)">实际分配 (算力)</va-button>
+						<va-button v-if="row.rowData.currency === 'tao'" size="medium" color="rgb(47, 148, 172)" class="mr-4" @click="fetchDataAndShowModal(row,'')">模拟分配</va-button>
+						<va-button v-if="row.rowData.currency === 'tao'" size="medium" :disabled="row.rowData.status === 1" color="danger" class="mr-4" @click="confirmAlloc(row)">实际分配</va-button>
+					</va-button-group>
 					<va-modal
 					  v-model="isNewModalVisible"
 					  title="实际分配 (算力)"

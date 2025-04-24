@@ -2,21 +2,25 @@
     <va-card class="machines-list">
         <!-- 搜索和过滤区域 -->
         <div class="mb-4">
-			机器名：
-			<va-input v-model="searchMachine" placeholder="搜索机器名" class="mb-1 mr-8" :style="{ maxWidth: '15%'}">
+			<va-input v-model="searchMachine" placeholder="搜索机器名" class="mb-1 mr-8" :style="{ maxWidth: '13%'}">
 			    <template #prepend>
 			        <!-- <va-icon name="va-calendar" /> -->
 			    </template>
 			</va-input>
-			记录日期：
+			<va-select
+			    v-model="searchCurrency"
+			    :options="currencyOptions"
+			    placeholder="请选择币种"
+			    class="mb-1 mr-8"
+			    :style="{ maxWidth: '12%' }"
+			/>
 			<va-date-input
 			      v-model="searchDate"
 			      placeholder="选择日期"
-			      class="mb-1 mr-5"
+			      class="mb-1 mr-8"
 			      :style="{ maxWidth: '16%'}"
 				  :allowed-days="(date) => !isDateDisabled(date)"
 			/>
-			分组：
 			<va-select v-model="searchGroup" :options="groupOptions" placeholder="组名" class="filter-item mb-1 mr-8" :style="{ maxWidth: '13%' }" />
 			参与分配：
 			<va-select v-model="searchAlloc" :options="allocateOptions" placeholder="是否参与分配" class="filter-item mb-1 mr-8" :style="{ maxWidth: '10%' }" />
@@ -161,6 +165,8 @@ const searchDate = ref(getYesterday(8)) // 存储 Date 对象
 const searchMachine = ref('');
 const searchAlloc = ref(allocateOptions[0]);
 const searchGroup = ref(groupOptions[0]);
+const searchCurrency = ref('')
+const currencyOptions = ref([])
 
 const isEditModalVisible = ref(false);
 
@@ -193,6 +199,7 @@ const fetchMachineOptions = async () => {
     const response = await machineOptions()
       // 带空值保护的转换
 	  const defaultOption = { value: '', text: '所有' };
+	  currencyOptions.value = [defaultOption, ...convertToOptions(response.currencies || [])];
 	  groupOptions.value = [defaultOption, ...convertToOptions(response.groups || [])];
   } catch (error) {
     console.error('接口调用失败:', error)
@@ -250,7 +257,8 @@ const fetchData = async () => {
 		      ...queryParams,
 			  is_in_black_list: searchAlloc.value.value,
 			  hostname: searchMachine.value,
-			  group: searchGroup.value?.value
+			  group: searchGroup.value?.value,
+			  currency: searchCurrency.value?.value,
 		    };
 			
 		if (searchDate.value) {
@@ -293,7 +301,7 @@ const getStatusColor = (status) => {
 
 import { watch } from 'vue'
 
-watch([searchDate, searchAlloc,searchGroup,searchMachine], () => {
+watch([searchDate, searchAlloc,searchGroup,searchMachine,searchCurrency], () => {
     queryParams.page = 1
     currentStartIndex.value = 1
     fetchData()
@@ -325,6 +333,9 @@ const onCancel = () => {
 const refreshData = () => {
 	searchMachine.value = '';
 	searchGroup.value = '';
+	searchCurrency.value = '';
+	searchAlloc.value.value = '0';
+	searchAlloc.value.text = '是';
 	// searchAlloc.value.value = "0";
 	// searchAlloc.value.text = "是";
 	// 分组不刷新

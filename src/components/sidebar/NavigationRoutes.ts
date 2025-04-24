@@ -41,13 +41,13 @@ export default {
         icon: "credit_card",
       },
     },
-	// {
-	//   name: "machines_root",
-	//   displayName: "admin.machines",
-	//   meta: {
-	//     icon: "storage", 
-	//   },
-	// },
+	{
+	  name: "machines_root",
+	  displayName: "admin.machines",
+	  meta: {
+	    icon: "storage", 
+	  },
+	},
 	{
 	  name: 'pre_alloc',
 	  displayName: "admin.preAlloc",
@@ -69,6 +69,13 @@ export default {
 		      icon: "vuestic-iconset-dashboard",
 		    },
 	    },
+		{
+		    name: 'tao_revenue',
+		    displayName: 'TAO收益',
+		    meta: {
+		      icon: "vuestic-iconset-dashboard",
+		    },
+		},
 		{
 		  name: 'alloc_tasks',
 		  displayName: 'admin.allocTask',

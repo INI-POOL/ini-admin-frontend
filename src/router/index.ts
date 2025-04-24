@@ -85,6 +85,15 @@ const routes: Array<RouteRecordRaw> = [
 			}
 	   },
 	   {
+	   			name: "tao_revenue",
+	   			path: "tao_revenue",
+	   			component: () => import("../pages/pre_alloc/tao_revenue.vue"),
+	   			meta: {
+	   			  requiresAuth: true,
+	   			  title: "TAO收益",
+	   			}
+	    },
+	   {
 		  name: "alloc_tasks",
 		  path: "alloc_tasks",
 		  component: () => import("../pages/pre_alloc/pre_alloc.vue"),
