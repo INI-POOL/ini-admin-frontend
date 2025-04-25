@@ -187,7 +187,7 @@ watch([searchDate, searchCurrency,searchGroup,searchHotkey], () => {
 const columns = [
     { key: 'id', label: 'ID' },
     { key: 'record_date', label: '记录日期' },
-    { key: 'hotkey', label: '热钱包地址',width:'520px' },
+    { key: 'hotkey', label: 'Hotkey',width:'520px' },
 	// { key: 'coldkey', label: '冷钱包地址' },
     { key: 'network', label: '网络' },
     { key: 'subnet', label: '子网' },
