@@ -69,7 +69,7 @@
                 查看
               </VaButton>
               <VaButton
-                v-if="row && Number(row.rowData.audit_status) === 0"
+                v-if="row && Number(row.rowData.audit_status) === 0 && (row.rowData.currency === 'aleo')"
                 size="small"
                 preset="primary"
                 @click="handleAudit(row)"
@@ -82,7 +82,20 @@
               > -->
                 审核
               </VaButton>
-              <span v-else>--</span>
+			  <VaButton
+			    v-if="row && Number(row.rowData.audit_status) === 0 && (row.rowData.currency != 'aleo')"
+			    size="small"
+			    preset="primary"
+			    @click="handlePass(row)"
+			  >
+			  <!-- <VaButton
+			    v-if="row"
+			    size="small"
+			    preset="primary"
+			    @click="handleAudit(row)"
+			  > -->
+			    通过
+			  </VaButton>
             </div>
           </template>
         </VaDataTable>
@@ -151,6 +164,9 @@
           <div class="mb-4">
             当前提现金额：{{ removeTrailingZeros(currentItem?.amount) || 0 }} {{ currentItem?.currency || '' }} 
           </div>
+		  <div class="mb-4" v-if="currentItem.from_addr">
+		    打款地址：{{ currentItem.from_addr }} 
+		  </div>
           <div class="mb-2">审核结果</div>
           <VaRadio
             v-model="auditForm.audit_status"
@@ -171,6 +187,30 @@
         </div>
       </div>
     </VaModal>
+	
+	<VaModal
+	  v-model="passVisible"
+	  title="提现通过确认"
+	  :ok-text="'确认'"
+	  :cancel-text="'取消'"
+	  size="small"
+	  class="audit-modal"
+	  @ok="handleSuccessSubmit"
+	>
+	  <div class="space-y-4">
+	    <div>
+	      <div class="mb-4">
+	        当前提现金额：{{ removeTrailingZeros(currentItem?.amount) || 0 }} {{ currentItem?.currency || '' }} 
+	      </div>
+		  <div class="mb-4" v-if="currentItem.from_addr">
+		    打款地址：{{ currentItem.from_addr }} 
+		  </div>
+	      <div class="mb-2">⚠️注意: 执行此操作前, 请确认链上是否已到账.</div>
+	      <div class="mb-2" style="padding-top: 0.62rem;">谷歌认证</div>
+	      <VaInput v-model="passForm.google_code" width="200px" placeholder="请输入谷歌认证码" />
+	    </div>
+	  </div>
+	</VaModal>
 
       <!-- 转账详情弹框 -->
       <VaModal v-model="detailVisible" title="转账详情" size="medium"  class="mr-6 my-1"  close-button >
@@ -263,7 +303,7 @@
 <script lang="js" setup>
 import { ref, reactive, onMounted } from "vue";
 import { useToast } from "vuestic-ui";
-import { getWithdrawList, auditWithdraw, getHotAddressBalance } from "../../api/withdraw";
+import { getWithdrawList, auditWithdraw, getHotAddressBalance,successWithdraw } from "../../api/withdraw";
 import { formatDateTime } from "../../utils/date.ts";
 import { getUserList } from "../../api/user";
 import {removeTrailingZeros} from "../../utils/index";
@@ -433,9 +473,13 @@ const getAuditStatusColor = (status) => {
 
 // 审核相关
 const auditVisible = ref(false);
+const passVisible = ref(false);
 const currentItem = ref(null);
 const auditForm = reactive({
   audit_status: 1, // 默认选中通过
+});
+
+const passForm = reactive({
 });
 
 // 用户余额相关
@@ -452,8 +496,15 @@ const handleAudit = (row) => {
   auditVisible.value = true;
 };
 
+const handlePass = (row) => {
+  if (!row) {
+    return;
+  }
+  currentItem.value = row.rowData;
+  passVisible.value = true;
+};
+
 const handleUidClick = async (row) => {
-	 console.log("row is",row)
     showUidModal.value = true;
     loadingDetail.value = true;
 	let params = {
@@ -516,6 +567,37 @@ const handleAuditSubmit = async () => {
   }
 };
 
+const handleSuccessSubmit = async () => {
+  if (!currentItem.value) return;
+  let username=getUser();
+  if(!passForm.google_code){
+    toast({
+      message: "谷歌认证码不能为空",
+      color: "danger",
+    });
+    return;
+  }
+
+  try {
+    let data = await successWithdraw({
+      id: currentItem.value.id,
+      google_code: passForm.google_code,
+      user_name: username,
+    });
+		toast({
+		  message: "转账已通过",
+		  color: "success",
+		});
+		passVisible.value = false;
+		fetchData();
+  } catch (error) {
+    toast({
+      message: error,
+      color: "danger",
+    });
+  }
+};
+
 // 查看详情
 const detailVisible = ref(false);
 const transfer = ref(null);
@@ -525,7 +607,6 @@ const handleView = (row) => {
     return
   }
   transfer.value = row.rowData;
-  auditForm.audit_status = 1; // 每次打开弹窗时重置为通过
   detailVisible.value = true;
 
   // console.log('查看详情:', row)
