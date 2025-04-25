@@ -66,15 +66,15 @@ const routes: Array<RouteRecordRaw> = [
       //     title: "机器管理",
       //   },
       // },
-	  // {
-	  //   name: "pre_machines",
-	  //   path: "pre_machines",
-	  //   component: () => import("../pages/pre_alloc/pre_machine.vue"),
-	  //   meta: {
-	  //     requiresAuth: true,
-	  //     title: "预分配机器管理",
-	  //   },
-	  // },
+	  {
+	    name: "pre_machines",
+	    path: "pre_machines",
+	    component: () => import("../pages/pre_alloc/pre_machine.vue"),
+	    meta: {
+	      requiresAuth: true,
+	      title: "预分配机器管理",
+	    },
+	  },
 	  {
 			name: "node_revenue",
 			path: "node_revenue",

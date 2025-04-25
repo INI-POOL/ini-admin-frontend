@@ -1,0 +1,2 @@
+import{g as t,p as n,a as r}from"./request-CpbRVTho.js";function c(a=""){return t(`/api/v1/back_stage/machine/options?currency=${a}`)}function o(a){return n("/api/v1/back_stage/pre_allocate/machine",a)}function p(a){return r("/api/v1/back_stage/pre_allocate/machine/modify",a).then(e=>{if(!e)throw new Error("请求失败，未返回响应数据");return e})}export{p as a,c as m,o as p};
+//# sourceMappingURL=machines-ZiDfGztb.js.map

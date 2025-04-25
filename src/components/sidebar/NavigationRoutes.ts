@@ -55,13 +55,13 @@ export default {
 	    icon: "text_snippet",
 	  },
 	  children: [
-		// {
-		//     name: 'pre_machines',
-		//     displayName: "admin.preMachines",
-		//     meta: {
-		//       icon: "vuestic-iconset-dashboard",
-		//     },
-		// },
+		{
+		    name: 'pre_machines',
+		    displayName: "admin.preMachines",
+		    meta: {
+		      icon: "vuestic-iconset-dashboard",
+		    },
+		},
         {
 	        name: 'node_revenue',
 	        displayName: 'admin.nodeRevenue',
