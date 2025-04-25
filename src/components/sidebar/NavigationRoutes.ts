@@ -41,13 +41,13 @@ export default {
         icon: "credit_card",
       },
     },
-	{
-	  name: "machines_root",
-	  displayName: "admin.machines",
-	  meta: {
-	    icon: "storage", 
-	  },
-	},
+	// {
+	//   name: "machines_root",
+	//   displayName: "admin.machines",
+	//   meta: {
+	//     icon: "storage", 
+	//   },
+	// },
 	{
 	  name: 'pre_alloc',
 	  displayName: "admin.preAlloc",
@@ -55,13 +55,13 @@ export default {
 	    icon: "text_snippet",
 	  },
 	  children: [
-		{
-		    name: 'pre_machines',
-		    displayName: "admin.preMachines",
-		    meta: {
-		      icon: "vuestic-iconset-dashboard",
-		    },
-		},
+		// {
+		//     name: 'pre_machines',
+		//     displayName: "admin.preMachines",
+		//     meta: {
+		//       icon: "vuestic-iconset-dashboard",
+		//     },
+		// },
         {
 	        name: 'node_revenue',
 	        displayName: 'admin.nodeRevenue',
@@ -92,20 +92,20 @@ export default {
 		},
 	  ],
 	},
-	{
-	  name: "version",
-	  displayName: "版本管理",
-	  meta: {
-	    icon: "publish", 
-	  },
-	},
-	{
-	  name: "notice",
-	  displayName: "消息通知",
-	  meta: {
-	    icon: "notifications", 
-	  },	  
-	},
+	// {
+	//   name: "version",
+	//   displayName: "版本管理",
+	//   meta: {
+	//     icon: "publish", 
+	//   },
+	// },
+	// {
+	//   name: "notice",
+	//   displayName: "消息通知",
+	//   meta: {
+	//     icon: "notifications", 
+	//   },	  
+	// },
     // {
     //   name: "dashboard",
     //   displayName: "menu.dashboard",
