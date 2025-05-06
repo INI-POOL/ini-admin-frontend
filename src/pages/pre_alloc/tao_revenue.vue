@@ -21,6 +21,11 @@
                 </va-button>
             </div>
         </div>
+		<div class="mb-4">
+			<h4 class="va-h6">
+				总收益: {{totalProfit}} TAO (最近更新时间:{{latestDate}})
+			</h4>
+		</div>
 
         <!-- 列表区域 -->
         <div class="table-responsive">
@@ -94,7 +99,7 @@
 import { ref, reactive } from 'vue'
 import { getPoolProfits, updatePoolProfit } from "../../api/node"
 import { taoProfitOptions } from "../../api/machines"
-import { formatDateTime,isDateDisabled } from "../../utils/date.ts"
+import { formatDateTime,isDateDisabled,formatReleaseTime } from "../../utils/date.ts"
 import { useToast } from "vuestic-ui"
 
 const { init: toast } = useToast()
@@ -110,6 +115,8 @@ const searchCurrency = ref('')
 
 const groupOptions = ref([]);
 const searchGroup = ref(groupOptions[0]);
+const totalProfit = ref(0)
+const latestDate = ref('')
 
 const convertToOptions = (arr) => 
   arr.map(item => ({ value: item, text: item }));
@@ -183,6 +190,8 @@ const fetchData = async () => {
         if (res?.pool_profits) {
             poolProfits.value = res.pool_profits
             totalItems.value = res.total
+			totalProfit.value = res.total_profit
+			latestDate.value = formatReleaseTime(res.pool_profits[0].timestamp)
         } else {
             poolProfits.value = []
             totalItems.value = 0
