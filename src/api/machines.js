@@ -5,6 +5,10 @@ export function machineOptions(currency='') {
   return get(`/api/v1/back_stage/machine/options?currency=${currency}`);
 }
 
+export function taoProfitOptions() {
+  return get('/api/v1/back_stage/tao/group/options');
+}
+
 // 查询机器列表
 export function machinList(data) {
   return post("/api/v1/back_stage/machine/list", data);

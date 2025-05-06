@@ -32,6 +32,20 @@
 				<template #cell(need_allocate)="{ value }">
 				    {{ getIsAllocate(value)}}
 				</template>
+				<template #cell(hotkey)="{ value }">
+				   <template v-if="!value">无</template>
+				
+				   <a v-else :title="value" target="_blank">  <!-- 悬浮显示完整内容 -->
+					 {{ truncateText(value, 20) }}
+				   </a>
+				</template>
+				<template #cell(coldkey)="{ value }">
+				   <template v-if="!value">无</template>
+				
+				   <a v-else :title="value" target="_blank">  <!-- 悬浮显示完整内容 -->
+					 {{ truncateText(value, 20) }}
+				   </a>
+				</template>
                 <template #cell(actions)="{ row }">
                     <va-button-group>
                         <va-button icon="edit" size="small" color="rgb(47, 148, 172)" @click="editProfit(row)" />
@@ -79,7 +93,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { getPoolProfits, updatePoolProfit } from "../../api/node"
-import { machineOptions } from "../../api/machines"
+import { taoProfitOptions } from "../../api/machines"
 import { formatDateTime,isDateDisabled } from "../../utils/date.ts"
 import { useToast } from "vuestic-ui"
 
@@ -101,15 +115,28 @@ const convertToOptions = (arr) =>
   arr.map(item => ({ value: item, text: item }));
 const fetchMachineOptions = async () => {
   try {
-    const response = await machineOptions('tao')
+    const response = await taoProfitOptions()
       // 带空值保护的转换
 	  const defaultOption = { value: '', text: '所有' };
-	  groupOptions.value = [defaultOption, ...convertToOptions(response.groups || [])];
+	  groupOptions.value = [defaultOption, ...convertToOptions(response || [])];
   } catch (error) {
     console.error('接口调用失败:', error)
     // 异常处理逻辑
   }
 }
+
+const truncateText = (text, maxLength) => {
+  if (!text) return '';
+  if (text.length <= maxLength) return text;
+  const ellipsis = '...';
+  if (maxLength <= ellipsis.length) {
+    return ellipsis.slice(0, maxLength);
+  }
+  const availableLength = maxLength - ellipsis.length;
+  const frontLength = Math.floor(availableLength / 2);
+  const backLength = availableLength - frontLength;
+  return text.slice(0, frontLength) + ellipsis + text.slice(-backLength);
+};
 
 const currentStartIndex = ref(1)
 const totalItems = ref(0)
@@ -185,17 +212,14 @@ watch([searchDate, searchCurrency,searchGroup,searchHotkey], () => {
 
 
 const columns = [
-    { key: 'id', label: 'ID' },
-    { key: 'record_date', label: '记录日期' },
-    { key: 'hotkey', label: 'Hotkey',width:'520px' },
-	// { key: 'coldkey', label: '冷钱包地址' },
-    { key: 'network', label: '网络' },
+    { key: 'id', label: 'ID',width:'100px' },
+    { key: 'record_date', label: '记录日期',width:'160px' },
+	{ key: 'group', label: '分组',width:'160px' },
+	{ key: 'profit', label: '收益'},
+    { key: 'hotkey', label: 'Hotkey',width:'240px' },
+	{ key: 'coldkey', label: 'Coldkey',width:'240px' },
+    // { key: 'network', label: '网络' },
     { key: 'subnet', label: '子网' },
-    { key: 'profit', label: '收益'},
-    { key: 'created_date', label: '地址创建日期'},
- //    { key: 'pool_type', label: '矿池类型' },
- //    // { key: 'addr', label: '地址' },
-	// { key: 'group', label: '分组' },
     { key: 'need_allocate', label: '是否需要分配' },
     { key: 'actions', label: '操作' }  // 添加操作列
 ]
