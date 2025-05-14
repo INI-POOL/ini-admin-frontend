@@ -425,15 +425,14 @@ const contentLength = () => {
 }
 
 const isFormValid = () => {
-	console.log("titleLength is",titleLength())
-		console.log("contentLength is",contentLength())
-			console.log("specLength is",specLength())
 	return titleLength() > 0 && 
 		 titleLength() <= 50 &&
 		 specLength() > 0 &&
 		 specLength() <= 100 &&
 		 contentLength() > 0 &&
-		 contentLength() <= 2000
+		 contentLength() <= 2000 &&
+		 addUid.value != '' &&
+		 addType.value != ''
 }
 
 const resetAddNoticeForm = () => {
