@@ -79,25 +79,31 @@
 				<template #cell(created_time)="{ value }">
 				    {{ formatDateTime(value) }}
 				</template>
-				<template #cell(content)="{ value }">
+				<template #cell(spec)="{ value }">
 				   <template v-if="!value">无</template>
 				
-				   <a v-else :title="value" :href="value" target="_blank">  <!-- 悬浮显示完整内容 -->
-					 {{ truncateText(value, 10) }}
+				   <a v-else :title="value" target="_blank">
+					 {{ truncateText(value, 45) }}
 				   </a>
+				</template>
+				<template #cell(belonged_user)="{ value }">
+				    {{ value === '' ? '所有' : value }}
+				</template>
+				<template #cell(is_published)="{ value }">
+				    {{ value === '0' || 0 ? '未推送' : '已推送' }}
 				</template>
                 <template #cell(actions)="{ row }">
 					  <div class="action-container">
 					    <!-- 主要操作：紧凑图标按钮 -->
 						<va-button-group>
-							<!-- <va-button 
+<!-- 							<va-button 
 								size="small"
 								icon="edit"
 								color="rgb(47, 148, 172)"
 								@click="editVersion(row)"
 								title="修改通知内容"
 								class="action-icon"
-							/>
+							/> -->
 							<va-button
 							  icon="rocket_launch"
 							  size="small"
@@ -105,7 +111,8 @@
 							  title="推送"
 							  @click="confirmPublish(row)"
 							  class="action-icon"
-							/> -->
+							  v-if="row.rowData.is_published === 0"
+							/>
 							<va-button
 							  size="small"
 							  icon="delete"
@@ -122,7 +129,7 @@
             <!-- 添加编辑弹窗 -->
             <VaModal
                 v-model="isEditModalVisible"
-                title="修改版本信息"
+                title="修改通知"
                 @cancel="onCancel"
                 @ok="onOk"
 				:ok-props="{ color: 'rgb(47, 148, 172)', textColor: 'white' }"
@@ -131,27 +138,27 @@
                 <VaForm>
 					<VaInput
 					    v-model="editForm.version"
-					    label="版本号"
+					    label="标题"
 					    type="string"
 					    class="mb-3"
 						readonly
 					/>
 					<VaInput
 					    v-model="editForm.system"
-					    label="系统"
+					    label="通知类型"
 					    type="string"
 					    class="mb-3"
 						readonly
 					/>
                     <VaInput
                         v-model="editForm.download_url"
-                        label="下载链接"
+                        label="概览"
                         type="string"
                         class="mb-3"
                     />	
 					<VaInput
 					    v-model="editForm.release_notes"
-					    label="更新日志 (如需换行请用','隔开)"
+					    label="推送用户"
 					    type="textarea"
 					    class="mb-3"
 					/>	
@@ -193,24 +200,23 @@
 			<VaModal
 			    v-model="showConfirmDialog"
 				title="系统提示"
-				ok-text="🚀 确认发布"
-				cancel-text="暂不发布"
+				ok-text="确认推送"
+				cancel-text="暂不推送"
 			    @ok="handleConfirm"
 			    @cancel="handleCancel"
 			  >
 				<template #header>
 				  <div class="dialog-header">
 					<va-icon name="warning" color="warning" />
-					<span class="header-text">版本发布确认</span>
+					<span class="header-text">消息推送确认</span>
 				  </div>
 				</template>
 			
 				<div class="dialog-content">
 				  <p class="version-info">
-					即将为 <span class="system-highlight">{{ getSystemText(pendingSystem) }}</span> 系统发布版本：<span class="version-highlight">{{ pendingVersion }}</span>
+					即将为 <span class="system-highlight">{{ pendingUid === '' ? '所有' : pendingUid }}</span> 用户推送 <span class="system-highlight">{{ pendingType }}</span> 类型通知
 				  </p>
 				  <va-divider />
-				  <p class="confirm-text">该操作将立即生效且不可逆转，请确认是否继续？</p>
 				</div>
 			  </VaModal>
 			  
@@ -254,7 +260,22 @@
 				            </span>
 				          </template>
 				        </va-input>
-						
+						<va-select
+						    v-model="addType"
+						    :options="noticeSpecTypeOptions"
+							label="通知类型"
+						    placeholder="请选择通知类型"
+						    class="mb-4"
+						    :style="{ maxWidth: '47.5%' }"
+						/>
+						<va-select
+						    v-model="addUid"
+						    :options="uidOptions"
+							label="用户UID"
+						    placeholder="请选择用户UID"
+						    class="mb-4 ml-8"
+						    :style="{ maxWidth: '47.5%' }"
+						/>
 						<va-input
 						  v-model="spec"
 						  label="概述"
@@ -302,7 +323,7 @@
 				            :disabled="!isFormValid"
 				            @click="handleSubmit"
 				          >
-				            提交
+				            确认发布
 				          </va-button>
 				        </div>
 				      </div>
@@ -334,6 +355,7 @@ import { ElMessage } from 'element-plus'
 import { ref, reactive, computed } from 'vue'
 import { versionList, addVersion, modifyVersion, publishVersion,uploadApk,downloadApk,timedPublishVersion,deleteVersion } from "../../api/version"
 import { noticeList, addNotice, modifyNotice, pushNotice,deleteNotice,noticeTypes } from "../../api/notice"
+import { getUserUids } from "../../api/user"
 import { formatDateTime } from "../../utils/date.ts"
 import { useToast, useForm } from "vuestic-ui"
 import { saveAs } from 'file-saver'
@@ -359,8 +381,12 @@ const showAddModal = ref(false)
 const title = ref('')
 const spec = ref('')
 const content = ref('')
+const addUid = ref('')
+const addType = ref('')
 
 const noticeTypeOptions = ref([])
+const noticeSpecTypeOptions = ref([])
+const uidOptions = ref([])
 
 const openDeleteConfirm = (rowData) => {
   deleteId.value = rowData.id
@@ -374,6 +400,10 @@ const fetchNoticeOptions = async () => {
     const response = await noticeTypes()
 	const defaultOption = { value: '', text: '所有' };
 	noticeTypeOptions.value = [defaultOption, ...convertToOptions(response || [])];
+	noticeSpecTypeOptions.value = convertToOptions(response || [])
+	const uids = await getUserUids()
+	uidOptions.value = [defaultOption, ...convertToOptions(uids || [])];
+	
   } catch (error) {
     toast({
       message: error,
@@ -410,6 +440,8 @@ const resetAddNoticeForm = () => {
    title.value = ''
    spec.value = ''
    content.value = ''
+   addUid.value = ''
+   addType.value = ''
 }
 
 const handleSubmit = async () => {
@@ -427,7 +459,9 @@ const handleSubmit = async () => {
 		  spec: spec.value,
 		  spec_en: spec.value,
 		  content: content.value,
-		  content_en: content.value
+		  content_en: content.value,
+		  type: addType.value.value,
+		  belonged_user: addUid.value.value
 	  }
 	
 	  try {				  
@@ -466,6 +500,7 @@ const confirmDelete = async () => {
     isDeleteConfirmVisible.value = false
   }
 }
+
 
 const cancelDelete = () => {
   toast({ message: '已取消删除', color: 'info' })
@@ -639,25 +674,42 @@ const currentStartIndex = ref(1)
 const totalItems = ref(0)
 const notices = ref([])
 const loading = ref(false)
+const pendingNoticeId = ref(0)
 
 const showConfirmDialog = ref(false)
 const pendingVersion = ref(null)
 const pendingSystem = ref(null)
 const deletePendingVersion = ref(null)
 const deletePendingSystem = ref(null)
+const pendingUid = ref('')
+const pendingType = ref('')
 
 const confirmPublish = (row) => {
-  pendingVersion.value = row.rowData.version
-  pendingSystem.value = row.rowData.system
+  pendingNoticeId.value = row.rowData.id
+  pendingUid.value = row.rowData.belonged_user
+  pendingType.value = row.rowData.type
   showConfirmDialog.value = true
-  
+
 }
 
-const handleConfirm = async () => {
-  try {
-	await publishNewVersion(pendingVersion.value,pendingSystem.value)
+const handleConfirm = async (row) => {
+	const params = {
+		uid: pendingUid.value,
+		notice_id: pendingNoticeId.value,
+	}
+  try {	  
+	const msg = await pushNotice(params)
+	toast({
+	    message: msg,
+	    color: "success",
+	})
   } catch (error) {
+	  toast({
+	      message: error.message || "发布失败",
+	      color: "danger",
+	  })
   } finally {
+
 	showConfirmDialog.value = false
   }
 }
@@ -682,7 +734,7 @@ const handleCronPublish = async () => {
 }
 
 const handleCancel = () => {
-  toast({ message: '已取消发布', color: 'warning' })
+  // toast({ message: '已取消推送', color: 'warning' })
   showConfirmDialog.value = false
 }
 
@@ -783,12 +835,14 @@ watch([searchSystem,searchContent,selectNotice], () => {
 })
 
 const columns = [
-	 { key: 'id', label: '序号' },
-    { key: 'title', label: '标题' },
+	{ key: 'id', label: '序号' },
 	{ key: 'type', label: '通知类型' },
+    { key: 'title', label: '标题' },
 	{ key: 'spec', label: '概览' },
-    { key: 'content', label: '内容' },
+    // { key: 'content', label: '内容' },
+	{ key: 'belonged_user', label: '推送用户' },
     { key: 'created_time', label: '通知时间' },
+	{ key: 'is_published', label: '推送状态' },
     { key: 'actions', label: '操作' }  // 添加操作列
 ]
 

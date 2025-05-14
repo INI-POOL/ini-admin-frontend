@@ -47,3 +47,7 @@ export function logout() {
 export function getUserList(params) {
 	return get("/api/v1/back_stage/user/list",params)
 }
+
+export function getUserUids() {
+	return get("/api/v1/back_stage/user/uid/list")
+}

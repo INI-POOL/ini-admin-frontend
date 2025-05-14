@@ -120,15 +120,15 @@ const routes: Array<RouteRecordRaw> = [
 		// 	title: "版本管理",
 		//   },
 		// },
-		// {
-		//   name: "notice",
-		//   path: "notice",
-		//   component: () => import("../pages/notice/notice.vue"),
-		//   meta: {
-		// 	requiresAuth: true,
-		// 	title: "通知管理",
-		//   },
-		// },
+		{
+		  name: "notice",
+		  path: "notice",
+		  component: () => import("../pages/notice/notice.vue"),
+		  meta: {
+			requiresAuth: true,
+			title: "通知管理",
+		  },
+		},
 		{
 		  name: "sub_user",
 		  path: "sub_user",

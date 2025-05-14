@@ -99,13 +99,13 @@ export default {
 	//     icon: "publish", 
 	//   },
 	// },
-	// {
-	//   name: "notice",
-	//   displayName: "消息通知",
-	//   meta: {
-	//     icon: "notifications", 
-	//   },	  
-	// },
+	{
+	  name: "notice",
+	  displayName: "消息通知",
+	  meta: {
+	    icon: "notifications", 
+	  },	  
+	},
     // {
     //   name: "dashboard",
     //   displayName: "menu.dashboard",
