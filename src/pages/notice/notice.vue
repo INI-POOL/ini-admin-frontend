@@ -153,7 +153,7 @@
 					<div class="flex justify-end gap-4">
 				          <va-button
 				            color="secondary"
-				            @click="cancel"
+				            @click="onCancel"
 				          >
 				            取消
 				          </va-button>
