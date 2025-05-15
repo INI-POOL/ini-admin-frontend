@@ -14,6 +14,14 @@
 				    v-model="selectNotice"
 				    :options="noticeTypeOptions"
 				    placeholder="请选择通知类型"
+				    class="mb-1 mr-6"
+				    :style="{ maxWidth: '16%' }"
+				/>
+				推送状态：
+				<va-select
+				    v-model="selectPublish"
+				    :options="publishedOptions"
+				    placeholder="请选择通知类型"
 				    class="mb-1"
 				    :style="{ maxWidth: '16%' }"
 				/>
@@ -71,7 +79,7 @@
 							  size="small"
 							  icon="delete"
 							  color="rgb(208, 24, 39)"
-							  title="删除版本"
+							  title="删除通知"
 							  @click="openDeleteConfirm(row.rowData)"
 							  class="action-icon"
 							/>
@@ -152,7 +160,7 @@
 				          <va-button
 				            @click="onOk"
 				          >
-				            确认新增
+				            确认修改
 				          </va-button>
 				        </div>
             </va-modal>
@@ -398,9 +406,10 @@ const fetchNoticeOptions = async () => {
   }
 }
 
-const searchPublish = ref('')
+const selectPublish = ref('')
 
 const publishedOptions = [
+	{ value: '', text: '所有' },
     { value: '1', text: '已推送' },
     { value: '0', text: '未推送' },
 ]
@@ -801,7 +810,8 @@ const fetchData = async () => {
             page: queryParams.page,
             pagesize: queryParams.pagesize,
 			content: searchContent?.value,
-			type: selectNotice.value?.value
+			type: selectNotice.value?.value,
+			is_published: selectPublish.value?.value
         }
 		
 		if (searchSystem) {
@@ -832,7 +842,7 @@ const fetchData = async () => {
 
 import { watch } from 'vue'
 
-watch([searchSystem,searchContent,selectNotice], () => {
+watch([searchSystem,searchContent,selectNotice,selectPublish], () => {
     queryParams.page = 1
     currentStartIndex.value = 1
     fetchData()
