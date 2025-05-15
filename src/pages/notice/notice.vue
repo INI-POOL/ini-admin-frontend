@@ -241,7 +241,7 @@
 				
 				<va-modal v-model="showAddModal" hide-default-actions size="medium">
 				      <template #header>
-				        <h5 class="va-h5">发布新通知</h5>
+				        <h5 class="va-h5">新增通知</h5>
 				      </template>
 				
 				      <div class="modal-content">
@@ -323,7 +323,7 @@
 				            :disabled="!isFormValid"
 				            @click="handleSubmit"
 				          >
-				            确认发布
+				            确认新增
 				          </va-button>
 				        </div>
 				      </div>
@@ -702,13 +702,14 @@ const handleConfirm = async (row) => {
 	    message: msg,
 	    color: "success",
 	})
+	await fetchData()
+	await fetchNoticeOptions()
   } catch (error) {
 	  toast({
 	      message: error.message || "发布失败",
 	      color: "danger",
 	  })
   } finally {
-
 	showConfirmDialog.value = false
   }
 }
@@ -894,7 +895,7 @@ const publishNewVersion = async (version,system) => {
 		  duration: 3000
 		})
         await fetchData()
-		fetchNoticeOptions()
+		await fetchNoticeOptions()
     } catch (error) {
         toast({
             message: error.message || "发布失败",
