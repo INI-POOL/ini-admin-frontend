@@ -21,54 +21,8 @@
 				    新增通知
 				</va-button>
 				<va-button @click="refreshData" color="rgb(47, 148, 172)" class="mb-1 ml-6">
-				    刷新
+				    重置
 				</va-button>
-				<VaModal
-				    v-model="isAddModalVisible"
-				    title="新增版本"
-				    @cancel="onAddCancel"
-				    @ok="onAddOk"
-					:ok-disabled="true"
-				>
-				    <VaForm>
-						<VaInput
-						    v-model="addForm.version"
-						    label="版本号"
-							:rules="[validateVersion]"
-							required
-						    class="mb-2"
-							placeholder="v1.0.0"
-						/>
-							<va-select
-								v-model="addForm.system"
-								label="操作系统"
-								:options="systemWithOutAllOptions"
-								placeholder="IOS"
-								class="mb-2"
-							/>
-				        <VaInput
-				            v-model="addForm.download_url"
-				            label="下载链接"
-				            type="url"
-				            :rules="[validateURL]"
-				            required
-				            class="mb-2"
-							placeholder="https://apps.apple.com/app/..."
-				        />
-						<VaInput
-						    v-model="addForm.release_notes"
-						    label="更新日志 (如需换行请用','隔开)"
-						    type="textarea"
-						    class="mb-2"
-						/>
-						<VaInput
-						    v-model="addForm.release_notes_en"
-						    label="更新日志英文版 (如需换行请用','隔开)"
-						    type="textarea"
-						    class="mb-2"
-						/>
-				    </VaForm>
-				</VaModal>		
             </div>
         </div>
 
@@ -80,8 +34,7 @@
 				    {{ formatDateTime(value) }}
 				</template>
 				<template #cell(spec)="{ value }">
-				   <template v-if="!value">无</template>
-				
+				   <template v-if="!value">无</template>				
 				   <a v-else :title="value" target="_blank">
 					 {{ truncateText(value, 45) }}
 				   </a>
@@ -103,6 +56,7 @@
 								@click="editNotice(row)"
 								title="修改通知内容"
 								class="action-icon"
+								v-if="row.rowData.is_published === 0"
 							/>
 							<va-button
 							  icon="rocket_launch"
@@ -129,6 +83,7 @@
             <!-- 添加编辑弹窗 -->
             <VaModal
                 v-model="isEditModalVisible"
+		
                 title="修改通知"
                 @cancel="onCancel"
                 @ok="onOk"
@@ -143,7 +98,7 @@
 					    placeholder="请选择通知类型"
 					    class="mb-4"
 					/>
-					<va-input
+					<VaInput
 					  v-model="editForm.title"
 					  label="标题"
 					  class="mb-4"
@@ -155,25 +110,38 @@
 					      {{ valueLength }}/50
 					    </span>
 					  </template>
+					</VaInput>
+					<va-input
+					  v-model="editForm.spec"
+					  label="概述"
+					  class="mb-4"
+					  :max-length="100"
+					  counter
+					>
+					  <template #counter="{ valueLength }">
+					    <span :class="{ 'text-danger': valueLength > 100 }">
+					      {{ valueLength }}/100
+					    </span>
+					  </template>
 					</va-input>
-                    <VaInput
-                        v-model="editForm.download_url"
-                        label="概览"
-                        type="string"
-                        class="mb-3"
-                    />	
-					<VaInput
-					    v-model="editForm.release_notes"
-					    label="推送用户"
-					    type="textarea"
-					    class="mb-3"
-					/>	
-					<VaInput
-					    v-model="editForm.release_notes_en"
-					    label="更新日志英文版 (如需换行请用','隔开)"
-					    type="textarea"
-					    class="mb-3"
-					/>	
+					<VaTextarea
+					  v-model="editForm.content"
+					  label="内容 (支持HTML语言)"
+					  placeholder="请输入详细内容..."
+					  autosize
+					  :min-rows="10"
+					  :max-rows="20"
+					  :max-length="2000"
+					  counter
+					  class="mb-6"
+					  :style="{ width: '1000px' }"
+					>
+					  <template #counter="{ valueLength }">
+					    <span :class="{ 'text-danger': valueLength > 2000 }">
+					      {{ valueLength }}/2000
+					    </span>
+					  </template>
+					</VaTextarea>
                 </VaForm>
             </VaModal>
 			
@@ -417,6 +385,13 @@ const fetchNoticeOptions = async () => {
     })
   }
 }
+
+const searchPublish = ref('')
+
+const publishedOptions = [
+    { value: '1', text: '已推送' },
+    { value: '0', text: '未推送' },
+]
 
 const titleLength = () => {
 	return title.value.trim().length
@@ -903,7 +878,7 @@ const onOk = async () => {
 		title_en: editForm.title,
 	    spec: editForm.spec,
 	    spec_en: editForm.spec,
-		type: editForm.type,
+		type: editForm.type.value,
 		content: editForm.content,
 		content_en: editForm.content_en,
 		belonged_user: editForm.belonged_user
