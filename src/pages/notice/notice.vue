@@ -96,14 +96,14 @@
 					  <div class="action-container">
 					    <!-- 主要操作：紧凑图标按钮 -->
 						<va-button-group>
-<!-- 							<va-button 
+							<va-button 
 								size="small"
 								icon="edit"
 								color="rgb(47, 148, 172)"
-								@click="editVersion(row)"
+								@click="editNotice(row)"
 								title="修改通知内容"
 								class="action-icon"
-							/> -->
+							/>
 							<va-button
 							  icon="rocket_launch"
 							  size="small"
@@ -136,20 +136,26 @@
 				:cancel-props="{ color: 'rgb(47, 148, 172)', textColor: 'white' }"
             >
                 <VaForm>
-					<VaInput
-					    v-model="editForm.version"
-					    label="标题"
-					    type="string"
-					    class="mb-3"
-						readonly
+					<va-select
+					    v-model="editForm.type"
+						:options="noticeSpecTypeOptions"
+						label="通知类型"
+					    placeholder="请选择通知类型"
+					    class="mb-4"
 					/>
-					<VaInput
-					    v-model="editForm.system"
-					    label="通知类型"
-					    type="string"
-					    class="mb-3"
-						readonly
-					/>
+					<va-input
+					  v-model="editForm.title"
+					  label="标题"
+					  class="mb-4"
+					  :max-length="50"
+					  counter
+					>
+					  <template #counter="{ valueLength }">
+					    <span :class="{ 'text-danger': valueLength > 50 }">
+					      {{ valueLength }}/50
+					    </span>
+					  </template>
+					</va-input>
                     <VaInput
                         v-model="editForm.download_url"
                         label="概览"
@@ -435,6 +441,18 @@ const isFormValid = () => {
 		 addType.value != ''
 }
 
+const isEditFormValid = () => {
+	console.log("title length is",editForm.title.trim().length)
+	return editForm.title.trim().length > 0 && 
+		 editForm.title.trim().length <= 50 &&
+		 editForm.spec.trim().length > 0 &&
+		 editForm.spec.trim().length <= 100 &&
+		 editForm.content.trim().length > 0 &&
+		 editForm.content.trim().length <= 2000 &&
+		 editForm.belonged_user.value != '' &&
+		 editForm.type.value != ''
+}
+
 const resetAddNoticeForm = () => {
    title.value = ''
    spec.value = ''
@@ -465,6 +483,9 @@ const handleSubmit = async () => {
 	
 	  try {				  
 	    await addNotice(params)
+		showAddModal.value = false
+		fetchData()
+		resetAddNoticeForm()
 	    toast({ message: '新增成功', color:'rgb(47, 148, 172)' })
 	  } catch (error) {
 	    toast({ 
@@ -472,9 +493,6 @@ const handleSubmit = async () => {
 	      color: 'danger' 
 	    })
 	  } finally {
-		fetchData()
-		resetAddNoticeForm()
-	    showAddModal.value = false
 	  }
 }
 
@@ -848,42 +866,64 @@ const columns = [
 
 const isEditModalVisible = ref(false)
 const editForm = reactive({
-	version: '',
-	system: '',
-	release_notes: '',
-	release_notes_en: '',
-	download_url: ''
+	id: null,
+	title: '',
+	title_en: '',
+	spec: '',
+	spec_en: '',
+	type: '',
+	content: '',
+	content_en: '',
+	belonged_user: ''
 })
 
-const editVersion = (row) => {
-    editForm.version = row.rowData.version
-	editForm.system = row.rowData.system
-	editForm.download_url = row.rowData.download_url
-    editForm.release_notes = row.rowData.release_notes
-	editForm.release_notes_en = row.rowData.release_notes_en
+const editNotice = (row) => {
+	editForm.id = row.rowData.id
+    editForm.title = row.rowData.title
+	editForm.spec = row.rowData.spec
+	editForm.type = row.rowData.type
+    editForm.content = row.rowData.content
+	editForm.belonged_user = row.rowData.belonged_user
     isEditModalVisible.value = true
 }
 
+
+
 const onOk = async () => {
+	if (!isEditFormValid()) {	
+	  toast({
+	    message: '请检查输入内容是否符合要求',
+	    color: 'danger'
+	  })
+	  return
+	}
+	
+	const params = {
+		title: editForm.title,
+		title_en: editForm.title,
+	    spec: editForm.spec,
+	    spec_en: editForm.spec,
+		type: editForm.type,
+		content: editForm.content,
+		content_en: editForm.content_en,
+		belonged_user: editForm.belonged_user
+	}
+	
     try {
-        const msg = await modifyVersion(editForm.version,editForm.system, {
-            download_url: editForm.download_url,
-            release_notes: editForm.release_notes,
-			release_notes_en: editForm.release_notes_en
-        })
+        const msg = await modifyNotice(editForm.id, params)
+		isEditModalVisible.value = false
+		fetchData()
         toast({
             message: msg,
             color: "success",
         })
-        await fetchData()
-        isEditModalVisible.value = false
     } catch (error) {
-        console.error("修改失败:", error)
         toast({
             message: error.message || "修改失败",
             color: "danger",
         })
-    }
+    } finally {
+	}
 }
 
 const publishNewVersion = async (version,system) => {
