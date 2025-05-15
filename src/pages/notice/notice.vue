@@ -127,11 +127,19 @@
             </VaDataTable>
             
             <!-- 添加编辑弹窗 -->
-            <VaModal
+            <!-- <va-modal
                 v-model="isEditModalVisible"
+				hide-default-actions
                 title="修改通知"
                 @cancel="onCancel"
                 @ok="onOk"
+				:ok-props="{ color: 'rgb(47, 148, 172)', textColor: 'white' }"
+				:cancel-props="{ color: 'rgb(47, 148, 172)', textColor: 'white' }"
+            > -->
+			<va-modal
+                v-model="isEditModalVisible"
+				hide-default-actions
+                title="修改通知"
 				:ok-props="{ color: 'rgb(47, 148, 172)', textColor: 'white' }"
 				:cancel-props="{ color: 'rgb(47, 148, 172)', textColor: 'white' }"
             >
@@ -175,7 +183,21 @@
 					    class="mb-3"
 					/>	
                 </VaForm>
-            </VaModal>
+				    <!-- 操作按钮 -->
+					<div class="flex justify-end gap-4">
+				          <va-button
+				            color="secondary"
+				            @click="cancel"
+				          >
+				            取消
+				          </va-button>
+				          <va-button
+				            @click="onOk"
+				          >
+				            确认新增
+				          </va-button>
+				        </div>
+            </va-modal>
 			
 			<va-modal v-model="isDatePickerVisible" hide-default-actions title="选择发布时间">
 			    <VaDateInput v-model="date" />
