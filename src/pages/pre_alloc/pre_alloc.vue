@@ -39,11 +39,11 @@
                 </template>
                 <template #cell(actions)="{ row }">
                     <va-button-group>
-                        <va-button v-if="row.rowData.currency != 'tao'" size="medium" color="rgb(47, 148, 172)" class="mr-4"  @click="fetchDataAndShowModal(row,'hashrate')">模拟 (算力)</va-button>
-						<va-button v-if="row.rowData.currency != 'tao'" size="medium" color="rgb(47, 148, 172)" class="mr-4" @click="fetchDataAndShowModal(row,'time')">模拟 (时长)</va-button>
-						<va-button v-if="row.rowData.currency != 'tao'" size="medium" :disabled="row.rowData.status === 1" color="danger" class="mr-4" @click="confirmAlloc(row)">实际分配 (算力)</va-button>
-						<va-button v-if="row.rowData.currency === 'tao'" size="medium" color="rgb(47, 148, 172)" class="mr-4" @click="fetchDataAndShowModal(row,'')">模拟分配</va-button>
-						<va-button v-if="row.rowData.currency === 'tao'" size="medium" :disabled="row.rowData.status === 1" color="danger" class="mr-4" @click="confirmAlloc(row)">实际分配</va-button>
+                        <va-button v-if="row.rowData.currency != 'tao' && row.rowData.currency != 'ltc'" size="medium" color="rgb(47, 148, 172)" class="mr-4"  @click="fetchDataAndShowModal(row,'hashrate')">模拟 (算力)</va-button>
+						<va-button v-if="row.rowData.currency != 'tao' && row.rowData.currency != 'ltc'" size="medium" color="rgb(47, 148, 172)" class="mr-4" @click="fetchDataAndShowModal(row,'time')">模拟 (时长)</va-button>
+						<va-button v-if="row.rowData.currency != 'tao' && row.rowData.currency != 'ltc'" size="medium" :disabled="row.rowData.status === 1" color="danger" class="mr-4" @click="confirmAlloc(row)">实际分配 (算力)</va-button>
+						<va-button v-if="row.rowData.currency === 'tao' || row.rowData.currency === 'ltc'" size="medium" color="rgb(47, 148, 172)" class="mr-4" @click="fetchDataAndShowModal(row,'')">模拟分配</va-button>
+						<va-button v-if="row.rowData.currency === 'tao' || row.rowData.currency === 'ltc'" size="medium" :disabled="row.rowData.status === 1" color="danger" class="mr-4" @click="confirmAlloc(row)">实际分配</va-button>
 					</va-button-group>
 					<va-modal
 					  v-model="isNewModalVisible"
@@ -75,7 +75,7 @@
 									  </div>
 									  <div>
 									    <va-text class="font-bold">币种：</va-text>
-									    <va-text>{{ row.rowData.currency?.toUpperCase() || 'Unknown' }}</va-text>
+									    <va-text>{{ apiData["currency"]?.toUpperCase() || 'Unknown' }}</va-text>
 									  </div>
 									  <div>
 									    <va-text class="font-bold">总分配收益：</va-text>
@@ -140,7 +140,7 @@
 import { ref, reactive,computed,h } from 'vue'
 import { getAllocTasks,preAlloc,alloc } from "../../api/allocate"
 import { machineOptions } from "../../api/machines"
-import { formatDateTime,isDateDisabled,getYesterday,convertDateTimeToDate } from "../../utils/date.ts"
+import { formatDateTime,isDateDisabled,getYesterday,convertDateTimeToDate,getColumns } from "../../utils/date.ts"
 import { useToast } from "vuestic-ui"
 import { getUser } from "../../utils/auth";
 import { useRouter } from 'vue-router';
@@ -215,13 +215,16 @@ const isModalVisible = ref(false); // 控制弹出框显示
 const isNewModalVisible = ref(false);
 const apiData = ref(null); // 存储后端返回数据
 
-const columnsNew = [
+let columnsNew = [
   { key: 'uid', label: '用户UID'},
   { key: 'sub_user_name', label: '子账户名' },
   { key: 'machines', label: '机器数' },
   { key: 'day_profits', label: '分配收益 '},
   { key: 'fees', label: '手续费 ' },
+  { key: 'currency', label: '币种' }
 ];
+
+// const columnsNew = getColumns()
 
 const confirmAlloc = (row) => {
   currentRow.value = row; // 设置当前行
@@ -240,6 +243,7 @@ const formatDate = (date) => {
 
 // 点击按钮逻辑
 const fetchDataAndShowModal = async (row,allocType) => {
+  columnsNew = getColumns(row.rowData.currency)
   loading.value = true; // 显示加载状态
   console.log("record_date is",row.rowData.record_date)
   try {
@@ -357,7 +361,7 @@ const fetchMachineOptions = async () => {
 	  
 	  const defaultOption = { value: '', text: '所有' };
 	  currencyOptions.value = [defaultOption, ...convertToOptions(response.currencies || [])];
-	  groupOptions.value = [defaultOption, ...convertToOptions(response.groups || [])];
+	  // groupOptions.value = [defaultOption, ...convertToOptions(response.groups || [])];
 	  
   } catch (error) {
     console.error('接口调用失败:', error)

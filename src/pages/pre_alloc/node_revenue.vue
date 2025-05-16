@@ -105,7 +105,7 @@
 
 <script setup>
 import { ref, reactive,h } from 'vue'
-import { getPoolProfits, updatePoolProfit } from "../../api/node"
+import { getPoolProfits, updatePoolProfit,getProfitCurrencies } from "../../api/node"
 import { machineOptions } from "../../api/machines"
 import { formatDateTime,formatHashRate,isDateDisabled } from "../../utils/date.ts"
 import { useToast } from "vuestic-ui"
@@ -130,9 +130,10 @@ const convertToOptions = (arr) =>
 const fetchMachineOptions = async () => {
   try {
     const response = await machineOptions()
+	const curRes = await getProfitCurrencies()
       // 带空值保护的转换
 	  const defaultOption = { value: '', text: '所有' };
-	  currencyOptions.value = [defaultOption, ...convertToOptions(response.currencies || [])];
+	  currencyOptions.value = [defaultOption, ...convertToOptions(curRes || [])];
 	  groupOptions.value = [defaultOption, ...convertToOptions(response.groups || [])];
   } catch (error) {
     console.error('接口调用失败:', error)

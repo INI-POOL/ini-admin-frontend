@@ -8,3 +8,7 @@ export function getPoolProfits(params) {
 export function updatePoolProfit(id, data) {
     return patch(`/api/v1/back_stage/pre_allocate/pool_profits/modify?id=${id}`, data);
 }
+
+export function getProfitCurrencies() {
+    return get("/api/v1/back_stage/profit/currencies");
+}

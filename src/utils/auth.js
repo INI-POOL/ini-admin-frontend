@@ -22,8 +22,6 @@ export const removeToken = () => {
   localStorage.removeItem(TOKEN_EXPIRY_KEY);
 };
 
-
-
 // 设置token和过期时间
 export const setUser = (token) => {
   const expiry = new Date().getTime() + TOKEN_EXPIRY_TIME;

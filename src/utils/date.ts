@@ -92,6 +92,19 @@ export function convertDateTimeToDate(isoString: string): string {
     return `${year}-${month}-${day}`;
 }
 
+export function getColumns(currency) {
+  const baseColumns = [
+    { key: 'uid', label: '用户UID' },
+    { key: 'sub_user_name', label: '子账户名' },
+    { key: 'day_profits', label: '分配收益' },
+    { key: 'fees', label: '手续费' }
+  ]
+  
+  return currency === 'ltc'
+    ? [...baseColumns, { key: 'currency', label: '币种' }]
+    : [...baseColumns, { key: 'machines', label: '机器数' }]
+}
+
 function getLowLevelUnit(unit: string): string {
 	if (unit === 'EH/s') {
 		return 'PH/s'

@@ -217,6 +217,7 @@ const columns = [
 	{ key: 'record_date', label: '记录日期' },
     { key: 'uid', label: '用户Uid' },
 	{ key: 'sub_user_name', label: '子账户' },
+	{ key: 'currency',label: '币种'},
     { key: 'machines', label: '机器数' },
     { key: 'profit', label: '分配收益' },
     { key: 'fee', label: '手续费' },

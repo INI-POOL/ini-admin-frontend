@@ -1,2 +1,0 @@
-import{g as t,p as a}from"./request-D2IdOgbh.js";function o(e){return a("/api/v1/back_stage/google/secret/auth",e)}function g(e){return a("/api/v1/back_stage/google/secret/bind",e)}function r(e){return t("/api/v1/back_stage/google/secret/get?user_name="+e)}function i(e){return t("/api/v1/back_stage/google_auth/judge?user_name="+e)}function n(e){return t("/api/v1/back_stage/user/list",e)}function u(){return t("/api/v1/back_stage/user/uid/list")}export{n as a,g as b,u as c,o as d,r as g,i};
-//# sourceMappingURL=user-lmo-Bdqm.js.map
