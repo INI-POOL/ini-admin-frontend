@@ -1,0 +1,2 @@
+import{g as n,p as e,a as i}from"./request-Ba4b_24I.js";function o(a=""){return n(`/api/v1/back_stage/machine/options?currency=${a}`)}function c(){return n("/api/v1/back_stage/tao/group/options")}function p(a){return e("/api/v1/back_stage/pre_allocate/machine",a)}function s(a){return i("/api/v1/back_stage/pre_allocate/machine/modify",a).then(t=>{if(!t)throw new Error("请求失败，未返回响应数据");return t})}export{s as a,o as m,p,c as t};
+//# sourceMappingURL=machines-CXOeTK0j.js.map

@@ -197,7 +197,7 @@ export const isDateDisabled = (date: Date): boolean => {
   today.setHours(0, 0, 0, 0) // 清除时间部分
 
   // 定义二期开始日期
-  const phase2Start = new Date('2025-02-27')
+  const phase2Start = new Date('2025-02-10')
   phase2Start.setHours(0, 0, 0, 0)
 
   // 处理比较日期
