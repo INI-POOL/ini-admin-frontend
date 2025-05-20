@@ -64,7 +64,6 @@
 								@click="editNotice(row)"
 								title="修改通知内容"
 								class="action-icon"
-								v-if="row.rowData.is_published === 0"
 							/>
 							<va-button
 							  icon="rocket_launch"
