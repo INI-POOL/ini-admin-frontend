@@ -57,15 +57,15 @@ const routes: Array<RouteRecordRaw> = [
           title: "提现管理",
         },
       },
-      // {
-      //   name: "machines_root",
-      //   path: "machines_root",
-      //   component: () => import("../pages/machines/list.vue"),
-      //   meta: {
-      //     requiresAuth: true,
-      //     title: "机器管理",
-      //   },
-      // },
+      {
+        name: "machines_root",
+        path: "machines_root",
+        component: () => import("../pages/machines/list.vue"),
+        meta: {
+          requiresAuth: true,
+          title: "机器管理",
+        },
+      },
 	  {
 	    name: "pre_machines",
 	    path: "pre_machines",
@@ -111,15 +111,15 @@ const routes: Array<RouteRecordRaw> = [
 			title: "分配记录",
 		  },
 	    },
-		// {
-		//   name: "version",
-		//   path: "version",
-		//   component: () => import("../pages/version/version.vue"),
-		//   meta: {
-		// 	requiresAuth: true,
-		// 	title: "版本管理",
-		//   },
-		// },
+		{
+		  name: "version",
+		  path: "version",
+		  component: () => import("../pages/version/version.vue"),
+		  meta: {
+			requiresAuth: true,
+			title: "版本管理",
+		  },
+		},
 		{
 		  name: "notice",
 		  path: "notice",

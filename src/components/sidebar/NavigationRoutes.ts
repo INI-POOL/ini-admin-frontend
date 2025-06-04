@@ -41,13 +41,13 @@ export default {
         icon: "credit_card",
       },
     },
-	// {
-	//   name: "machines_root",
-	//   displayName: "admin.machines",
-	//   meta: {
-	//     icon: "storage", 
-	//   },
-	// },
+	{
+	  name: "machines_root",
+	  displayName: "admin.machines",
+	  meta: {
+	    icon: "storage", 
+	  },
+	},
 	{
 	  name: 'pre_alloc',
 	  displayName: "admin.preAlloc",
@@ -92,13 +92,13 @@ export default {
 		},
 	  ],
 	},
-	// {
-	//   name: "version",
-	//   displayName: "版本管理",
-	//   meta: {
-	//     icon: "publish", 
-	//   },
-	// },
+	{
+	  name: "version",
+	  displayName: "版本管理",
+	  meta: {
+	    icon: "publish", 
+	  },
+	},
 	{
 	  name: "notice",
 	  displayName: "消息通知",
