@@ -9,7 +9,7 @@ export const validators = {
     return pattern.test(v) || "Please enter a valid email address";
   },
   username: (v: string) => {
-    const pattern = /^admin|umpool$/;
+    const pattern = /^admin|Inipool$/;
     return pattern.test(v) || "请输入有效用户名";
   },
   required: (v: any) => !!v || "This field is required",

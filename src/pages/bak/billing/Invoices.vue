@@ -38,10 +38,10 @@
 <script lang="ts" setup>
 import { computed, ref } from "vue";
 import { useToast } from "vuestic-ui";
-import { useI18n } from "vue-i18n";
+// import { useI18n } from "vue-i18n";
 
 const { init } = useToast();
-const { locale } = useI18n();
+// const { locale } = useI18n();
 
 const minNumberOfInvoices = 7;
 const maxNumberOfInvoices = 20;
@@ -64,16 +64,16 @@ function getRandomDateInBetween(start: string, end: string): Date {
   );
 }
 
-function getLanguageCode(): string {
-  const countryCodeToLanguageCodeMapping: Record<any, string> = {
-    br: "pt",
-    cn: "zh-CN",
-    gb: "en-GB",
-    ir: "fa",
-  };
+// function getLanguageCode(): string {
+//   const countryCodeToLanguageCodeMapping: Record<any, string> = {
+//     br: "pt",
+//     cn: "zh-CN",
+//     gb: "en-GB",
+//     ir: "fa",
+//   };
 
-  return countryCodeToLanguageCodeMapping[locale.value] || "en-GB";
-}
+//   return countryCodeToLanguageCodeMapping[locale.value] || "en-GB";
+// }
 
 function getRandomDateString(): string {
   const startDate = "2020-01-01";
@@ -86,8 +86,8 @@ function getRandomDateString(): string {
   };
 
   return getRandomDateInBetween(startDate, endDate).toLocaleDateString(
-    getLanguageCode(),
-    dateFormatOptions,
+    // getLanguageCode(),
+    // dateFormatOptions,
   );
 }
 

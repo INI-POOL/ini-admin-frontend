@@ -61,7 +61,7 @@ import {checkGoogleCode,isNeedGoogle} from "../../api/user";
 const { push } = useRouter();
 const { init } = useToast();
 const isGoogle=ref(false)// 判断用户是否有谷歌认证
-const umpoolISGoogle=ref(0)// 判断umpool是否有谷歌认证
+const InipoolISGoogle=ref(0)// 判断Inipool是否有谷歌认证
 const adminISGoogle=ref(0)// 判断admin是否有谷歌认证
 
 const formData = reactive({
@@ -72,7 +72,7 @@ const formData = reactive({
 });
 
 const checkIsNeedGoogleCode = () => {
-  if(formData.username.trim() === "umpool" && umpoolISGoogle.value===1 ){
+  if(formData.username.trim() === "Inipool" && InipoolISGoogle.value===1 ){
     isGoogle.value=true // 默认为true
   }else if(formData.username.trim() === "admin" && adminISGoogle.value===1 ){
     isGoogle.value=true // 默认为true
@@ -85,8 +85,8 @@ onMounted(async () => {
 });
 const checkUserGoogleCode = async () => {
   try {
-    const res = await isNeedGoogle('umpool');
-    umpoolISGoogle.value = res;
+    const res = await isNeedGoogle('Inipool');
+    InipoolISGoogle.value = res;
 
     const res_admin = await isNeedGoogle('admin');
     adminISGoogle.value = res_admin;
@@ -131,7 +131,7 @@ const submit = () => {
 };
 const checkUserpassword = () =>{  
   if((formData.username.trim() === "admin" &&
-    formData.password.trim() === "A3f!7#b2Pz9L") ||  (formData.username === "umpool" &&
+    formData.password.trim() === "A3f!7#b2Pz9L") ||  (formData.username === "Inipool" &&
     formData.password === "gT9@pY6uV*2S"))
     {
       return true;

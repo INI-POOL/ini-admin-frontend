@@ -12,14 +12,14 @@
 
 <p align="center">
   <a href="https://admin-demo.vuestic.dev"> ライブデモ </a> |
-  <a href="https://admin-landing.vuestic.dev/"> Umpool Admin について </a> |
+  <a href="https://admin-landing.vuestic.dev/"> Inipool Admin について </a> |
   <a href="https://ui.vuestic.dev/">Vuestic UI ドキュメンテーション</a>
 </p>
 
-> Umpool Admin は [Vuestic UI](https://ui.vuestic.dev) で構築されています。私たちの
+> Inipool Admin は [Vuestic UI](https://ui.vuestic.dev) で構築されています。私たちの
 > <a href="https://github.com/epicmaxco/vuestic-ui/issues">課題</a>、
 > <a href="https://ui.vuestic.dev/en/contribution/guide">貢献ガイド</a> を参照して、
-> <a href="https://discord.gg/jTKTjj2weV">Discord サーバー</a> でディスカッションに参加して、Umpool Admin ＆ Vuestic UI の体験を向上させるのに役立ててください。
+> <a href="https://discord.gg/jTKTjj2weV">Discord サーバー</a> でディスカッションに参加して、Inipool Admin ＆ Vuestic UI の体験を向上させるのに役立ててください。
 
 <p align="center">
   <a href="https://admin.vuestic.dev" target="_blank">
@@ -29,13 +29,13 @@
 
 ### クイックスタート
 
-次のコマンドを使用して、[Umpool Admin](admin-demo.vuestic.ui) または空の Vite または Nuxt プロジェクトを [Vuestic UI](ui.vuestic.dev) と共に素早く構築します。
+次のコマンドを使用して、[Inipool Admin](admin-demo.vuestic.ui) または空の Vite または Nuxt プロジェクトを [Vuestic UI](ui.vuestic.dev) と共に素早く構築します。
 
 ```bash
 npm create vuestic@latest
 ```
 
-[Umpool Admin](admin.vuestic.ui) をインストールしたら、`npm install` を実行して依存関係をインストールし、次に `npm run dev` を実行してローカル開発サーバーを起動します。
+[Inipool Admin](admin.vuestic.ui) をインストールしたら、`npm install` を実行して依存関係をインストールし、次に `npm run dev` を実行してローカル開発サーバーを起動します。
 
 ### ドキュメンテーション
 
@@ -80,7 +80,7 @@ npm create vuestic@latest
 
 ### お仕事の依頼はできますか？
 
-[Epicmax](https://epicmax.co) は初めからオープンソースにコミットしています。Umpool Admin は Epicmax によって作成され、そしてこれまでのすべての年月を通じてサポートされています。
+[Epicmax](https://epicmax.co) は初めからオープンソースにコミットしています。Inipool Admin は Epicmax によって作成され、そしてこれまでのすべての年月を通じてサポートされています。
 
 6年以上にわたる商業およびオープンソースプロジェクトへの専念した作業、および世界中のさまざまな分野で47以上のクライアントを持つことで、Epicmaxは特にVue.jsにおけるフロントエンド開発の深い専門知識を有しています。私たちはプロジェクトのコード監査を定期的に実施しており、これまでのクライアントだけでなく、フロントエンドコードの状態を理解し、セキュアで最新であることを確認したいすべての方にこのサービスを提供することに興奮しています！
 

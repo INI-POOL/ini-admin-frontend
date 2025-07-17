@@ -1,8 +1,8 @@
 <template>
 
-<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 120 120" fill="none">
-  <path  x="50" y="50" width="200" height="100" d="M30 30H0V0H14.667V21.333H21.333V0H30V30Z" fill="#fff"/>
-    <text x="95" y="25"  font-family="Arial" font-weight="bolder" font-size="28" fill="white" text-anchor="middle">INIPOOL</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="150" height="30" viewBox="0 0 150 30" fill="none">
+  <path  x="0" y="0" width="150" height="30" d="M30 30H0V0H14.667V21.333H21.333V0H30V30Z" fill="#8B2EF9"/>
+    <text x="95" y="25"  font-family="Arial" font-weight="bolder" font-size="28" fill="#8B2EF9" text-anchor="middle">INIPOOL</text>
 </svg>
 
 <!-- <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" fill="none">

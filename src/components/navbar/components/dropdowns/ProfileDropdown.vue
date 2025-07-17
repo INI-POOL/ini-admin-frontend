@@ -1,13 +1,13 @@
 <template>
   <div class="profile-dropdown-wrapper">
-	      <div class="language-switcher mr-4">
+	      <!-- <div class="language-switcher mr-4">
 	        <VaSelect
 	          v-model="selectedLanguage"
 	          :options="languageOptions"
 	          @update:modelValue="changeLanguage"
 	          class="language-select"
 	        />
-	      </div>
+	      </div> -->
     <VaDropdown
       v-model="isShown"
       :offset="[9, 0]"
@@ -61,32 +61,32 @@
 
 <script lang="ts" setup>
 import { ref, computed } from "vue";
-import { useI18n } from "vue-i18n";
+// import { useI18n } from "vue-i18n";
 import { useColors } from "vuestic-ui";
 import { removeToken } from "@/utils/auth";
 import router from "@/router";
 const { colors, setHSLAColor } = useColors();
 const hoverColor = computed(() => setHSLAColor(colors.focus, { a: 0.1 }));
 
-const { t } = useI18n();
+// const { t } = useI18n();
 
 // 语言选项
-const languageOptions = [
-  { value: 'cn', text: '中文' },
-  { value: 'en', text: 'English' },
-];
-const selectedLanguage = ref(t.value || languageOptions[0]); // 当前选中的语言
+// const languageOptions = [
+//   { value: 'cn', text: '中文' },
+//   { value: 'en', text: 'English' },
+// ];
+// const selectedLanguage = ref(t.value || languageOptions[0]); // 当前选中的语言
 
 
 
 // 切换语言
-const changeLanguage = (language) => {
-	console.log("t.value is",t.value)
-	console.log("language is",language)
-	// console.log('当前语言包:', i18n.global.messages);
-  t.value = language; // 更新 i18n 的 locale
-  localStorage.setItem('language', language.value); // 将语言设置保存到 localStorage
-};
+// const changeLanguage = (language) => {
+// 	console.log("t.value is",t.value)
+// 	console.log("language is",language)
+// 	// console.log('当前语言包:', i18n.global.messages);
+//   t.value = language; // 更新 i18n 的 locale
+//   localStorage.setItem('language', language.value); // 将语言设置保存到 localStorage
+// };
 
 type ProfileListItem = {
   name: string;

@@ -11,16 +11,16 @@ export default {
     displayName: "navigationRoutes.home",
   },
   routes: [
-	  // {
-	  //   name: "dashboard",
-	  //   displayName: "仪表盘",
-	  //   meta: {
-	  //     icon: "",
-	  //   },
-	  // },
+	  {
+	    name: "dashboard",
+	    displayName: "总览",
+	    meta: {
+	      icon: "",
+	    },
+	  },
 	{
 	    name: "user",
-	    displayName: "用户管理",
+	    displayName: "矿工管理",
 	    meta: {
 	      icon: "manage_accounts",
 	    },
@@ -32,80 +32,90 @@ export default {
 				  icon: "contact_page",
 				},
 			},
+      {
+        name: "machines_root",
+        displayName: "机器列表",
+        meta: {
+          icon: "storage", 
+        },
+      },
 		],
 	},
-    {
-      name: "withdraw",
-      displayName: "admin.withdrawList",
-      meta: {
-        icon: "credit_card",
-      },
+  {
+    name: "user",
+    displayName: "矿池管理",
+    meta: {
+      icon: "manage_accounts",
     },
-	{
-	  name: "machines_root",
-	  displayName: "admin.machines",
-	  meta: {
-	    icon: "storage", 
-	  },
-	},
+  children: [
+    {
+      name: 'node_revenue',
+      displayName: '节点收益',
+    meta: {
+      icon: "vuestic-iconset-dashboard",
+    },
+  },
+  ],
+},
+    // {
+    //   name: "withdraw",
+    //   displayName: "提现列表",
+    //   meta: {
+    //     icon: "credit_card",
+    //   },
+    // },
 	{
 	  name: 'pre_alloc',
-	  displayName: "admin.preAlloc",
+	  displayName: "收益发放",
 	  meta: {
 	    icon: "text_snippet",
 	  },
 	  children: [
 		{
 		    name: 'pre_machines',
-		    displayName: "admin.preMachines",
+		    displayName: "预发放数据",
 		    meta: {
 		      icon: "vuestic-iconset-dashboard",
 		    },
 		},
-        {
-	        name: 'node_revenue',
-	        displayName: 'admin.nodeRevenue',
-		    meta: {
-		      icon: "vuestic-iconset-dashboard",
-		    },
-	    },
-		{
-		    name: 'tao_revenue',
-		    displayName: 'TAO收益',
-		    meta: {
-		      icon: "vuestic-iconset-dashboard",
-		    },
-		},
+       
+		// {
+		//     name: 'tao_revenue',
+		//     displayName: 'TAO收益',
+		//     meta: {
+		//       icon: "vuestic-iconset-dashboard",
+		//     },
+		// },
 		{
 		  name: 'alloc_tasks',
-		  displayName: 'admin.allocTask',
+		  displayName: '发放任务',
 		  meta: {
 		    icon: "vuestic-iconset-dashboard",
 		  },
 		},
 		{
 		  name: "allocated",
-		  displayName: "分配记录",
+		  displayName: "已发放",
 		  meta: {
 		    icon: "text_snippet", 
 		  },
 		},
 	  ],
 	},
-	{
-	  name: "version",
-	  displayName: "版本管理",
-	  meta: {
-	    icon: "publish", 
-	  },
-	},
-	{
-	  name: "notice",
-	  displayName: "消息通知",
-	  meta: {
-	    icon: "notifications", 
-	  },	  
-	},
+	// {
+	//   name: "version",
+	//   displayName: "版本管理",
+	//   meta: {
+	//     icon: "publish", 
+	//   },
+	// },
+	// {
+	//   name: "notice",
+	//   displayName: "消息通知",
+	//   meta: {
+	//     icon: "notifications", 
+	//   },	  
+	// },
     // {
     //   name: "dashboard",
     //   displayName: "menu.dashboard",
@@ -192,12 +202,12 @@ export default {
     //     icon: "manage_accounts",
     //   },
     // },
-    // {
-    //   name: "settings",
-    //   displayName: "menu.settings",
-    //   meta: {
-    //     icon: "settings",
-    //   },
-    // },
+    {
+      name: "settings",
+      displayName: "矿池设置",
+      meta: {
+        icon: "settings",
+      },
+    },
   ] as INavigationRoute[],
 };

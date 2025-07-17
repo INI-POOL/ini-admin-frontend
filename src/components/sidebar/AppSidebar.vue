@@ -16,9 +16,7 @@
             :active="routeHasActiveChild(route)"
             :active-color="activeColor"
             :text-color="textColor(route)"
-            :aria-label="`${route.children ? 'Open category ' : 'Visit'} ${t(
-              route.displayName,
-            )}`"
+          
             role="button"
             hover-opacity="0.10"
           >
@@ -33,7 +31,8 @@
               <VaSidebarItemTitle
                 class="flex justify-between items-center leading-5 font-semibold"
               >
-                {{ t(route.displayName) }}
+                <!-- {{ t(route.displayName) }} -->
+                  {{ route.displayName }}
                 <VaIcon
                   v-if="route.children"
                   :name="arrowDirection(isCollapsed)"
@@ -50,12 +49,11 @@
               :active="isActiveChildRoute(childRoute)"
               :active-color="activeColor"
               :text-color="textColor(childRoute)"
-              :aria-label="`Visit ${t(route.displayName)}`"
               hover-opacity="0.10"
             >
               <VaSidebarItemContent class="py-3 pr-2 pl-11">
                 <VaSidebarItemTitle class="leading-5 font-semibold">
-                  {{ t(childRoute.displayName) }}
+                  {{ childRoute.displayName }}
                 </VaSidebarItemTitle>
               </VaSidebarItemContent>
             </VaSidebarItem>
@@ -69,7 +67,7 @@
 import { defineComponent, watch, ref, computed } from "vue";
 import { useRoute } from "vue-router";
 
-import { useI18n } from "vue-i18n";
+// import { useI18n } from "vue-i18n";
 import { useColors } from "vuestic-ui";
 
 import navigationRoutes, { type INavigationRoute } from "./NavigationRoutes";
@@ -85,7 +83,7 @@ export default defineComponent({
   setup: (props, { emit }) => {
     const { getColor, colorToRgba } = useColors();
     const route = useRoute();
-    const { t } = useI18n();
+    // const { t } = useI18n();
 
     const value = ref<boolean[]>([]);
 
@@ -134,7 +132,7 @@ export default defineComponent({
       navigationRoutes,
       routeHasActiveChild,
       isActiveChildRoute,
-      t,
+      // t,
       iconColor,
       textColor,
       arrowDirection,

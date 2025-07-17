@@ -231,8 +231,8 @@ watch([searchDate, searchCurrency,searchGroup], () => {
 		});
 		return
 	}
-    fetchData()
-	fetchMachineOptions()
+    // fetchData()
+	// fetchMachineOptions()
 })
 
 const poolTypeMap = {
@@ -298,8 +298,8 @@ const onOk = async () => {
             message: msg,
             color: "success",
         })
-        await fetchData()
-		await fetchMachineOptions()
+        // await fetchData()
+		// await fetchMachineOptions()
         isEditModalVisible.value = false
     } catch (error) {
         console.error("修改失败:", error)
@@ -326,21 +326,21 @@ const resetForm = () => {
 const handlePageChange = (startIndex) => {
     queryParams.page = Math.ceil(startIndex / queryParams.pagesize)
     currentStartIndex.value = startIndex
-    fetchData()
-	fetchMachineOptions()
+    // fetchData()
+	// fetchMachineOptions()
 }
 
 const refreshData = () => {
 	searchDate.value = null;
 	searchGroup.value = '';
 	searchCurrency.value = '';
-    fetchData()
-	fetchMachineOptions()
+    // fetchData()
+	// fetchMachineOptions()
 }
 
 // 初始化加载数据
-fetchData()
-fetchMachineOptions()
+// fetchData()
+// fetchMachineOptions()
 </script>
 
 <style scoped>

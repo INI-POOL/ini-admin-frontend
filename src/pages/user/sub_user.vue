@@ -200,7 +200,7 @@ import { watch } from 'vue'
 watch([searchCurrency,searchSub,searchUid], () => {
     queryParams.page = 1
     currentStartIndex.value = 1
-    fetchData()
+    // fetchData()
 })
 
 const columns = [
@@ -218,19 +218,19 @@ const columns = [
 const handlePageChange = (startIndex) => {
     queryParams.page = Math.ceil(startIndex / queryParams.pagesize)
     currentStartIndex.value = startIndex
-    fetchData()
+    // fetchData()
 }
 
 const refreshData = () => {
 	searchSub.value = ''
 	searchUid.value = ''
-    fetchData()
-	fetchMachineOptions()
+  //   fetchData()
+	// fetchMachineOptions()
 }
 
 // 初始化加载数据
-fetchData()
-fetchMachineOptions()
+// fetchData()
+// fetchMachineOptions()
 </script>
 
 <style scoped>

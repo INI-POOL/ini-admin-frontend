@@ -58,13 +58,13 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useI18n } from "vue-i18n";
+// import { useI18n } from "vue-i18n";
 import VaIconNotification from "../../../icons/VaIconNotification.vue";
 
-const { t, locale } = useI18n();
+// const { t, locale } = useI18n();
 
 const baseNumberOfVisibleNotifications = 4;
-const rtf = new Intl.RelativeTimeFormat(locale.value, { style: "short" });
+// const rtf = new Intl.RelativeTimeFormat(locale.value, { style: "short" });
 const displayAllNotifications = ref(false);
 
 interface INotification {
@@ -189,10 +189,11 @@ const notificationsWithRelativeTime = computed(() => {
 
     return {
       ...item,
-      updateTimestamp: rtf.format(
-        -1 * Math.round(timeDifference / TIME_NAMES[timeName]),
-        timeName,
-      ),
+      updateTimestamp:"",
+      // updateTimestamp: rtf.format(
+      //   -1 * Math.round(timeDifference / TIME_NAMES[timeName]),
+      //   timeName,
+      // ),
       separator,
     };
   });

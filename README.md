@@ -12,14 +12,14 @@
 
 <p align="center">
   <a href="https://admin-demo.vuestic.dev"> Live Demo </a> |
-  <a href="https://admin.vuestic.dev/"> About Umpool Admin </a> |
+  <a href="https://admin.vuestic.dev/"> About Inipool Admin </a> |
   <a href="https://ui.vuestic.dev/">Vuestic UI documentation</a>
 </p>
 
-> Umpool Admin is built with [Vuestic UI](https://ui.vuestic.dev). See our
+> Inipool Admin is built with [Vuestic UI](https://ui.vuestic.dev). See our
 > <a href="https://github.com/epicmaxco/vuestic-ui/issues">issues</a>,
 > <a href="https://ui.vuestic.dev/en/contribution/guide">contributing guide</a> and join discussions on our
-> <a href="https://discord.gg/jTKTjj2weV">Discord server</a> to help us improve Umpool Admin & Vuestic UI experience.
+> <a href="https://discord.gg/jTKTjj2weV">Discord server</a> to help us improve Inipool Admin & Vuestic UI experience.
 
 <p align="center">
   <a href="https://admin.vuestic.dev" target="_blank">
@@ -29,13 +29,13 @@
 
 ### Quick start
 
-Use following command to quickly scaffold new [Umpool Admin](https://admin-demo.vuestic.dev) or empty Vite or Nuxt project with [Vuestic UI](https://ui.vuestic.dev).
+Use following command to quickly scaffold new [Inipool Admin](https://admin-demo.vuestic.dev) or empty Vite or Nuxt project with [Vuestic UI](https://ui.vuestic.dev).
 
 ```bash
 npm create vuestic@latest
 ```
 
-After [Umpool Admin](https://admin.vuestic.dev) is installed, run `npm install` to install dependcies, then run `npm run dev` to start local development server.
+After [Inipool Admin](https://admin.vuestic.dev) is installed, run `npm install` to install dependcies, then run `npm run dev` to start local development server.
 
 ### Documentation
 
@@ -80,7 +80,7 @@ Become a partner: [hello@epicmax.co](mailto:hello@epicmax.co)
 
 ### Can I hire you guys?
 
-[Epicmax](https://epicmax.co) is committed to Open Source from its beginning. Umpool Admin was created and backed by Epicmax, and is supported through all the years.
+[Epicmax](https://epicmax.co) is committed to Open Source from its beginning. Inipool Admin was created and backed by Epicmax, and is supported through all the years.
 
 With 6+ years of dedicated work on both commercial and open-source projects, and more than 47 clients worldwide across various fields, Epicmax has deep expertise in frontend development, especially in Vue.js. We regularly conduct code audits for our projects and now excited to offer this service not only to our existing clients but to anyone looking to understand the state of their frontend code and ensure it's secure and up-to-date!
 
@@ -103,7 +103,7 @@ Say hi: <a href="mailto:hello@epicmax.co">hello@epicmax.co</a>. We will be happy
 
 ### Premium Support and Consulting
 
-Get Premium Support & Consulting services through our official development partner, Epicmax. As the main contributor to Vuestic UI and Umpool Admin, Epicmax brings a wealth of expertise and experience to help you achieve your project goals efficiently and effectively.
+Get Premium Support & Consulting services through our official development partner, Epicmax. As the main contributor to Vuestic UI and Inipool Admin, Epicmax brings a wealth of expertise and experience to help you achieve your project goals efficiently and effectively.
 
 [Get a quote](https://www.epicmax.co/?ref=vuestic-consulting)
 

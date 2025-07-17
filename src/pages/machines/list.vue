@@ -237,7 +237,7 @@ const columns = [
 const handlePageChange = (startIndex) => {
     queryParams.page = Math.ceil(startIndex / queryParams.pagesize);
     currentStartIndex.value = startIndex;
-    fetchData();
+    // fetchData();
 };
 
 // 方法
@@ -281,7 +281,7 @@ const fetchData = async () => {
 watch([searchMachine, searchMobile,searchSubUser,searchCurrency,searchUid,searchIdc], () => {
     queryParams.page = 1
     currentStartIndex.value = 1
-    fetchData()
+    // fetchData()
 })
 
 const getStatusColor = (status) => {
@@ -294,7 +294,7 @@ const getStatusColor = (status) => {
 }
 
 const refreshList = () => {
-    fetchData()
+    // fetchData()
 }
 
 const editMachine = (machine) => {
@@ -329,8 +329,8 @@ const refreshData = () => {
 	searchCurrency.value = ''
 	searchUid.value = ''
 	searchIdc.value = ''
-	fetchData();
-	fetchMachineOptions();
+	// fetchData();
+	// fetchMachineOptions();
 }
 
 const onOk = async () => {
@@ -356,7 +356,7 @@ const onOk = async () => {
       color: "success",
     });
     // 刷新数据
-    await fetchData();
+    // await fetchData();
     // 关闭弹窗
     isEditModalVisible.value = false;
   } catch (error) {
@@ -379,8 +379,8 @@ const deleteMachine = async (machine) => {
 }
 
 // 初始化加载数据
-fetchData()
-fetchMachineOptions()
+// fetchData()
+// fetchMachineOptions()
 </script>
 
 <style scoped>

@@ -2,7 +2,7 @@ import "./scss/main.scss";
 
 import { createApp } from "vue";
 import App from "./App.vue";
-import i18n from "./i18n";
+// import i18n from "./i18n";
 import { createVuestic } from "vuestic-ui";
 import { createGtm } from "@gtm-support/vue-gtm";
 
@@ -14,7 +14,7 @@ const app = createApp(App);
 
 app.use(stores);
 app.use(router);
-app.use(i18n);
+// app.use(i18n);
 app.use(createVuestic({ config: vuesticGlobalConfig }));
 
 if (import.meta.env.VITE_APP_GTM_ENABLED) {

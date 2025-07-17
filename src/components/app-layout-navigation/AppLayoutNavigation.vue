@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useI18n } from "vue-i18n";
+// import { useI18n } from "vue-i18n";
 import { useColors } from "vuestic-ui";
 import VaIconMenuCollapsed from "../icons/VaIconMenuCollapsed.vue";
 import { storeToRefs } from "pinia";
@@ -35,7 +35,7 @@ const { isSidebarMinimized } = storeToRefs(useGlobalStore());
 
 const router = useRouter();
 const route = useRoute();
-const { t } = useI18n();
+// const { t } = useI18n();
 
 type BreadcrumbNavigationItem = {
   label: string;
@@ -70,7 +70,8 @@ const items = computed(() => {
       return;
     }
     result.push({
-      label: t(labelKey),
+      // label: t(labelKey),
+      label:labelKey,
       to: route.path,
       hasChildren: route.children && route.children.length > 0,
     });

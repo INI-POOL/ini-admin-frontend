@@ -34,7 +34,7 @@ export default defineConfig({
       "/api": {
         target: "http://172.28.56.107:12002",
 	    // target: "http://127.0.0.1:12002",
-        // target: "http://api.umpool.io:12001",
+        // target: "http://api.Inipool.io:12001",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },

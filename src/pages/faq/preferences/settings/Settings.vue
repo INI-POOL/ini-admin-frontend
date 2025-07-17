@@ -11,7 +11,7 @@
       </div>
     </div>
     <VaButton
-      v-if="umpoolISGoogle==0"
+      v-if="InipoolISGoogle==0"
       :style="buttonStyles"
       class="w-fit h-fit"
       preset="primary"
@@ -45,7 +45,7 @@ import { buttonStyles } from "../styles";
 const store = useUserStore();
 
 const { init } = useToast();
-const umpoolISGoogle=ref(0)// 判断umpool是否有谷歌认证
+const InipoolISGoogle=ref(0)// 判断Inipool是否有谷歌认证
 
 onMounted(async () => {
   await checkUserGoogleCode();
@@ -55,7 +55,7 @@ const checkUserGoogleCode = async () => {
     const username=getUser();
     const res = await isNeedGoogle(username);
     // console.log(res);
-    umpoolISGoogle.value = res;
+    InipoolISGoogle.value = res;
   } catch (error) {
     console.error("Error checking Google code requirement:", error);
   }
