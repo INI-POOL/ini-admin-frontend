@@ -1,93 +1,96 @@
+
 <template>
-  <div
-    class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 min-h-[36px] leading-5"
-  >
-    <p class="font-bold w-[200px]">绑定谷歌认证器</p>
+  <div class="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-6 min-h-[36px] leading-5">
+    <p class="font-bold w-[200px]">Name</p>
     <div class="flex-1">
       <div class="max-w-[748px]">
-        <!-- {{ twoFA.content }} -->
-        为您的帐户增加一层额外的安全保护。
-        登录时，除了用户名和密码外，您还需要提供一个谷歌验证码（安全认证器）。
+        {{ store.userName }}
       </div>
     </div>
-    <VaButton
-      v-if="InipoolISGoogle==0"
-      :style="buttonStyles"
-      class="w-fit h-fit"
-      preset="primary"
-      @click="emits('openAuthenticationModal')"
-    >
-      绑定
+    <VaButton :style="buttonStyles" class="w-fit h-fit" preset="primary" @click="emits('openNameModal')">
+      Edit
     </VaButton>
-    <!-- <VaButton
-      :style="buttonStyles"
-      class="w-fit h-fit"
-      preset="primary"
-      :color="twoFA.color"
-      @click="toggle2FA"
-    >
-      {{ twoFA.button }}
-    </VaButton> -->
   </div>
   <VaDivider />
- 
+  <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 min-h-[36px] leading-5">
+    <p class="font-bold w-[200px]">Email</p>
+    <div class="flex-1">
+      <div class="max-w-[748px]">
+        {{ store.email }}
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 min-h-[36px] leading-5">
+    <p class="font-bold w-[200px]">Password</p>
+    <div class="flex-1">
+      <div class="max-w-[748px]">•••••••••••••</div>
+    </div>
+    <VaButton :style="buttonStyles" class="w-fit h-fit" preset="primary" @click="emits('openResetPasswordModal')">
+      Reset Password
+    </VaButton>
+  </div>
+  <VaDivider />
+  <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 min-h-[36px] leading-5">
+    <p class="font-bold w-[200px]">Two-factor authentication</p>
+    <div class="flex-1">
+      <div class="max-w-[748px]">
+        {{ twoFA.content }}
+      </div>
+    </div>
+    <VaButton :style="buttonStyles" class="w-fit h-fit" preset="primary" :color="twoFA.color" @click="toggle2FA">
+      {{ twoFA.button }}
+    </VaButton>
+  </div>
+  <VaDivider />
+  <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 min-h-[36px] leading-5">
+    <p class="font-bold w-[200px]">Email subscriptions</p>
+    <div class="flex-1">
+      <div class="max-w-[748px]">
+        <p>To manage what emails you get, visit the</p>
+        <div class="flex space-x-1 w-fit">
+          <RouterLink :to="{ name: 'settings' }" class="font-semibold text-primary">Notification settings</RouterLink>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 <script lang="ts" setup>
-import { computed,ref,onMounted } from "vue";
+import { computed } from 'vue'
 
-import { useToast } from "vuestic-ui";
+import { useToast } from 'vuestic-ui'
 
-import { useUserStore } from "../../../stores/user-store";
-import {isNeedGoogle} from "../../../api/user";
-import { getUser } from "../../../utils/auth";
+import { useUserStore } from '../../../stores/user-store'
 
-import { buttonStyles } from "../styles";
-const store = useUserStore();
+import { buttonStyles } from '../styles'
 
-const { init } = useToast();
-const InipoolISGoogle=ref(0)// 判断Inipool是否有谷歌认证
+const store = useUserStore()
 
-onMounted(async () => {
-  await checkUserGoogleCode();
-});
-const checkUserGoogleCode = async () => {
-  try {
-    const username=getUser();
-    const res = await isNeedGoogle(username);
-    // console.log(res);
-    InipoolISGoogle.value = res;
-  } catch (error) {
-    console.error("Error checking Google code requirement:", error);
-  }
-}
+const { init } = useToast()
 
-const toastMessage = computed(() =>
-  store.is2FAEnabled ? "2FA successfully enabled" : "2FA successfully disabled",
-);
+const toastMessage = computed(() => (store.is2FAEnabled ? '2FA successfully enabled' : '2FA successfully disabled'))
 
 const twoFA = computed(() => {
   if (store.is2FAEnabled) {
     return {
-      color: "danger",
-      button: "Disable 2FA",
+      color: 'danger',
+      button: 'Disable 2FA',
       content:
-        "Two-Factor Authentication (2FA) is now enabled for your account, adding an extra layer of security to your sign-ins.",
-    };
+        'Two-Factor Authentication (2FA) is now enabled for your account, adding an extra layer of security to your sign-ins.',
+    }
   } else {
     return {
-      color: "primary",
-      button: "Set up 2FA",
+      color: 'primary',
+      button: 'Set up 2FA',
       content:
-        "Add an extra layer of security to your account. To sign in, you’ll need to provide a code along with your username and password.",
-    };
+        'Add an extra layer of security to your account. To sign in, you’ll need to provide a code along with your username and password.',
+    }
   }
-});
+})
 
 const toggle2FA = () => {
-  store.toggle2FA();
-  init({ message: toastMessage.value, color: "success" });
-};
+  store.toggle2FA()
+  init({ message: toastMessage.value, color: 'success' })
+}
 
-const emits = defineEmits(["openNameModal", "openResetPasswordModal"]);
-
+const emits = defineEmits(['openNameModal', 'openResetPasswordModal'])
 </script>

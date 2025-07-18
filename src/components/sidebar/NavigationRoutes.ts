@@ -197,7 +197,7 @@ export default {
     //   },
     // },
     {
-      name: "users",
+      name: "preferences",
       displayName: "用户管理",
       meta: {
         icon: "manage_accounts",
