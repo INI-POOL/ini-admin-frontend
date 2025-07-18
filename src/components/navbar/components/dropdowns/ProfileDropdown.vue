@@ -149,17 +149,17 @@ withDefaults(
       //     },
       //   ],
       // },
-      // {
-      //   name: "",
-      //   separator: false,
-      //   list: [
-      //     {
-      //       name: "logout",
-      //       to: "login",
-      //       icon: "mso-logout",
-      //     },
-      //   ],
-      // },
+      {
+        name: "",
+        separator: false,
+        list: [
+          {
+            name: "logout",
+            to: "login",
+            icon: "mso-logout",
+          },
+        ],
+      },
     ],
   },
 );

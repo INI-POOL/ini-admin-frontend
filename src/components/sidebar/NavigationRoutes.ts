@@ -15,14 +15,14 @@ export default {
 	    name: "dashboard",
 	    displayName: "总览",
 	    meta: {
-	      icon: "",
+	      icon: "vuestic-iconset-dashboard",
 	    },
 	  },
 	{
 	    name: "user",
 	    displayName: "矿工管理",
 	    meta: {
-	      icon: "manage_accounts",
+	      icon: "engineering",
 	    },
 		children: [
 			{
@@ -45,7 +45,7 @@ export default {
     name: "user",
     displayName: "矿池管理",
     meta: {
-      icon: "manage_accounts",
+      icon: "precision_manufacturing",
     },
   children: [
     {
@@ -68,7 +68,8 @@ export default {
 	  name: 'pre_alloc',
 	  displayName: "收益发放",
 	  meta: {
-	    icon: "text_snippet",
+	    // icon: "text_snippet",
+      icon: 'attach_money',
 	  },
 	  children: [
 		{
@@ -195,13 +196,13 @@ export default {
     //     icon: "vuestic-iconset-files",
     //   },
     // },
-    // {
-    //   name: "preferences",
-    //   displayName: "menu.preferences",
-    //   meta: {
-    //     icon: "manage_accounts",
-    //   },
-    // },
+    {
+      name: "users",
+      displayName: "用户管理",
+      meta: {
+        icon: "manage_accounts",
+      },
+    },
     {
       name: "settings",
       displayName: "矿池设置",
