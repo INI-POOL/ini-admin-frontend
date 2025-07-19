@@ -16,9 +16,9 @@
     >
       <template #anchor>
         <VaButton preset="secondary" color="textPrimary">
-          <span class="profile-dropdown__anchor min-w-max">
+          <span class="profile-dropdown__anchor min-w-max" style="width: 2.18rem; height: 2.18rem;">
             <slot />
-            <VaAvatar color="warning"> U.M </VaAvatar>
+            <VaAvatar color="warning" size="small"> I.N.I </VaAvatar>
           </span>
         </VaButton>
       </template>
@@ -27,32 +27,34 @@
         class="profile-dropdown__content md:w-60 px-0 py-4 w-full"
         :style="{ '--hover-color': hoverColor }"
       >
-        <VaList v-for="group in options" :key="group.name">
+        <!-- <VaList v-for="group in options" :key="group.name"> -->
+          <VaList>
           <!-- <header
             v-if="group.name"
             class="uppercase text-[var(--va-secondary)] opacity-80 font-bold text-xs px-4"
           >
             {{ t(`user.${group.name}`) }}
           </header> -->
-          <VaListItem
+          <!-- <VaListItem
             v-for="item in group.list"
             :key="item.name"
             class="menu-item px-4 text-base cursor-pointer h-8"
             v-bind="resolveLinkAttribute(item)"
-          >
-            <VaIcon :name="item.icon" class="pr-1" color="secondary" @click="" />
-            {{ t(`admin.doubleCheck`) }}
-          </VaListItem>
+          > -->
+            <!-- <VaIcon :name="item.icon" class="pr-1" color="secondary" @click="" /> -->
+            <!-- {{ t(`admin.doubleCheck`) }} -->
+              
+          <!-- </VaListItem> -->
           <VaListItem
             key="logout"
             class="menu-item px-4 text-base cursor-pointer h-8"
             @click="logout"
           >
           <VaIcon name="mso-logout" class="pr-1" color="secondary"/>
-            {{ t(`admin.logOut`) }}
+              退出
           </VaListItem>
 
-          <VaListSeparator v-if="group.separator" class="mx-3 my-2" />
+          <!-- <VaListSeparator v-if="group.separator" class="mx-3 my-2" /> -->
         </VaList>
       </VaDropdownContent>
     </VaDropdown>
@@ -121,16 +123,16 @@ withDefaults(
             to: "settings",
             icon: "mso-settings",
           },
-          {
-            name: "billing",
-            to: "billing",
-            icon: "mso-receipt_long",
-          },
-          {
-            name: "projects",
-            to: "projects",
-            icon: "mso-favorite",
-          },
+          // {
+          //   name: "billing",
+          //   to: "billing",
+          //   icon: "mso-receipt_long",
+          // },
+          // {
+          //   name: "projects",
+          //   to: "projects",
+          //   icon: "mso-favorite",
+          // },
         ],
       },
       // {

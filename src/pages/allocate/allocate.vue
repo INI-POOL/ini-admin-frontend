@@ -203,7 +203,7 @@ import { watch } from 'vue'
 watch([searchDate, searchCurrency,searchGroup], () => {
     queryParams.page = 1
     currentStartIndex.value = 1
-    fetchData()
+    // fetchData()
 	
 })
 
@@ -259,22 +259,22 @@ const resetForm = () => {
 const handlePageChange = (startIndex) => {
     queryParams.page = Math.ceil(startIndex / queryParams.pagesize)
     currentStartIndex.value = startIndex
-    fetchData()
+    // fetchData()
 }
 
 const refreshList = () => {
-    fetchData()
-	fetchMachineOptions()
+    // fetchData()
+	// fetchMachineOptions()
 }
 
 const refreshData = () => {
-    fetchData()
-	fetchMachineOptions()
+    // fetchData()
+	// fetchMachineOptions()
 }
 
 // 初始化加载数据
-fetchData()
-fetchMachineOptions()
+// fetchData()
+// fetchMachineOptions()
 </script>
 
 <style scoped>

@@ -408,7 +408,7 @@ const copyText = async (text) => {
 const handlePageChange = (startIndex) => {
   queryParams.page = Math.ceil(startIndex / queryParams.pagesize);
   currentStartIndex.value = startIndex;
-  fetchData();
+  // fetchData();
 };
 
 // 每页条数改变
@@ -557,7 +557,7 @@ const handleAuditSubmit = async () => {
 		  color: "success",
 		});
 		auditVisible.value = false;
-		fetchData();
+		// fetchData();
 	}
   } catch (error) {
     toast({
@@ -589,7 +589,7 @@ const handleSuccessSubmit = async () => {
 		  color: "success",
 		});
 		passVisible.value = false;
-		fetchData();
+		// fetchData();
   } catch (error) {
     toast({
       message: error,
@@ -630,8 +630,8 @@ const getHotAddressBalanceData = async () => {
 };
 
 onMounted(() => {
-  fetchData();
-  getHotAddressBalanceData();
+  // fetchData();
+  // getHotAddressBalanceData();
 });
 </script>
 

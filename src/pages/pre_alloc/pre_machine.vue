@@ -150,8 +150,8 @@ import { ref, reactive, computed, watch } from 'vue'
 import { preMachineList, preMachineModify, machineOptions } from "../../api/machines"
 import { formatDateTime,convertDateTimeToDate,isDateDisabled,getYesterday,formatHashRate } from "../../utils/date.ts";
 import { useToast,VaDatePicker, VaButton, VaIcon,VaPopover } from "vuestic-ui";
-import { useI18n } from "vue-i18n";
-const { t } = useI18n();
+// import { useI18n } from "vue-i18n";
+// const { t } = useI18n();
 
 const { init: toast } = useToast()
 
@@ -216,27 +216,28 @@ const queryParams = reactive({
   pagesize: 10,
 })
 
+
 const columns = [
 	// { key: 'id',label: 'ID'},
-    { key: 'mid', label: t('admin.mid') },
-    { key: 'hostname', label: t('admin.mName') },
-    { key: 'record_date', label: t('admin.recordDate') },
-    { key: 'currency', label: t('admin.currency') },
-	{ key:'uid', label: t('admin.userUid') },
-    { key:'sub_user_name', label: t('admin.subUserName') },
-    {key: 'online_time', label: t('admin.onlineTimes') },
-    {key: 'online_points', label: t('admin.onlinePoints') },
-	{ key: 'hashrate', label: t('admin.avgHashrate') },
-	{key: 'is_in_black_list', label: t('admin.needAllocate')},
-	{key: 'group', label: t('admin.groupName')},
-    { key: 'actions', label: t('admin.operation') }
+    { key: 'mid', label: "机器ID" },
+    { key: 'hostname', label:'机器名' },
+    { key: 'record_date', label: "记录日期" },
+    { key: 'currency', label: "币种" },
+	{ key:'uid', label: "用户Uid" },
+    { key:'sub_user_name', label: "子账户" },
+    {key: 'online_time', label: "在线时长" },
+    {key: 'online_points', label: "时长点数" },
+	{ key: 'hashrate', label: "24小时平均算力" },
+	{key: 'is_in_black_list', label: "是否参与分配" },
+	{key: 'group', label: "组名" },
+    { key: 'actions', label: "操作" }
 ]
 
 // 分页
 const handlePageChange = (startIndex) => {
     queryParams.page = Math.ceil(startIndex / queryParams.pagesize);
     currentStartIndex.value = startIndex;
-    fetchData();
+    // fetchData();
 };
 
 const formatDate = (date) => {
@@ -302,7 +303,7 @@ const getStatusColor = (status) => {
 watch([searchDate, searchAlloc,searchGroup,searchMachine,searchCurrency], () => {
     queryParams.page = 1
     currentStartIndex.value = 1
-    fetchData()
+    // fetchData()
 })
 
 const editMachine = (machine) => {
@@ -340,8 +341,8 @@ const refreshData = () => {
 	if (searchDate.value) {
 		searchDate.value = formatDate(getYesterday(8));
 	}
-	fetchData();
-	fetchMachineOptions();
+	// fetchData();
+	// fetchMachineOptions();
 }
 
 const onOk = async () => {
@@ -358,7 +359,7 @@ const onOk = async () => {
       color: "success",
     });
     // 刷新数据
-    await fetchData();
+    // await fetchData();
     // 关闭弹窗
     isEditModalVisible.value = false;
   } catch (error) {
@@ -381,8 +382,8 @@ const deleteMachine = async (machine) => {
 }
 
 // 初始化加载数据
-fetchData();
-fetchMachineOptions();
+// fetchData();
+// fetchMachineOptions();
 </script>
 
 <style scoped>

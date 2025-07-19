@@ -346,8 +346,8 @@ const allocOnline = async (row,allocType) => {
     })
   } finally {
     isLoading.value = false; // 隐藏加载状态
-	fetchData();
-	fetchMachineOptions()
+	// fetchData();
+	// fetchMachineOptions()
   }
 };
 
@@ -411,8 +411,8 @@ import { watch } from 'vue'
 watch([searchDate, searchCurrency], () => {
     queryParams.page = 1
     currentStartIndex.value = 1
-    fetchData()
-	fetchMachineOptions()
+  //   fetchData()
+	// fetchMachineOptions()
 })
 
 const statusMap = {
@@ -464,25 +464,25 @@ const resetForm = () => {
 const handlePageChange = (startIndex) => {
     queryParams.page = Math.ceil(startIndex / queryParams.pagesize)
     currentStartIndex.value = startIndex
-    fetchData()
-	fetchMachineOptions()
+  //   fetchData()
+	// fetchMachineOptions()
 }
 
 const refreshList = () => {
-    fetchData()
-	fetchMachineOptions()
+  //   fetchData()
+	// fetchMachineOptions()
 }
 
 const refreshData = () => {
 	searchDate.value = getYesterday(8);
 	searchCurrency.value = '';
-    fetchData()
-	fetchMachineOptions()
+  //   fetchData()
+	// fetchMachineOptions()
 }
 
 // 初始化加载数据
-fetchData()
-fetchMachineOptions()
+// fetchData()
+// fetchMachineOptions()
 </script>
 
 <style scoped>
